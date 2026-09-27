@@ -1,0 +1,134 @@
+import type { BookmarksRepository } from '../browser/bookmarks';
+import { QUOTAS, type MetadataRepository } from '../browser/metadata';
+import { editToken, flattenTree, normalizeTags, validateUrl } from './logic';
+import type { Command, Favorite, LinkInput, LocalState, LogEntry, Snapshot } from './model';
+import { reconcile } from './reconcile';
+
+export class DashboardService {
+  private logs: LogEntry[] | undefined;
+  constructor(private readonly bookmarks: BookmarksRepository, private readonly metadata: MetadataRepository,
+    private readonly identity: { extensionId: string; version: string; quotas?: typeof QUOTAS },
+    private readonly uuid: () => string = () => crypto.randomUUID(),
+    private readonly now: () => string = () => new Date().toISOString()) {}
+  private async log(message: string) {
+    this.logs ??= await this.metadata.readLogs();
+    this.logs = [...this.logs, { time: this.now(), message }].slice(-60);
+    if (import.meta.env.DEV) console.debug('[reconciliation]', message);
+    await this.metadata.saveLogs(this.logs);
+  }
+  async snapshot(reason: string): Promise<Snapshot> {
+    const [tree, metadata, local] = await Promise.all([this.bookmarks.getTree(), this.metadata.read(), this.metadata.readLocal()]);
+    const { favorites, folders } = flattenTree(tree);
+    const result = reconcile(favorites, metadata, local.mappings, local.pendingDeletions);
+    const errors = [...metadata.invalid, ...result.warnings];
+    const patch: Record<string, unknown> = { ...result.historyWrites };
+    for (const id of local.pendingDeletions) if (!metadata.tombstones[id]) patch[`dead:${id}`] = { schemaVersion: 1, stableId: id, deletedAt: this.now() };
+    let saved = true;
+    try { await this.metadata.write(patch); } catch (error) { saved = false; errors.push(String(error)); }
+    if (saved) {
+      local.mappings = { ...local.mappings, ...result.mappings };
+      local.pendingDeletions = [];
+      await this.metadata.saveLocal(local);
+    }
+    const finalMetadata = saved && Object.keys(patch).length ? await this.metadata.read() : metadata;
+    const finalResult = reconcile(favorites, finalMetadata, local.mappings, local.pendingDeletions);
+    await this.log(`${reason}: ${favorites.length} Favorites; ${finalResult.matches.map(m => `${m.stableId.slice(0, 8)}=${m.status}${m.bookmarkId ? `(${m.bookmarkId})` : ''}`).join(', ') || 'no metadata'}${errors.length ? `; ${errors.length} errors/warnings` : ''}`);
+    return { schemaVersion: 1, ...this.identity, tree, favorites, folders, metadata: finalMetadata, local,
+      reconciliation: finalResult, syncBytes: await this.metadata.bytes(), quotas: this.identity.quotas ?? QUOTAS,
+      lastReconciliation: this.now(), logs: this.logs ?? [], errors };
+  }
+  async removed(ids: string[]) {
+    const local = await this.metadata.readLocal();
+    const deleted = ids.map(id => local.mappings[id]?.stableId).filter((id): id is string => Boolean(id));
+    local.pendingDeletions = [...new Set([...local.pendingDeletions, ...deleted])];
+    await this.metadata.saveLocal(local);
+    return this.snapshot('bookmarks.removed');
+  }
+  private inScope(node: { id: string; ancestorIds: string[] }, local: LocalState) {
+    return local.rootId !== null && (local.rootId === '*' || node.id === local.rootId || node.ancestorIds.includes(local.rootId));
+  }
+  private folder(snapshot: Snapshot, id: string, allowSetup = false) {
+    const f = snapshot.folders.find(f => f.id === id);
+    if (!f?.writable || (!allowSetup && !this.inScope(f, snapshot.local))) throw new Error('Choose a writable folder inside the configured dashboard root.');
+    return f;
+  }
+  private favorite(snapshot: Snapshot, id: string, expected: string) {
+    const f = snapshot.favorites.find(f => f.id === id);
+    if (!f || f.unmodifiable || !this.inScope(f, snapshot.local)) throw new Error('Favorite is missing, managed, or outside the dashboard root.');
+    if (editToken(f, this.tags(snapshot, id)) !== expected) throw new Error('This Favorite or its tags changed since editing began. Cancel and reopen the editor.');
+    return f;
+  }
+  private tags(snapshot: Snapshot, id: string) {
+    const mapping = snapshot.reconciliation.mappings[id];
+    return snapshot.metadata.records.find(r => r.stableId === mapping?.stableId)?.tags ?? [];
+  }
+  private validate(input: LinkInput): LinkInput {
+    if (!input.title.trim()) throw new Error('A title is required.');
+    const tags = normalizeTags(input.tags);
+    if (tags.length > 30 || tags.some(t => t.length > 80)) throw new Error('Use at most 30 tags of 80 characters each.');
+    return { ...input, title: input.title.trim(), url: validateUrl(input.url), tags };
+  }
+  private async setTags(favorite: Favorite, tags: string[]) {
+    const state = await this.snapshot('before tag write');
+    if (state.metadata.invalid.length) throw new Error('Unsupported synchronized data is present. Tag writes are blocked until reviewed in diagnostics.');
+    if (state.reconciliation.matches.some(m => m.status === 'ambiguous' && m.candidateIds.includes(favorite.id))) throw new Error('Ambiguous metadata match. Tags were not written.');
+    const previousId = state.local.mappings[favorite.id]?.stableId;
+    if (previousId && (state.metadata.tombstones[previousId] || state.local.pendingDeletions.includes(previousId))) throw new Error('Deletion evidence exists for this Favorite. Wait for Favorites synchronization before editing tags.');
+    const mapping = state.reconciliation.mappings[favorite.id];
+    const existing = state.metadata.records.find(r => r.stableId === mapping?.stableId);
+    if (existing && JSON.stringify(existing.tags) === JSON.stringify(tags)) return;
+    if (!existing && !tags.length) return;
+    // Known absent/conflicting identities must not be replaced with a fresh UUID.
+    if (!existing && state.local.mappings[favorite.id] && !state.metadata.tombstones[state.local.mappings[favorite.id].stableId]) throw new Error('Existing local identity has no usable metadata yet. Wait for synchronization.');
+    const stableId = existing?.stableId ?? this.uuid();
+    const record = { schemaVersion: 1 as const, stableId, initialLocator: existing?.initialLocator ?? favorite.locator, tags, updatedAt: this.now() };
+    await this.metadata.write({ [`meta:${stableId}`]: record });
+    const local = await this.metadata.readLocal();
+    local.mappings[favorite.id] = { stableId, lastLocator: favorite.locator, dateAdded: favorite.dateAdded, method: mapping?.method ?? 'explicit' };
+    await this.metadata.saveLocal(local);
+  }
+  async command(command: Command): Promise<Snapshot> {
+    if (command.type === 'snapshot' || command.type === 'reconcile') return this.snapshot(command.type);
+    const s = await this.snapshot(`before ${command.type}`);
+    if (command.type === 'set-root') {
+      if (command.rootId !== null && command.rootId !== '*') this.folder(s, command.rootId, true);
+      await this.metadata.saveLocal({ ...s.local, rootId: command.rootId });
+    } else if (command.type === 'create-folder') {
+      this.folder(s, command.parentId, s.local.rootId === null);
+      if (!command.title.trim()) throw new Error('Folder name is required.');
+      const folder = await this.bookmarks.create({ parentId: command.parentId, title: command.title.trim() });
+      if (s.local.rootId === null) await this.metadata.saveLocal({ ...s.local, rootId: folder.id });
+    } else if (command.type === 'rename-folder') {
+      const folder = this.folder(s, command.id);
+      if (!folder.renamable) throw new Error('Browser-owned root folders cannot be renamed.');
+      if (folder.title !== command.expectedTitle) throw new Error('Folder changed. Reopen the editor.');
+      if (!command.title.trim()) throw new Error('Folder name is required.');
+      await this.bookmarks.update(command.id, { title: command.title.trim() });
+    } else if (command.type === 'delete') {
+      this.favorite(s, command.id, command.expected);
+      await this.bookmarks.removeLink(command.id);
+      await this.removed([command.id]);
+    } else if (command.type === 'create') {
+      const input = this.validate(command.input);
+      this.folder(s, input.parentId);
+      const node = await this.bookmarks.create({ parentId: input.parentId, title: input.title, url: input.url });
+      try {
+        const fresh = flattenTree(await this.bookmarks.getTree()).favorites.find(f => f.id === node.id);
+        if (!fresh) throw new Error('Created Favorite is no longer present.');
+        await this.setTags(fresh, input.tags);
+      } catch (error) { throw new Error(`Favorite ${node.id} was CREATED, but tags could not be saved. Edit that Favorite; do not repeat Add. ${String(error)}`, { cause: error }); }
+    } else if (command.type === 'edit') {
+      const f = this.favorite(s, command.id, command.expected);
+      const input = this.validate(command.input);
+      this.folder(s, input.parentId);
+      try {
+        if (f.title !== input.title || f.url !== input.url) await this.bookmarks.update(f.id, { title: input.title, url: input.url });
+        if (f.parentId !== input.parentId) await this.bookmarks.move(f.id, input.parentId);
+        const fresh = flattenTree(await this.bookmarks.getTree()).favorites.find(n => n.id === f.id);
+        if (!fresh) throw new Error('Favorite disappeared during edit.');
+        await this.setTags(fresh, input.tags);
+      } catch (error) { throw new Error(`Edit may be partially applied to Edge Favorites. Reload and inspect before retrying. ${String(error)}`, { cause: error }); }
+    }
+    return this.snapshot(`after ${command.type}`);
+  }
+}

@@ -1,0 +1,28 @@
+:root { font-family: system-ui, sans-serif; color: #1e293b; background: #f5f7fa; font-size: 14px; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1440px; margin: auto; padding: 28px; }
+h1 { margin: 0; font-size: 26px; } h2 { font-size: 18px; } h3 { font-size: 15px; }
+small { color: #536176; font-weight: normal; } h1 small { font-size: 12px; }
+header, .toolbar, .actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+button, input, select { font: inherit; border: 1px solid #aeb9c7; border-radius: 5px; padding: 9px 12px; background: white; color: inherit; }
+button { cursor: pointer; } button:hover { background: #eef3fb; } button:disabled { cursor: default; opacity: .5; }
+input:focus, select:focus, button:focus-visible, a:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+a { color: #164dab; font-weight: 600; overflow-wrap: anywhere; }
+label { display: grid; gap: 5px; margin: 10px 0; } select { max-width: 100%; }
+.banner { padding: 12px; background: #fff6db; border-left: 4px solid #b87d12; }
+.error { padding: 12px; background: #ffeded; color: #8c2424; overflow-wrap: anywhere; }
+.warning { color: #8a4d00; font-size: 12px; }
+.settings, .editor, .diagnostics { background: white; border: 1px solid #d9e0e9; padding: 16px; margin: 18px 0; border-radius: 7px; }
+.settings p { margin-bottom: 0; } .settings form, .editor form { max-width: 700px; }
+.toolbar input { flex: 1; } .layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 24px; margin-top: 20px; }
+nav { display: flex; flex-direction: column; gap: 6px; align-self: start; } nav button { text-align: left; overflow-wrap: anywhere; }
+.selected { background: #e5edff; border-color: #4775c3; }
+article { display: flex; align-items: center; gap: 16px; padding: 14px; background: white; border: 1px solid #d9e0e9; margin-bottom: 7px; border-radius: 5px; }
+.link { flex: 1; min-width: 0; display: grid; gap: 5px; } .url { color: #536176; font-size: 12px; overflow-wrap: anywhere; }
+.tag { display: inline-block; padding: 3px 7px; margin: 3px 5px 0 0; background: #eef2f7; border-radius: 4px; font-size: 12px; }
+.actions { justify-content: flex-start; flex-wrap: wrap; } .table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 12px; } th, td { text-align: left; padding: 10px; border: 1px solid #d9e0e9; vertical-align: top; overflow-wrap: anywhere; min-width: 130px; max-width: 320px; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 500px; overflow: auto; } .logs { max-height: 300px; overflow: auto; font: 12px monospace; padding-left: 24px; } .logs li { margin: 7px 0; overflow-wrap: anywhere; }
+footer { margin-top: 24px; color: #536176; } summary { cursor: pointer; } code { overflow-wrap: anywhere; }
+@media (max-width: 750px) { main { padding: 16px; } .layout { grid-template-columns: 1fr; } nav { max-height: 180px; overflow: auto; } header, article { align-items: flex-start; flex-direction: column; } }
