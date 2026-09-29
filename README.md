@@ -73,17 +73,6 @@ Local check results and live-test status are recorded in the test worksheet. If 
 - **MANUALLY VALIDATED IN EDGE (cross-device):** initial A → B tags were loaded on B. Following the recorded failure, fresh B → A creation with tags succeeded, then A → B and B → A tag edits converged on the same identity (user report recorded 2026-09-28).
 - **NOT YET VALIDATED:** new bookmarklet confirmation/preservation in Edge, derived labels and targeted-search UI; Stage 1 journal/event/preflight-specific checks in Edge, the remaining cross-device mutation matrix, and full architecture validation beyond the successful sequential creation/tag-edit workflow.
 
-## Roadmap (not implemented)
+## Roadmap
 
-System labels are always derived from the Favorite itself, not user metadata. They are immediately reproducible, never synchronized independently, and must not create stableIds.
-
-| Label | Meaning | Status |
-| --- | --- | --- |
-| JS | `javascript:` bookmarklet | Implemented; new UI validation pending |
-| HTTP | Unencrypted `http://` URL | Implemented; new UI validation pending |
-| LOCAL | Localhost / loopback destination | Future |
-| IP | Direct IP address destination | Future |
-| PDF | URL clearly targets a PDF resource | Future |
-| MAIL | `mailto:` link | Future; does not expand today's save policy |
-
-Future search possibilities: targeted system-label search (perhaps `!js`, syntax undecided), tag autocomplete after `#`, category autocomplete after `@`, quoted multi-word targeted values, and richer filters/advanced search UI. None is implemented in this MVP.
+Deferred system labels, search enhancements, metadata-recovery work and distribution considerations are tracked in [the roadmap](docs/roadmap.md). Roadmap items are not implementation requirements unless explicitly promoted into current work; see [the current development handoff](docs/development-state.md) for active status and next actions.
