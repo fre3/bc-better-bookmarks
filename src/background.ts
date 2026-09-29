@@ -2,6 +2,7 @@ import { BrowserBookmarksRepository } from './browser/bookmarks';
 import { BrowserMetadataRepository } from './browser/metadata';
 import { DashboardService } from './core/service';
 import type { Command } from './core/model';
+import { storageChangeLogs } from './core/metadata-diagnostics';
 
 const service = new DashboardService(new BrowserBookmarksRepository(), new BrowserMetadataRepository(), {
   extensionId: chrome.runtime.id, version: chrome.runtime.getManifest().version,
@@ -42,6 +43,10 @@ chrome.bookmarks.onRemoved.addListener((id, info) => {
   collect(info.node);
   void enqueue(() => service.removed(ids)).then(notify).catch(error => { console.error('Removal reconciliation failed', error); notify(); });
 });
-chrome.storage.onChanged.addListener((_changes, area) => { if (area === 'sync') refresh('storage.sync.changed (origin unknown)'); });
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'sync') return;
+  const entries = storageChangeLogs(changes, new Date().toISOString());
+  void enqueue(() => service.syncChanged(entries)).then(notify).catch(error => { console.error('Sync change reconciliation failed', error); notify(); });
+});
 chrome.runtime.onStartup.addListener(() => refresh('browser startup'));
 chrome.runtime.onInstalled.addListener(() => refresh('extension installed/updated'));

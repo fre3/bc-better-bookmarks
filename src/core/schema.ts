@@ -1,4 +1,4 @@
-import type { LocalMapping, LocalState, Locator, MetadataState } from './model';
+import type { LocalMapping, LocalState, Locator, MetadataJournal, MetadataState } from './model';
 import { normalizeTags } from './logic';
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export const object = (v: unknown): v is Record<string, unknown> => Boolean(v) && typeof v === 'object' && !Array.isArray(v);
@@ -41,4 +41,17 @@ export function parseLocal(raw: unknown): LocalState {
     const m = value as LocalMapping;
     return [id, { stableId: m.stableId, dateAdded: m.dateAdded, lastLocator: cleanLocator(m.lastLocator), method: m.method }];
   })) };
+}
+
+export function parseJournal(raw: unknown): MetadataJournal {
+  if (raw === undefined) return { schemaVersion: 1, entries: {} };
+  if (!object(raw) || raw.schemaVersion !== 1 || !object(raw.entries)) throw new Error('Invalid or unsupported local metadata journal; preserved unchanged. Publication blocked.');
+  const entries: MetadataJournal['entries'] = {};
+  for (const [id, entry] of Object.entries(raw.entries)) {
+    if (!UUID.test(id) || !object(entry) || !time(entry.locallyWrittenAt)) throw new Error('Invalid local metadata journal entry; publication blocked.');
+    const parsed = parseMetadata({ [`meta:${id}`]: entry.metadata });
+    if (parsed.invalid.length || !parsed.records.length) throw new Error('Invalid preserved metadata; publication blocked.');
+    entries[id] = { metadata: parsed.records[0], locallyWrittenAt: entry.locallyWrittenAt };
+  }
+  return { schemaVersion: 1, entries };
 }

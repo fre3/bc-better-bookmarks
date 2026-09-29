@@ -1,6 +1,126 @@
 # Two-device Windows Edge validation
 
-**Status: NOT RUN on real devices.** Do not mark this MVP technically validated until metadata reaches the other Edge installation AND is associated with the correct Favorite there. Equal local bookmark IDs are neither necessary nor sufficient.
+**Status: baseline single-device behavior and sequential two-way metadata synchronization MANUALLY VALIDATED IN EDGE.** The latest user-reported test passed fresh B → A creation with tags and subsequent A → B and B → A tag edits on the same identity. The user confirmed matching development IDs on two independently built machines. The earlier incident remains recorded below; full architecture validation still includes the remaining mutation matrix and feature-specific checks. Equal local bookmark IDs are neither necessary nor sufficient.
+
+## Evidence already reported
+
+Recorded 2026-09-27 from the user's manual results (execution dates, Edge/Windows versions and private diagnostic exports were not supplied):
+
+- Unpacked extension loads; both independent builds have ID `nfhbegeoeafnpejpjdljhgagefbpafal`.
+- Complete Favorites/folder structure loads correctly; native Edge Favorites ordering is respected.
+- Dashboard add creates a real Favorite; title and URL edits update Edge immediately; moves between folders work; dashboard deletion removes the real Favorite.
+- Adding/removing user tags and tag search work.
+- Native Edge rename/move changes update the open dashboard live without reopening; mapped Favorite tags survive rename/move.
+- Native copy/paste of a tagged Favorite creates a new Favorite that appears immediately and does not inherit the original's tags. This is expected behavior.
+
+The single-device observations alone do not establish Microsoft account metadata transport. Separately, on 2026-09-28 the user reported that A's existing tags had already arrived and associated correctly on B before subsequent testing. New feature checks below are **NOT YET VALIDATED** in Edge. Automated tests use pure logic and mocked/in-memory repositories; no Edge UI automation is assumed or performed.
+
+### Cross-device incident reported 2026-09-28
+
+On B, a newly tagged Favorite had browser ID `63` and UUID `ead34bb4-4adf-4585-86c8-fb82210aead1`. A received the Favorite as browser ID `45` without metadata. B logged the UUID as mapped at `08:58:59.004Z`, a storage-change snapshot at `08:59:00.784Z`, then lacked the metadata match at `08:59:01.028Z`, while retaining its explicit local mapping. Tag edits were blocked. A showed 6 sync keys / 3 metadata records, none for that UUID. This is a failed B → A observation, not proof that all metadata transport is unavailable. Exact changed-key evidence and the initiating deletion source were not recorded by the old build.
+
+### Successful sequential two-way test — recorded 2026-09-28
+
+Source: user-reported manual testing in real Microsoft Edge, following the earlier incident and Stage 1 implementation.
+
+| Step | Result |
+| --- | --- |
+| Create a fresh Favorite with tags on B → receive on A | PASS — creation and tags synchronized successfully |
+| Edit tags on A → receive on B | PASS — converged correctly on the same identity |
+| Edit tags on B → receive on A | PASS — converged correctly on that same identity |
+
+Conclusion: cross-device metadata sync is generally working reliably for the tested sequential creation/tag-edit workflow, including both directions and identity preservation. This is actual manual transport/association evidence, separate from automated tests or local storage acknowledgements. Exact execution times, latency, build revision, Edge versions, UUID and diagnostic exports were not supplied for this run; no values are inferred. The result does not identify the cause of the earlier loss, demonstrate recovery of that lost record, or mark unperformed mutation/journal/preflight tests as passed. Stage 2 automatic recovery remains deferred.
+
+## Stage 1 hardening — manual A/B checks (transport sequence passed; other checks pending)
+
+These steps are for the user after installing the same new build on both machines. Automated tests do not execute Edge UI or prove Microsoft transport. Keep existing incident evidence and do not clear storage, uninstall, or try to repair the missing UUID yet.
+
+1. Verify both installed IDs remain `nfhbegeoeafnpejpjdljhgagefbpafal`. Reload the extension and open a fresh dashboard. Existing schema-v1 state should load without migration. Record build/revision and Edge versions.
+2. On B, inspect the already affected Favorite. If its raw meta key is still absent, Diagnostics should show its original UUID, `Metadata: missing`, `raw meta: absent`, and its local preservation status. A record lost before Stage 1 will ordinarily show `locally preserved: false`; the journal cannot recover history it never captured.
+3. Try an edit combining title/URL/folder and nonempty tags on that missing identity, then an edit with empty tags. Both must reject before any Favorite mutation. Verify the original title/URL/folder in native Edge. No new UUID or meta key should appear, and the error must not promise that waiting guarantees repair.
+4. In the dedicated disposable test root, create a new tagged HTTPS Favorite. Inspect `storage.local.metadataJournal` read-only in worker DevTools: its same UUID should have the intended metadata and `locallyWrittenAt`. Treat this as private data. There should be no journal key in `storage.sync`, and the sync record remains `meta:<UUID>`.
+5. Change its tags, including removing all tags. The preserved entry should reflect the latest local intent under the same UUID; another UUID's entry must remain unchanged. Inspect logs for `type=meta`, added/updated operation, old/new presence and validation, without actual tags/URL/title. These events do not indicate remote acknowledgement.
+6. Close worker DevTools, reload/restart Edge and reopen the dashboard. Local preservation should remain. Existing missing metadata must remain missing: no startup replay/recovery occurs.
+7. Observe A naturally receiving the new Favorite/metadata and record the actual result, including different local IDs and same stableId if matched. A receiving metadata alone must not create a local journal entry: only local authorship does. Then edit tags on A; A should preserve its own intended write before normal sync publication. Inspect B and record whether the return arrives.
+8. If a disappearance recurs, promptly capture the bounded log before it rolls over. Look for the exact `meta:<UUID>` key with `operation=removed`, `oldPresent=true`, `newPresent=false`, receipt timestamp and old/new validation. Inspect `loc:`/`dead:` events too. Record raw-key presence, health status and preservation status independently; do not automatically attribute the removal to the other PC. Invalid related records should show quarantine; valid tombstones should show deleted rather than missing.
+9. Confirm normal HTTPS/bookmarklet edits, user-tag search, native rename/move updates, ordering and copied-tag isolation still behave as before. No journal entry should be created solely by a derived system label.
+
+Capacity/quota failures and event removals are covered in mocked tests; do not fill or remove real sync storage merely to exercise these checks. A journal failure blocks metadata publication without evicting existing entries, but runtime failures after a browser mutation can still report partial success. Local writes and events are not remote acknowledgements. Stage 2 recovery requires a separate review and explicit authorization.
+
+| Stage 1 manual check | Result |
+| --- | --- |
+| A/B build identity, compatibility, journal durability and content-free events | NOT YET VALIDATED |
+| Missing identity rejected before mutation; no automatic recreation | NOT YET VALIDATED |
+| Fresh B → A creation with tags, A → B edit, then B → A edit | MANUALLY VALIDATED IN EDGE — PASS, all converged on the same identity; recorded 2026-09-28 |
+| Existing behavior regression after hardening | NOT YET VALIDATED |
+
+## SINGLE-DEVICE UI TESTING — new features (NOT YET VALIDATED)
+
+Build with the README commands, verify the expected ID, reload the unpacked extension at `edge://extensions`, and open a fresh New Tab. Back up Favorites and use a disposable, uniquely named dashboard test root. These are steps for the user to execute manually after the build. Record version/revision, results and any errors; automated passes do not mark these steps PASS.
+
+### A. Targeted search
+
+Under the test root, create folders `Development` and `Work`. Select **All in dashboard** so the category sidebar does not independently filter the test. Create these fixtures:
+
+| Title | URL | Folder | User tags |
+| --- | --- | --- | --- |
+| Microsoft Azure Guide | `https://example.com/azure-guide#intro` | Development | azure, important |
+| Microsoft Notes | `https://example.com/notes` | Development | notes |
+| Invoice | `https://example.com/invoice` | Work | azure |
+
+Run each query in the existing search field:
+
+1. `Guide`: guide found by title.
+2. `azure-guide#intro`: guide found by URL; embedded `#` is ordinary text.
+3. `#azure`: guide and invoice only; notes excluded despite its title.
+4. `#azu`: same partial-tag matches.
+5. `@development`: guide and notes only, based on folder path.
+6. `@dev`: same partial-folder matches.
+7. `microsoft #azure`: guide only; both conditions required.
+8. `microsoft @development #important`: guide only; all three required.
+9. `#does-not-exist`: no results.
+10. `#`, then `@`: all three fixtures remain visible, no crash/error. Empty operators are ignored, including alongside other terms.
+11. `#azure #important`: guide only; both tag substrings required.
+12. `  MICROSOFT   @DEV   #IMPORTANT  `: guide only; case and extra whitespace do not matter.
+13. Clear the field: all fixtures return in native folder order. `microsoft azure` finds the guide using AND semantics.
+
+### B. HTTP system label
+
+1. Clear search, create a disposable Favorite titled `HTTP label test` with URL `http://example.com` and no tags. It saves normally, without an executable-code warning.
+2. Verify `HTTP` appears immediately as a read-only system label. Open Edit: the user Tags field is empty. In Diagnostics the Favorite has no stableId; metadata record/key counts do not increase solely for classification. Capture counts before/after in a quiet test tree.
+3. Search `http`: the Favorite appears through ordinary search. This query can also match HTTPS URLs; it is not an exclusive HTTP filter.
+4. Clear search and edit the untagged Favorite to `https://example.com`. `HTTP` disappears immediately, user tags remain empty, and no stableId/sync metadata is created. No label migration/write is required. For an already mapped/tagged Favorite, existing locator-history publication on URL edits is still expected.
+
+### C. Bookmarklet system label and confirmation
+
+1. Create a disposable Favorite titled `Bookmarklet label test`, with no tags, using exactly `javascript:alert('Better Bookmarks test')`. Click Save: an **Executable bookmarklet** warning explains that it can execute code in a web page and only trusted code should be saved.
+2. Cancel the warning: the editor remains open and no Favorite is created. Save again and explicitly confirm: exactly one real Favorite is created.
+3. Inspect its URL in native Edge Favorites. It is `javascript:` with the supplied code. Record any browser canonicalization. The dashboard must never execute the code when viewing or clicking its title; it says to run it through Edge Favorites. Merely opening/viewing the existing bookmarklet must not prompt.
+4. Verify the dashboard shows `JS`, Edit's user Tags field is empty, and Diagnostics has no stableId or new synchronized metadata for this untagged Favorite.
+5. Search `js`: it appears. Clear search. Add user tag `original-only`, confirm the warning again, and save. This explicit user-tag assignment now creates the ordinary metadata identity; `JS` remains separate.
+6. Rename it and move it between test folders through Edge Favorites. The open dashboard updates live, `JS` remains, and `original-only` remains with the same stableId.
+7. Copy/paste it through native Edge Favorites. The copy appears immediately with `JS`, no user tags and no new stableId/synchronized metadata. The mapped original retains `original-only` and its existing stableId. Verify both rows in Diagnostics.
+8. Edit the copied Favorite to `https://example.com/copied-bookmarklet`: no executable-code warning, `JS` disappears immediately, and the copy remains without user metadata.
+9. Edit that HTTPS copy back to the example `javascript:` URL. Cancel the warning: native URL remains HTTPS. Repeat and confirm: native URL becomes the bookmarklet and `JS` returns with no user metadata. This checks the edit path independently of creation.
+10. In a disposable editor try `mailto:test@example.com`, `file:///test` or `data:text/plain,test`. Saving must report unsupported scheme and leave Favorites unchanged. HTTP/HTTPS must still save normally.
+
+Every save whose resulting URL is `javascript:` prompts, including title/tag-only edits; confirmation is not remembered. Code is not evaluated or rewritten by the application. The browser API and textarea may apply their own text handling, so browser fidelity is a manual observation.
+
+### D. Regression
+
+1. Add a normal HTTPS Favorite and verify it in Edge Favorites.
+2. Add, edit, then remove an ordinary user tag; verify search after each change.
+3. Move the Favorite through the dashboard, then rename it through native Edge UI; verify real-time dashboard updates.
+4. Compare folder/link ordering with Edge Favorites; it must still match.
+5. Delete the disposable Favorite through the dashboard; verify real deletion in Edge.
+6. Record A–D below. Do not mark cross-device rows PASS from these checks.
+
+| New manual UI suite | Result |
+| --- | --- |
+| A: targeted search | NOT YET VALIDATED |
+| B: HTTP system label and metadata absence | NOT YET VALIDATED |
+| C: bookmarklet warning/cancel/save, code fidelity, JS/copy behavior | NOT YET VALIDATED |
+| D: post-change regression | NOT YET VALIDATED |
 
 ## Preparation
 
@@ -124,7 +244,7 @@ Optional transport-only probe: in the extension worker DevTools, inspect `chrome
 | Date/time/timezone | NOT RUN | NOT RUN |
 | Windows / Edge version | NOT RUN | NOT RUN |
 | Source revision / build | NOT RUN | NOT RUN |
-| Extension ID | NOT RUN | NOT RUN |
+| Extension ID | User confirmed `nfhbegeoeafnpejpjdljhgagefbpafal` | Same ID, independently built; user confirmed |
 | Same intended account confirmed (yes/no only) | NOT RUN | NOT RUN |
 | Favorites / Extensions / Settings toggles | NOT RUN | NOT RUN |
 | Initial Favorite ID / parent ID | NOT RUN | NOT RUN |
@@ -136,13 +256,19 @@ Optional transport-only probe: in the extension worker DevTools, inspect `chrome
 
 | Validation | Result |
 | --- | --- |
-| Local typecheck / lint / unit tests / production package | PASS (2026-09-24): typecheck, lint, 49 tests, production build and manifest/identity checks |
-| Actual Edge unpacked load / New Tab / CRUD | NOT RUN — no browser installed in development environment |
-| A → B transport and correct identity | NOT RUN |
-| B → A tag round trip without duplication | NOT RUN |
+| Local typecheck / lint / unit tests / production package | AUTOMATED TESTED — PASS (2026-09-28): typecheck, lint, 124 tests across 6 files, production build and manifest/identity checks; Node 24.21.0 |
+| Stage 1 key-level events, local preservation/failure/capacity, metadata health and preflight | AUTOMATED TESTED — 26 added regression cases, including real worker listener wiring against mocked Chrome APIs and first-publication failure retaining its UUID; no live Edge automation |
+| Bookmarklet confirmation logic/preservation, scheme policy, JS/HTTP labels, targeted parsing/matching, no label metadata writes and copy isolation | AUTOMATED TESTED — pure logic and mocked/in-memory service/repository tests only; does not validate Edge mutation acceptance, warning rendering or Microsoft transport |
+| Baseline Edge unpacked load / Favorites CRUD, structure/order, user tags/search, live rename/move and copied-tag isolation | MANUALLY VALIDATED IN EDGE — user report above |
+| Same development ID on independently built machines | MANUALLY VALIDATED IN EDGE — `nfhbegeoeafnpejpjdljhgagefbpafal` on both |
+| New bookmarklet/system-label/targeted-search UI and post-change regression | NOT YET VALIDATED — execute single-device A–D above |
+| New Tab prompt/override handling and worker suspension/wakeup | NOT YET VALIDATED explicitly |
+| Initial A → B tag transport/association | MANUALLY VALIDATED IN EDGE — user confirmed before the 2026-09-28 incident; full environment worksheet not supplied |
+| B → A new Favorite metadata transport | MANUALLY VALIDATED IN EDGE — PASS on fresh retest recorded 2026-09-28; earlier failed observation retained above |
+| Sequential A → B and B → A tag edits on the same identity | MANUALLY VALIDATED IN EDGE — PASS, both edits converged correctly after fresh B → A creation |
 | Mutation matrix | NOT RUN |
 | Real metadata-first delivery observation | NOT RUN |
-| Architecture technically validated on two Windows devices | **NO — pending above evidence** |
+| Full architecture validation on two Windows devices | **PARTIAL — sequential creation/tag-edit sync passed; remaining mutation matrix and feature-specific checks pending** |
 
 ## Production difference
 
@@ -150,4 +276,4 @@ For Edge Add-ons distribution, the store provides installation/update and store 
 
 Official references and uncertainty classification: [technical spike](technical-spike.md). Sideloading follows [Microsoft's instructions](https://learn.microsoft.com/en-us/microsoft-edge/extensions/getting-started/extension-sideloading); sync setup follows [Microsoft's sync settings guidance](https://support.microsoft.com/en-us/edge/change-and-customize-sync-settings-in-microsoft-edge).
 
-Local dependency audit after upgrading Vitest/ESLint: 0 reported vulnerabilities. No real Edge browser was available; build checks are not browser execution evidence.
+Historical local dependency audit after upgrading Vitest/ESLint: 0 reported vulnerabilities (2026-09-24; not a fresh audit). Build checks are not browser execution evidence. Manual baseline results came from the user; this development iteration uses no live Edge automation.

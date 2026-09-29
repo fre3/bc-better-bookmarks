@@ -3,7 +3,7 @@ import { BrowserMetadataRepository, checkQuota, type StorageArea } from '../src/
 import type { BookmarksRepository } from '../src/browser/bookmarks';
 import type { FavoriteNode } from '../src/core/model';
 import { DashboardService } from '../src/core/service';
-import { editToken } from '../src/core/logic';
+import { confirmLinkInput, editToken } from '../src/core/logic';
 import { diagnosticExport } from '../src/core/export';
 import { idA, mapping, metadata, tree } from './fixtures';
 class MemoryStorage implements StorageArea {
@@ -55,6 +55,67 @@ describe('repository', () => {
   });
 });
 describe('application service', () => {
+  it('requires confirmation for bookmarklet create/edit before Favorite mutation and preserves code', async () => {
+    const { service, bookmarks, sync } = setup();
+    let s = await service.command({ type: 'set-root', rootId: '1' });
+    const code = "javascript:(() => {\n alert('%20 ? # &');\n})();  ";
+    const input = { title: 'Tool', url: code, parentId: '10', tags: [] };
+    await expect(service.command({ type: 'create', input })).rejects.toThrow('confirmation');
+    const f = s.favorites[0];
+    await expect(service.command({ type: 'edit', id: f.id, expected: editToken(f, []), input })).rejects.toThrow('confirmation');
+    expect(bookmarks.calls).toEqual([]);
+    expect(confirmLinkInput(input, () => false)).toBeUndefined();
+    s = await service.command({ type: 'create', input: confirmLinkInput(input, () => true)! });
+    expect(s.favorites.find(f => f.id === '101')).toMatchObject({ url: code, systemLabels: ['JS'] });
+    s = await service.command({ type: 'edit', id: f.id, expected: editToken(f, []), input: confirmLinkInput(input, () => true)! });
+    expect(s.favorites.find(node => node.id === f.id)?.url).toBe(code);
+    expect(bookmarks.calls).toEqual(['create', 'update']);
+    expect(sync.writes).toBe(0);
+    expect(s.metadata.records).toEqual([]);
+  });
+  it('derives imported/synced bookmarklet labels without identities or sync writes, including URL changes', async () => {
+    const { service, bookmarks, sync } = setup();
+    await bookmarks.update('20', { url: 'javascript:alert(1)' });
+    let s = await service.snapshot('native or synced bookmarklet');
+    expect(s.favorites[0].systemLabels).toEqual(['JS']);
+    expect(s.local.mappings).toEqual({});
+    await service.command({ type: 'set-root', rootId: '1' });
+    for (const [url, labels] of [['http://example.com/', ['HTTP']], ['https://example.com/', []]] as const) {
+      const f = s.favorites[0];
+      s = await service.command({ type: 'edit', id: f.id, expected: editToken(f, []), input: { title: f.title, url, parentId: f.parentId!, tags: [] } });
+      expect(s.favorites[0].systemLabels).toEqual(labels);
+      expect(s.metadata.records).toEqual([]);
+      expect(s.local.mappings).toEqual({});
+    }
+    expect(sync.data).toEqual({}); expect(sync.writes).toBe(0);
+  });
+  it('keeps a copied bookmarklet untagged while both show JS and preserves original identity through rename/move', async () => {
+    const { service, bookmarks, sync } = setup();
+    await service.command({ type: 'set-root', rootId: '1' });
+    const input = { title: 'Tool', url: "javascript:alert('test')", parentId: '10', tags: ['owned'] };
+    await service.command({ type: 'create', input: confirmLinkInput(input, () => true)! });
+    const before = structuredClone(sync.data); const writes = sync.writes;
+    const copy = await bookmarks.create({ title: input.title, url: input.url, parentId: input.parentId });
+    let s = await service.snapshot('native paste');
+    expect(s.favorites.filter(f => f.systemLabels.includes('JS'))).toHaveLength(2);
+    expect(s.reconciliation.mappings['101'].stableId).toBe(idA);
+    expect(s.reconciliation.mappings[copy.id]).toBeUndefined();
+    expect(s.metadata.records).toHaveLength(1); expect(s.metadata.records[0].tags).toEqual(['owned']);
+    expect(sync.data).toEqual(before); expect(sync.writes).toBe(writes);
+    await bookmarks.update('101', { title: 'Renamed' }); await bookmarks.move('101', '11');
+    s = await service.snapshot('native rename/move');
+    expect(s.favorites.find(f => f.id === '101')?.systemLabels).toEqual(['JS']);
+    expect(s.reconciliation.mappings['101'].stableId).toBe(idA);
+    expect(s.reconciliation.mappings[copy.id]).toBeUndefined();
+    expect(s.metadata.records[0].tags).toEqual(['owned']);
+    expect(sync.data[`meta:${idA}`]).toEqual(before[`meta:${idA}`]);
+  });
+  it.each(['http://example.com/', 'https://example.com/'])('creates %s without derived-label metadata', async url => {
+    const { service, sync } = setup(); await service.command({ type: 'set-root', rootId: '1' });
+    const s = await service.command({ type: 'create', input: { title: 'Web', url, parentId: '10', tags: [] } });
+    expect(s.favorites.find(f => f.id === '101')?.systemLabels).toEqual(url.startsWith('http:') ? ['HTTP'] : []);
+    expect(s.metadata.records).toEqual([]); expect(sync.writes).toBe(0);
+  });
   it('starts read only and never mutates Favorites during reconciliation', async () => {
     const { service, bookmarks } = setup();
     await service.snapshot('startup'); await service.snapshot('sync'); expect(bookmarks.calls).toEqual([]);

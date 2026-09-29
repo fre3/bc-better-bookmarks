@@ -1,6 +1,6 @@
 # Technical spike — 2026-09-24
 
-Status: documentation investigation completed before implementation. Local automated checks are separate from live Edge validation. **Two-device Windows Edge validation is NOT yet performed.** No backend is required by the evidence currently available.
+Status: documentation investigation completed before implementation. Latest update recorded 2026-09-28: after the earlier metadata-loss incident, the user successfully tested fresh B → A creation with tags, followed by A → B and B → A tag edits on the same identity, all converging correctly. **Sequential two-way metadata synchronization is manually validated in real Edge and generally working reliably for this workflow.** The earlier loss cause and broader mutation-matrix validation remain open. Local automated checks remain separate from live Edge validation. No backend is required by the evidence currently available.
 
 ## Assumptions and findings
 
@@ -34,7 +34,7 @@ Confirmed removal events for mapped nodes publish a separate tombstone (no Favor
 
 ## Remaining questions / risks
 
-- Does this Edge version/account actually replicate unpacked extension data? Which sync setting governs extension settings? Inspect A/B results and `edge://sync-internals`; no API exposes a reliable remote sync-complete flag.
+- Unpacked extension metadata transport now has successful manual evidence in both directions. Which exact sync setting governs extension settings, and what caused the earlier disappearance, remain open. Inspect recorded results and `edge://sync-internals`; no API exposes a reliable remote sync-complete flag.
 - Favorites and extension settings are independently replicated. Metadata may arrive first, and individual storage keys may arrive separately. Retain unresolved records and reconcile again.
 - No exposed globally portable Favorite GUID. Perfect identity for identical duplicates, deletion/recreation without observed events, or changes on every device before first mapping is impossible with locators alone.
 - Simultaneous first tagging before either device receives metadata can create two UUIDs. Surface conflict rather than merge silently. Do not tag on B until the first round trip has completed.
@@ -44,10 +44,26 @@ Confirmed removal events for mapped nodes publish a separate tombstone (no Favor
 - Local mappings belong to this installed profile. Root selection is local and must be selected independently on B. Default is all Favorites for reading, with mutations locked until a root is explicitly chosen.
 - Production Edge Add-ons installation uses the store-assigned identity and distribution. Do not assume the development key determines the store ID or transports existing dev metadata to it; retest, and plan an explicit migration before publishing. [Publishing](https://learn.microsoft.com/en-us/microsoft-edge/extensions/publish/publish-extension)
 
-No official source or local test proves the target A/B scenario. If controlled tests establish that browser sync cannot satisfy it, stop and document the evidence before considering any backend.
+Official sources and local tests alone do not prove the target A/B scenario. The user's initial A → B success is real manual evidence of transport; the later failure does not establish that sync is fundamentally unavailable. If controlled tests establish that browser sync cannot satisfy the intended workflow, stop and document the evidence before considering any backend.
 
 ## Implementation / local verification outcome
 
 Implemented the decisions above using plain Vite, an MV3 module service worker, isolated browser repositories, pure matching/search logic, and a simple React dashboard. Development ID: `nfhbegeoeafnpejpjdljhgagefbpafal`. Only the public key exists on disk. Build verification rejects unintended identity rotation.
 
-Local checks on 2026-09-24: typecheck, lint, 49 unit/service tests and production package passed. Simulated A/B repositories use different bookmark IDs and both arrival orders; these tests validate our code, not Microsoft's transport. Dependency audit reports zero vulnerabilities after updating test/lint tools. Actual Edge loading, account sync, bookmark-ID comparison and two-device mapping remain NOT RUN. Record actual evidence in the cross-device worksheet before claiming architecture validation.
+Local checks on 2026-09-24: typecheck, lint, 49 unit/service tests and production package passed. Simulated A/B repositories use different bookmark IDs and both arrival orders; these tests validate our code, not Microsoft's transport. The dependency audit at that time reported zero vulnerabilities. User-reported Edge loading and baseline single-device behavior pass, with identical development IDs on two independent builds. Subsequent manual two-way transport and identity-preserving tag edits passed as recorded in the cross-device worksheet; the full mutation matrix remains pending.
+
+The bookmarklet/derived-label/targeted-search iteration preserves the existing identity, reconciliation and storage design. New saves allow HTTP, HTTPS and explicitly confirmed JavaScript bookmarklets only. JS/HTTP labels are derived without metadata writes; copied bookmarklets remain untagged while displaying JS. An existing mapped URL edit can still publish identity locator history. Automated checks cover these distinctions; Edge confirmation rendering, browser URL fidelity and the new UI flows remain manual validation items. The roadmap in README records additional labels/search possibilities without implementing them.
+
+Automated verification on 2026-09-27 (Node 24.21.0): typecheck, lint, 98 tests across 4 files and production package verification passed. `npm run extension:id` still reports `nfhbegeoeafnpejpjdljhgagefbpafal`; manifest key and permissions were unchanged. These are local automated results, not new manual Edge or Microsoft sync evidence.
+
+## Stage 1 hardening — 2026-09-28
+
+Investigation found no production sync remove/clear path or shared multi-Favorite sync object. `meta:ead34bb4-4adf-4585-86c8-fb82210aead1` disappearing from raw storage reproduces the reported explicit-mapping/no-metadata state and editing failure in memory. Quarantine and valid tombstones produce different errors/statuses. The initiating deletion remains unproven because the prior handler discarded changed-key payloads. Native title reversions are separate evidence and do not identify an extension deletion path.
+
+Stage 1 adds content-free, key-level sync event diagnostics, a bounded durable local metadata journal written before sync publication, explicit metadata health and identity preflight before Favorite edits. No per-UUID sync schema, matching algorithm, public key or permission change is required. A known identity with missing metadata remains blocked rather than receiving another UUID. Local journal failures block metadata publication. This prevents loss of the sole local authored copy during later sync-key disappearance but cannot stop an external actor/browser from removing a sync key.
+
+Automatic journal republishing/recovery is intentionally deferred to Stage 2. No retries, timers, startup replay or tombstone revival have been added. Remaining risks include same-key cross-device overwrites, absence of remote acknowledgement, a latest-intent journal not being a global version history, journal capacity/local-storage failure, and browser mutations racing after preflight. Manual A/B verification must inspect the new event evidence before attributing a cause or enabling recovery.
+
+Stage 1 automated checks passed on 2026-09-28: typecheck, lint, 124 tests across 6 files, production build/package verification and deterministic extension-ID verification. The 26 new cases cover key-level content-free diagnostics (including the actual worker listener with mocked Chrome), journal ordering/durability/failure/capacity, first-publication failure retaining the same UUID, missing/quarantined/deleted/ambiguous states, preflight before mutations, no replay and independent UUID writes. These results do not establish live Edge UI or Microsoft transport behavior.
+
+Subsequent manual result, reported 2026-09-28: fresh B → A creation with tags PASS; A → B tag edit PASS; B → A tag edit PASS, all on the same identity with correct convergence. This confirms general operation of sequential two-way sync. It does not prove that Stage 1 fixed the unknown initiating deletion or recovered the earlier missing record. Exact run timings/build details were not supplied; see the worksheet for remaining checks.

@@ -1,5 +1,5 @@
-import type { LocalState, LogEntry, MetadataState } from '../core/model';
-import { parseLocal, parseMetadata } from '../core/schema';
+import type { LocalState, LogEntry, MetadataJournal, MetadataState } from '../core/model';
+import { parseJournal, parseLocal, parseMetadata } from '../core/schema';
 export interface StorageArea {
   get(keys?: string | string[] | null): Promise<Record<string, unknown>>;
   set(items: Record<string, unknown>): Promise<void>;
@@ -7,13 +7,16 @@ export interface StorageArea {
 }
 export interface MetadataRepository {
   read(): Promise<MetadataState>;
-  write(changes: Record<string, unknown>): Promise<void>;
+  write(changes: Record<string, unknown>, authoredLocalState?: LocalState): Promise<void>;
   readLocal(): Promise<LocalState>;
   saveLocal(local: LocalState): Promise<void>;
   bytes(): Promise<number>;
   readLogs(): Promise<LogEntry[]>;
   saveLogs(logs: LogEntry[]): Promise<void>;
+  readJournal(): Promise<MetadataJournal>;
 }
+export const JOURNAL_KEY = 'metadataJournal';
+export const JOURNAL_LIMITS = { entries: 512, bytes: 1024 * 1024 };
 export const QUOTAS = { bytes: 102400, perItem: 8192, items: 512, writesPerMinute: 120, writesPerHour: 1800 };
 export function checkQuota(raw: Record<string, unknown>, patch: Record<string, unknown>, quotas = QUOTAS) {
   const next = { ...raw, ...patch };
@@ -27,17 +30,32 @@ export function checkQuota(raw: Record<string, unknown>, patch: Record<string, u
   if (total > quotas.bytes) throw new Error('storage.sync total byte quota exceeded. No metadata was written.');
 }
 export class BrowserMetadataRepository implements MetadataRepository {
-  constructor(private readonly sync: StorageArea = chrome.storage.sync, private readonly local: StorageArea = chrome.storage.local) {}
+  constructor(private readonly sync: StorageArea = chrome.storage.sync, private readonly local: StorageArea = chrome.storage.local,
+    private readonly journalLimits = JOURNAL_LIMITS, private readonly now: () => string = () => new Date().toISOString()) {}
   async read() { return parseMetadata(await this.sync.get(null)); }
-  async write(changes: Record<string, unknown>) {
+  async write(changes: Record<string, unknown>, authoredLocalState?: LocalState) {
     const raw = await this.sync.get(null);
     const patch = Object.fromEntries(Object.entries(changes).filter(([key, value]) => JSON.stringify(raw[key]) !== JSON.stringify(value)));
     if (!Object.keys(patch).length) return;
     const invalid = parseMetadata(raw).invalid;
     if (Object.keys(patch).some(key => invalid.some(issue => issue.startsWith(`${key}: `)))) throw new Error('Refusing to overwrite an invalid or future-schema sync record.');
     checkQuota(raw, patch);
+    const authored = Object.fromEntries(Object.entries(patch).filter(([key]) => key.startsWith('meta:')));
+    if (Object.keys(authored).length) {
+      const parsed = parseMetadata(authored);
+      if (parsed.invalid.length) throw new Error('Refusing to publish invalid metadata.');
+      const journal = await this.readJournal();
+      for (const record of parsed.records) journal.entries[record.stableId] = { metadata: record, locallyWrittenAt: this.now() };
+      if (Object.keys(journal.entries).length > this.journalLimits.entries || new TextEncoder().encode(JOURNAL_KEY + JSON.stringify(journal)).length > this.journalLimits.bytes) {
+        throw new Error('Local metadata preservation capacity reached. No records were evicted and metadata was not published.');
+      }
+      // Keep explicit identity evidence with the intent even if sync publication fails.
+      try { await this.local.set({ [JOURNAL_KEY]: journal, ...(authoredLocalState ? { state: authoredLocalState } : {}) }); }
+      catch { throw new Error('Local metadata preservation failed. Metadata was not published; inspect local storage capacity.'); }
+    }
     await this.sync.set(patch); // Browser enforces actual quotas/rate limits; rejection is shown to the user.
   }
+  async readJournal() { return parseJournal((await this.local.get(JOURNAL_KEY))[JOURNAL_KEY]); }
   async readLocal() { return parseLocal((await this.local.get('state')).state); }
   async saveLocal(state: LocalState) {
     const current = (await this.local.get('state')).state;

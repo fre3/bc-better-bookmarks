@@ -13,8 +13,10 @@ export interface FavoriteNode {
 }
 export interface FolderPart { kind: 'title' | 'browser'; value: string }
 export interface Locator { url: string; title: string; folderPath: FolderPart[] }
+export type SystemLabel = 'JS' | 'HTTP';
 export interface Favorite extends FavoriteNode {
   url: string;
+  systemLabels: SystemLabel[];
   folderPath: string[];
   ancestorIds: string[];
   locator: Locator;
@@ -31,6 +33,15 @@ export interface BookmarkMetadata {
   tags: string[];
   initialLocator: Locator;
   updatedAt: string;
+}
+export interface MetadataJournal {
+  schemaVersion: 1;
+  entries: Record<string, { metadata: BookmarkMetadata; locallyWrittenAt: string }>;
+}
+export interface MetadataHealth {
+  status: 'valid' | 'missing' | 'quarantined' | 'deleted' | 'ambiguous';
+  rawMeta: 'absent' | 'valid' | 'invalid';
+  preservedLocally: boolean;
 }
 export interface LocatorHistory {
   schemaVersion: 1;
@@ -82,13 +93,16 @@ export interface Snapshot {
   metadata: MetadataState;
   local: LocalState;
   reconciliation: Reconciliation;
+  metadataHealth: Record<string, MetadataHealth>;
+  preservation: { available: boolean; stableIds: string[] };
   syncBytes: number;
   quotas: { bytes: number; perItem: number; items: number; writesPerMinute: number; writesPerHour: number };
   lastReconciliation: string;
   logs: LogEntry[];
   errors: string[];
 }
-export interface LinkInput { title: string; url: string; parentId: string; tags: string[] }
+// Confirmation is command-only, never persisted as metadata.
+export interface LinkInput { title: string; url: string; parentId: string; tags: string[]; bookmarkletConfirmed?: boolean }
 export type Command =
   | { type: 'snapshot' | 'reconcile' }
   | { type: 'set-root'; rootId: string | null }

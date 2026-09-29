@@ -1,5 +1,7 @@
 import type { FavoriteNode, Snapshot } from './model';
+import { isBookmarklet } from './logic';
 function redactUrl(value: string): string {
+  if (isBookmarklet(value)) return value;
   try {
     const url = new URL(value);
     url.username = ''; url.password = '';
@@ -27,7 +29,9 @@ export function diagnosticExport(snapshot: Snapshot) {
     dashboardTree: rootId && rootId !== '*' ? root ? [root] : [] : snapshot.tree,
     favorites: snapshot.favorites, folders: snapshot.folders,
     synchronizedMetadata: { records: snapshot.metadata.records, histories: snapshot.metadata.histories, tombstones: snapshot.metadata.tombstones, invalidKeys: snapshot.metadata.invalid },
-    local: snapshot.local, reconciliation: snapshot.reconciliation,
+    local: snapshot.local, reconciliation: snapshot.reconciliation, metadataHealth: snapshot.metadataHealth,
+    // Preserve the journal privately in storage.local; exports contain only availability and IDs.
+    preservation: snapshot.preservation,
     syncBytes: snapshot.syncBytes, quotas: snapshot.quotas, lastReconciliation: snapshot.lastReconciliation, logs: snapshot.logs,
     // Error strings may contain browser-supplied data; export counts, inspect detailed errors locally.
     errorCount: snapshot.errors.length,
