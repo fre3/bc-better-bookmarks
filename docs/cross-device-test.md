@@ -31,13 +31,15 @@ Source: user-reported manual testing in real Microsoft Edge, following the earli
 
 Conclusion: cross-device metadata sync is generally working reliably for the tested sequential creation/tag-edit workflow, including both directions and identity preservation. This is actual manual transport/association evidence, separate from automated tests or local storage acknowledgements. Exact execution times, latency, build revision, Edge versions, UUID and diagnostic exports were not supplied for this run; no values are inferred. The result does not identify the cause of the earlier loss, demonstrate recovery of that lost record, or mark unperformed mutation/journal/preflight tests as passed. Stage 2 automatic recovery remains deferred.
 
-### Browser verification attempt — 2026-09-29 (BLOCKED; no browser evidence)
+### Browser verification attempt — 2026-09-29 (historical tooling incident; no extension evidence)
 
 - Source checkout: `5109ce0acb8a2940a7c80cca0b2083c733c37c4f`. Installed extension build, Edge version, profile and runtime state were not observed.
 - Codex Desktop's Edge/browser entry point `cua.getState()` failed before returning any tabs: `windows sandbox failed: helper_unknown_error: setup refresh had errors` (`kernel_status=exited(code=1)`, `reason=stdout_eof`). Resetting the JavaScript session and retrying failed identically. The separate Node runtime also failed during sandbox startup.
 - No browser actions, fixture creation, UI observations or sync observations occurred. Suites A–D and outstanding Stage 1 journal/event/preflight checks remain **NOT YET VALIDATED**. This is an environment blocker, not an application test failure or Microsoft sync evidence.
 - No automated checks were rerun. Historical automated results and user-reported Edge results retain their original scope.
-- Next action: restore the Codex Desktop sandbox/browser runtime, retry Edge discovery, verify the installed build/version, then execute the disposable-root procedures below. Do not reset Edge sync or clear extension storage to address this tooling failure.
+- Subsequent user report: the tooling incident was resolved; Edge Computer Use successfully opened example.com in a fresh Codex chat, the built-in browser works, and `codex doctor` reports no problems. This is user-reported tooling evidence, not extension UI or Microsoft sync evidence.
+- Resume attempt in this chat: after `js_reset`, `cua.getState()` still failed before returning any browser state with the same sandbox startup error (`kernel_pid=34476`, `kernel_status=exited(code=1)`, `reason=stdout_eof`). No extension actions occurred. The cause of the difference between chats is unknown; do not infer a global browser outage or application failure.
+- Next action: continue the pending A–D suites in the verified working fresh chat (or this chat once Edge discovery works), first recording installed build/version. Preserve prior baseline/sync results. Do not reset Edge sync or clear extension storage for this tooling issue.
 
 ## Stage 1 hardening — manual A/B checks (transport sequence passed; other checks pending)
 
@@ -269,7 +271,7 @@ Optional transport-only probe: in the extension worker DevTools, inspect `chrome
 | Bookmarklet confirmation logic/preservation, scheme policy, JS/HTTP labels, targeted parsing/matching, no label metadata writes and copy isolation | AUTOMATED TESTED — pure logic and mocked/in-memory service/repository tests only; does not validate Edge mutation acceptance, warning rendering or Microsoft transport |
 | Baseline Edge unpacked load / Favorites CRUD, structure/order, user tags/search, live rename/move and copied-tag isolation | MANUALLY VALIDATED IN EDGE — user report above |
 | Same development ID on independently built machines | MANUALLY VALIDATED IN EDGE — `nfhbegeoeafnpejpjdljhgagefbpafal` on both |
-| New bookmarklet/system-label/targeted-search UI and post-change regression | NOT YET VALIDATED — 2026-09-29 attempt blocked before browser observation; execute A–D after tooling recovery |
+| New bookmarklet/system-label/targeted-search UI and post-change regression | NOT YET VALIDATED — tooling works in a fresh chat per user; this chat retry failed before observation; resume A–D in the working chat |
 | New Tab prompt/override handling and worker suspension/wakeup | NOT YET VALIDATED explicitly |
 | Initial A → B tag transport/association | MANUALLY VALIDATED IN EDGE — user confirmed before the 2026-09-28 incident; full environment worksheet not supplied |
 | B → A new Favorite metadata transport | MANUALLY VALIDATED IN EDGE — PASS on fresh retest recorded 2026-09-28; earlier failed observation retained above |
