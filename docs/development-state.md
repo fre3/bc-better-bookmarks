@@ -38,12 +38,15 @@ Automated checks do not constitute Edge UI or Microsoft sync verification.
 
 ## Browser/UI verification
 
-Status: **PARTIAL — tooling restored in a fresh chat per user; retry in this chat still blocked (2026-09-29)**
+Status: **PARTIAL — loaded build manually confirmed; open dashboard tab inaccessible through current browser tool (2026-09-29)**
 
-The user reports the previous tooling incident resolved: Edge Computer Use opened example.com in a fresh Codex chat, the built-in browser works, and `codex doctor` reports no problems. On resuming here, a fresh JavaScript reset followed by `cua.getState()` nevertheless failed before returning tabs with `windows sandbox failed: helper_unknown_error: setup refresh had errors`. This observation applies to this chat; it does not invalidate the successful fresh-chat test or indicate an extension failure. No extension UI actions or observations occurred and no automated checks were rerun. Installed build/version remain unverified. See `docs/cross-device-test.md`.
+At source revision `9b1a327e310c0817aa3c87b127622266c77fa6e9`, `cua.getState()` successfully returned Edge and its tab inventory. The previous sandbox startup failures are historical tooling incidents. Opening `edge://extensions` through Edge Computer Use was then rejected by the browser URL policy: only HTTP/HTTPS protocols are allowed, and the rejection explicitly prohibits alternate routes to the blocked action. No extension UI was reached, fixtures created, Favorites changed, or sync/storage settings modified. The user subsequently confirmed on 2026-09-29 that the loaded Edge extension uses the latest repository build: the current single-device loaded-build check is manually complete. This is user-reported evidence; an exact installed revision/version string and Edge version were not supplied. Suites A–D remain unrun. No automated checks were rerun for this documentation-only update. See `docs/cross-device-test.md` for the actual tool evidence.
+
+On the user's request to test the already-open dashboard, Edge tab discovery returned `Better Bookmarks` at `edge://newtab/`. Selecting that exact tab with `cua.getTab` returned `about:blank`; a subsequent accessibility observation and tab listing still reported `about:blank`, with no dashboard controls. No navigation, reload, or app input was issued. The cause of this mismatch is unknown; it is tool-access evidence, not an application failure or a passed New Tab test. A–D remain pending.
 
 Already manually validated in real Edge:
 
+- Current loaded extension uses the latest repository build (user confirmation, 2026-09-29).
 - Baseline unpacked loading and matching development ID on two independent builds.
 - Favorites hierarchy/order and normal dashboard CRUD.
 - User-tag add/remove/search.
@@ -77,4 +80,4 @@ Use `docs/cross-device-test.md` for detailed procedures and durable evidence.
 
 ## Next action
 
-Resume in the fresh Codex chat where Edge Computer Use is verified working, or once this chat can discover Edge. Read this handoff, verify the installed build/version and perform the pending single-device suites A–D using a disposable test root, followed by outstanding Stage 1 checks where available. Do not repeat the already documented baseline or sequential two-way sync validation. All pending checks remain unvalidated. Record reusable cross-device evidence in `docs/cross-device-test.md`, update this handoff with failures or completion, and leave implementation fixes for the next CLI/WSL session unless a browser-side change is clearly necessary.
+Continue with suite A targeted search, then B–D, manually in Edge using the documented disposable test root, or resume automation once an approved tool configuration supports extension/internal pages. The current loaded-build check is complete by user confirmation; do not request it again. Edge version remains unrecorded. Do not work around the current URL-policy rejection. Record actual results in `docs/cross-device-test.md`, then continue outstanding Stage 1 checks where available. Preserve prior baseline and sequential two-way sync validation; all pending checks remain unvalidated. Leave implementation fixes for the next CLI/WSL session unless a browser-side change is clearly necessary.

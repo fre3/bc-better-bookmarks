@@ -41,6 +41,22 @@ Conclusion: cross-device metadata sync is generally working reliably for the tes
 - Resume attempt in this chat: after `js_reset`, `cua.getState()` still failed before returning any browser state with the same sandbox startup error (`kernel_pid=34476`, `kernel_status=exited(code=1)`, `reason=stdout_eof`). No extension actions occurred. The cause of the difference between chats is unknown; do not infer a global browser outage or application failure.
 - Next action: continue the pending A–D suites in the verified working fresh chat (or this chat once Edge discovery works), first recording installed build/version. Preserve prior baseline/sync results. Do not reset Edge sync or clear extension storage for this tooling issue.
 
+### Browser verification resume — 2026-09-29 (discovery restored; URL-policy blocker)
+
+- Source checkout: `9b1a327e310c0817aa3c87b127622266c77fa6e9`; installed build/revision and Edge version remain unverified.
+- Actual Computer Use observation: `cua.getState()` succeeded and returned Edge with a tab inventory. No dashboard or extension-management tab appeared in that inventory. Private unrelated tab contents/URLs are not reproduced here.
+- `cua.createBrowserTab('edge', 'edge://extensions', ...)` was rejected before extension inspection: `The browser URL policy blocks this action` and `Allowed protocols: "http:", "https:"`. The tool explicitly prohibited workarounds, indirect execution, raw CDP/browser commands and alternate browser surfaces for the blocked action. No workaround was attempted.
+- This is a tooling-policy limitation, separate from the historical sandbox startup errors and from application behavior. No fixtures were created, no Favorites or extension storage were changed, and no suite A–D assertion was exercised. No new Microsoft sync evidence or automated test result was obtained. All prior reported validation retains its original scope.
+- Subsequent user confirmation (2026-09-29): the loaded extension in Edge uses the latest repository build. Mark the current single-device loaded-build check **MANUALLY COMPLETED — PASS (user-reported)**. No exact installed revision/version string or Edge version was supplied; do not infer those values or extend this confirmation to both devices, journal durability, or suites A–D.
+- Next action: suite A targeted search, then B–D, manually or through an approved tool configuration supporting extension/internal pages. The current loaded-build check does not need repeating. Record actual observations before changing any suite status; do not reset sync or clear storage for this tooling limitation.
+
+### Already-open dashboard attempt — 2026-09-29
+
+- At the user's request, `cua.listTabs({browser:'edge'})` returned a tab titled `Better Bookmarks` at `edge://newtab/` (tab `844604392`). This establishes tab-inventory visibility only.
+- Selecting that exact existing tab with `cua.getTab('844604392', {browser:'2'})` returned title/URL `about:blank` and accessibility content `AXWebArea about:blank`. A subsequent `getAXState()` and tab listing also showed `about:blank`. No dashboard controls were exposed.
+- No navigation, reload, dashboard input, or Favorite/storage mutation was issued. The reason the selected tab differs from the initial inventory is unknown; do not attribute it to the extension. No alternate access route was attempted.
+- The loaded-build prerequisite remains manually complete by user confirmation. Suites A–D remain unrun; this observation does not validate New Tab rendering or change any previous application/sync result.
+
 ## Stage 1 hardening — manual A/B checks (transport sequence passed; other checks pending)
 
 These steps are for the user after installing the same new build on both machines. Automated tests do not execute Edge UI or prove Microsoft transport. Keep existing incident evidence and do not clear storage, uninstall, or try to repair the missing UUID yet.
@@ -127,6 +143,7 @@ Every save whose resulting URL is `javascript:` prompts, including title/tag-onl
 
 | New manual UI suite | Result |
 | --- | --- |
+| Prerequisite: current loaded extension uses latest repository build | MANUALLY COMPLETED — PASS, user confirmation 2026-09-29; exact installed version/revision and Edge version not supplied |
 | A: targeted search | NOT YET VALIDATED |
 | B: HTTP system label and metadata absence | NOT YET VALIDATED |
 | C: bookmarklet warning/cancel/save, code fidelity, JS/copy behavior | NOT YET VALIDATED |
@@ -271,7 +288,7 @@ Optional transport-only probe: in the extension worker DevTools, inspect `chrome
 | Bookmarklet confirmation logic/preservation, scheme policy, JS/HTTP labels, targeted parsing/matching, no label metadata writes and copy isolation | AUTOMATED TESTED — pure logic and mocked/in-memory service/repository tests only; does not validate Edge mutation acceptance, warning rendering or Microsoft transport |
 | Baseline Edge unpacked load / Favorites CRUD, structure/order, user tags/search, live rename/move and copied-tag isolation | MANUALLY VALIDATED IN EDGE — user report above |
 | Same development ID on independently built machines | MANUALLY VALIDATED IN EDGE — `nfhbegeoeafnpejpjdljhgagefbpafal` on both |
-| New bookmarklet/system-label/targeted-search UI and post-change regression | NOT YET VALIDATED — tooling works in a fresh chat per user; this chat retry failed before observation; resume A–D in the working chat |
+| New bookmarklet/system-label/targeted-search UI and post-change regression | NOT YET VALIDATED — Edge discovery succeeded on 2026-09-29; extension inspection rejected by HTTP/HTTPS-only browser URL policy before A–D could run |
 | New Tab prompt/override handling and worker suspension/wakeup | NOT YET VALIDATED explicitly |
 | Initial A → B tag transport/association | MANUALLY VALIDATED IN EDGE — user confirmed before the 2026-09-28 incident; full environment worksheet not supplied |
 | B → A new Favorite metadata transport | MANUALLY VALIDATED IN EDGE — PASS on fresh retest recorded 2026-09-28; earlier failed observation retained above |
