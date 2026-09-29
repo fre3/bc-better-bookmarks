@@ -38,7 +38,9 @@ Automated checks do not constitute Edge UI or Microsoft sync verification.
 
 ## Browser/UI verification
 
-Status: **PARTIAL**
+Status: **PARTIAL — latest browser attempt BLOCKED by tool startup (2026-09-29)**
+
+At checkout `5109ce0acb8a2940a7c80cca0b2083c733c37c4f`, Edge discovery failed before returning any tabs: `windows sandbox failed: helper_unknown_error: setup refresh had errors`. Reset/retry failed identically. No browser actions or observations occurred; the installed build/version remain unknown. No automated checks were rerun. This is a tooling blocker, not an application test failure. See the attempt record in `docs/cross-device-test.md`.
 
 Already manually validated in real Edge:
 
@@ -75,4 +77,4 @@ Use `docs/cross-device-test.md` for detailed procedures and durable evidence.
 
 ## Next action
 
-Use Codex Desktop with Edge/browser computer-use capabilities to perform the pending bookmarklet, derived-label, and targeted-search UI checks above. Record reusable cross-device evidence in `docs/cross-device-test.md`, update this handoff with failures or completion, and leave implementation fixes for the next CLI/WSL session unless a browser-side change is clearly necessary.
+Restore the Codex Desktop sandbox/browser runtime and retry Edge discovery. Once accessible, verify the installed build/version and perform single-device suites A–D using a disposable test root, followed by outstanding Stage 1 checks where available. All pending checks remain unvalidated. Record reusable cross-device evidence in `docs/cross-device-test.md`, update this handoff with failures or completion, and leave implementation fixes for the next CLI/WSL session unless a browser-side change is clearly necessary.
