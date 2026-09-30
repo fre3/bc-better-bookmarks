@@ -1,13 +1,13 @@
 # Development State
 
-Last updated: 2026-09-29
+Last updated: 2026-09-30
 Baseline revision: `bc9e20fb489dfdc63acaeeb2e4a8c5111b0cc7fb` (`Add bookmarklet search and metadata sync hardening`)
 
 This file is the current handoff between Codex sessions and surfaces. Keep it concise and replace stale state instead of accumulating a changelog; Git is the history.
 
 ## Current focus
 
-Validate the newly implemented bookmarklet/search/system-label UI and Stage 1 metadata-sync hardening in real Edge, then continue the remaining cross-device mutation matrix.
+Single-device feature suites A–C passed via user-performed real Edge testing on 2026-09-29. Suite D baseline evidence is carried forward without repeated tests. Remaining work is Stage 1 journal/event/preflight validation and the cross-device mutation matrix. The exact user-operated runbook is prepared in [next-manual-session.md](next-manual-session.md); preparation is not execution evidence.
 
 ## Implementation status
 
@@ -38,15 +38,13 @@ Automated checks do not constitute Edge UI or Microsoft sync verification.
 
 ## Browser/UI verification
 
-Status: **PARTIAL — loaded build manually confirmed; open dashboard tab inaccessible through current browser tool (2026-09-29)**
+Status: **A–C PASSED — manual Edge evidence; D baseline evidence carried forward (2026-09-29)**
 
-At source revision `9b1a327e310c0817aa3c87b127622266c77fa6e9`, `cua.getState()` successfully returned Edge and its tab inventory. The previous sandbox startup failures are historical tooling incidents. Opening `edge://extensions` through Edge Computer Use was then rejected by the browser URL policy: only HTTP/HTTPS protocols are allowed, and the rejection explicitly prohibits alternate routes to the blocked action. No extension UI was reached, fixtures created, Favorites changed, or sync/storage settings modified. The user subsequently confirmed on 2026-09-29 that the loaded Edge extension uses the latest repository build: the current single-device loaded-build check is manually complete. This is user-reported evidence; an exact installed revision/version string and Edge version were not supplied. Suites A–D remain unrun. No automated checks were rerun for this documentation-only update. See `docs/cross-device-test.md` for the actual tool evidence.
-
-On the user's request to test the already-open dashboard, Edge tab discovery returned `Better Bookmarks` at `edge://newtab/`. Selecting that exact tab with `cua.getTab` returned `about:blank`; a subsequent accessibility observation and tab listing still reported `about:blank`, with no dashboard controls. No navigation, reload, or app input was issued. The cause of this mismatch is unknown; it is tool-access evidence, not an application failure or a passed New Tab test. A–D remain pending.
+Edge Computer Use cannot access the extension New Tab UI because of its privileged URL policy. The user performed suites A–C manually in real Edge and reported all checks passed on the latest build; exact revision/version was not supplied. Bookmarklet titles are non-clickable with an instruction to run through Edge Favorites, explicitly accepted by the user. The HTTP-test Favorites count was corrected from a recording typo to 36 before creation and 37 afterwards. Suite D baseline checks remain validated from earlier evidence and were not repeated at the user's request; no fresh complete post-change D run is claimed. Detailed evidence is in docs/cross-device-test.md.
 
 Already manually validated in real Edge:
 
-- Current loaded extension uses the latest repository build (user confirmation, 2026-09-29).
+- Current loaded extension uses the latest repository build (user confirmation, 2026-09-29); exact installed revision/version and Edge version were not supplied.
 - Baseline unpacked loading and matching development ID on two independent builds.
 - Favorites hierarchy/order and normal dashboard CRUD.
 - User-tag add/remove/search.
@@ -54,13 +52,13 @@ Already manually validated in real Edge:
 - Native copy/paste appearing without inheriting the original's user tags.
 - Sequential cross-device creation/tag-edit convergence described above.
 
-Still pending for the current feature set:
+Current feature validation:
 
-- Bookmarklet add/edit confirmation behavior, cancellation behavior, exact code preservation, and non-execution by the dashboard.
-- Visible `JS` and `HTTP` derived labels and their search behavior.
-- `#tag`, `@category`, mixed targeted/plain-text searches, lone `#`/`@`, and embedded URL/text characters in the real UI.
-- Stage 1 journal/event/preflight-specific behavior in real Edge.
-- Remaining cross-device mutation matrix and investigation of the earlier metadata-loss incident.
+- Suite A: targeted/plain/mixed search, embedded URL characters, case/whitespace, empty operators and clearing passed.
+- Suite B: HTTP label/search, empty tags and absent stableId, unchanged metadata counts, and label removal on HTTPS conversion passed.
+- Suite C: bookmarklet warning/cancel/save, code fidelity, non-execution, JS label/search, repeated confirmation on tag edits, rename/move identity preservation, copied-tag isolation, URL conversions and unsupported-scheme rejection passed.
+- Suite D: existing CRUD/tag/search/live-update/order baseline evidence carried forward; no duplicate test requests or fresh full regression claim.
+- Still pending: Stage 1 journal/event/preflight-specific real Edge checks, remaining cross-device mutation matrix, and the earlier metadata-loss investigation.
 
 Use `docs/cross-device-test.md` for detailed procedures and durable evidence.
 
@@ -80,4 +78,4 @@ Use `docs/cross-device-test.md` for detailed procedures and durable evidence.
 
 ## Next action
 
-Continue with suite A targeted search, then B–D, manually in Edge using the documented disposable test root, or resume automation once an approved tool configuration supports extension/internal pages. The current loaded-build check is complete by user confirmation; do not request it again. Edge version remains unrecorded. Do not work around the current URL-policy rejection. Record actual results in `docs/cross-device-test.md`, then continue outstanding Stage 1 checks where available. Preserve prior baseline and sequential two-way sync validation; all pending checks remain unvalidated. Leave implementation fixes for the next CLI/WSL session unless a browser-side change is clearly necessary.
+Resume [next-manual-session.md](next-manual-session.md) at batch E (E1 journal baselines). User controls privileged Edge/New Tab/Favorites/worker DevTools actions; Codex provides larger batches, evaluates reports and updates the runbook ledger, cross-device-test.md and this handoff after each report. E covers local preservation/events/reload and conditional missing-identity preflight; F covers Favorite-first delivery, remote journal absence and sequential mutations; G covers path isolation/deletion/recreation with convergence gates. Missing-identity checks require the naturally affected record; fresh duplicate/pre-mapping cases remain deferred with explicit prerequisites. No next-session tests have run, no automation is scheduled, and no code or automated checks changed in this preparation. Preserve all earlier manual passes without repeating them.

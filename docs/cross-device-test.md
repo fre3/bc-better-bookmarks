@@ -13,7 +13,7 @@ Recorded 2026-09-27 from the user's manual results (execution dates, Edge/Window
 - Native Edge rename/move changes update the open dashboard live without reopening; mapped Favorite tags survive rename/move.
 - Native copy/paste of a tagged Favorite creates a new Favorite that appears immediately and does not inherit the original's tags. This is expected behavior.
 
-The single-device observations alone do not establish Microsoft account metadata transport. Separately, on 2026-09-28 the user reported that A's existing tags had already arrived and associated correctly on B before subsequent testing. New feature checks below are **NOT YET VALIDATED** in Edge. Automated tests use pure logic and mocked/in-memory repositories; no Edge UI automation is assumed or performed.
+The single-device observations alone do not establish Microsoft account metadata transport. Separately, on 2026-09-28 the user reported that A's existing tags had already arrived and associated correctly on B before subsequent testing. New feature checks below are **PARTIALLY VALIDATED** in Edge: suites A–C passed on 2026-09-29; D baseline evidence is carried forward without a fresh complete rerun. Remaining Stage 1 and cross-device checks are tracked below. Automated tests use pure logic and mocked/in-memory repositories; no Edge UI automation is assumed or performed.
 
 ### Cross-device incident reported 2026-09-28
 
@@ -57,6 +57,31 @@ Conclusion: cross-device metadata sync is generally working reliably for the tes
 - No navigation, reload, dashboard input, or Favorite/storage mutation was issued. The reason the selected tab differs from the initial inventory is unknown; do not attribute it to the extension. No alternate access route was attempted.
 - The loaded-build prerequisite remains manually complete by user confirmation. Suites A–D remain unrun; this observation does not validate New Tab rendering or change any previous application/sync result.
 
+### Interactive manual session — 2026-09-29
+
+- The user established that Edge Computer Use cannot access the extension New Tab UI because of its privileged URL policy. This supersedes the earlier plan to resume automated access in a fresh chat; it is a tooling restriction, not an extension failure.
+- Proceed through suites A–D using user-performed actions in the real Better Bookmarks New Tab. User now requests larger batches for remaining suites. Preserve prior passes and reuse evidence instead of repeating validated checks.
+- Environment: user reports latest build; exact installed revision/version was not supplied. Evidence is user-reported manual Edge behavior, separate from automated checks and Microsoft sync evidence.
+- Suite A fixture setup: PASS — user reports all three links appeared after the requested setup. This does not yet validate search queries.
+- Suite A.3–A.4 targeted tag search: PASS — user reports both #azure and #azu returned Microsoft Azure Guide and Invoice, excluding Microsoft Notes.
+- Suite A.5–A.6 category search: PASS — user reports both @development and @dev returned Microsoft Azure Guide and Microsoft Notes, excluding Invoice.
+- Suite A.7, A.8 and A.11 combined search: PASS — user reports microsoft #azure, microsoft @development #important, and #azure #important each returned Microsoft Azure Guide only.
+- Suite A.9–A.10 unmatched tags and empty operators: PASS — user confirms all expected results: #does-not-exist returned none; lone # and lone @ each returned all three fixtures; microsoft # @ returned Microsoft Azure Guide and Microsoft Notes. No errors were reported.
+- Suite A.2 and A.12 URL text and case/whitespace: PASS — user reports azure-guide#intro and the supplied uppercase/extra-whitespace mixed query each returned Microsoft Azure Guide only.
+- Suite A.1 and A.13: PASS — user confirms Guide and microsoft azure each returned Microsoft Azure Guide only, and clearing search restored all three fixtures. Native-order coverage reuses prior baseline evidence; it was not retested in this session.
+- Suite A complete: all requested query checks passed.
+- Suite B: PASS — user reports all HTTP-label checks passed, including no executable-code warning, immediate read-only label, empty user tags, absent stableId, ordinary http search and label removal after HTTPS edit. Reported sync usage at all three checkpoints: 4,762 / 102,400 bytes; 10 / 512 keys; 7 metadata records. These local observations do not prove Microsoft sync.
+- Favorites-count correction: user clarified the HTTP-test total was 36 before creation and 37 afterwards; the earlier unchanged total was a recording typo. Discrepancy resolved (the user called this suite A, but the referenced count belongs to suite B).
+- Suite C.1–C.5: PASS — user reports all steps passed: warning/cancellation without creation, confirmed creation of one Favorite, exact native URL fidelity, JS label/search, empty tags and absent stableId/unchanged metadata counts before tagging, then original-only tag assignment with renewed warning and a stableId. UUID value was not supplied.
+- Accepted C.3 interaction: bookmarklet title is not clickable; an info label reads "Run this bookmarklet through Edge Favorites." User explicitly accepts this. Dashboard non-execution is covered by the disabled title; no clickable-title action is claimed.
+- Suite C.6–C.10: PASS — user reports all remaining steps succeeded: native rename/move updated the dashboard and preserved JS/original-only/stableId; copy retained JS without user tags, stableId or additional metadata; HTTPS conversion removed JS without a warning; cancelling conversion back to javascript preserved the native HTTPS URL; confirming restored the bookmarklet/JS without user metadata; mailto:test@example.com was rejected without changing the Favorite. Unsupported-scheme runtime evidence covers mailto only, not file or data.
+- Suite D disposition: prior manual baseline CRUD, tag add/remove/search, native updates, ordering and deletion evidence is carried forward under the user instruction not to repeat validated checks. Current-session A–C observations provide additional overlap, but a fresh complete post-change D run was not performed or claimed.
+- Session complete: suites A–C passed; D baseline coverage reused. No automated checks were rerun and no new Microsoft transport evidence was produced. Remaining Stage 1 journal/event/preflight checks and the cross-device mutation matrix are outside this completed A–D session.
+
+## Next session prepared — 2026-09-30
+
+[Exact manual runbook](next-manual-session.md): batches E–G provide user actions, expected observations, read-only journal inspection, convergence gates and a result ledger. All new cases remain PREPARED / NOT RUN; conditional missing-identity checks and deferred ambiguity/pre-mapping cases are explicitly separated. The user performs privileged Edge/New Tab actions; Codex evaluates reports and updates evidence/state. Prior A–C, carried-forward D and sequential two-way sync results remain unchanged. Preparation adds no browser or Microsoft transport evidence.
+
 ## Stage 1 hardening — manual A/B checks (transport sequence passed; other checks pending)
 
 These steps are for the user after installing the same new build on both machines. Automated tests do not execute Edge UI or prove Microsoft transport. Keep existing incident evidence and do not clear storage, uninstall, or try to repair the missing UUID yet.
@@ -80,7 +105,7 @@ Capacity/quota failures and event removals are covered in mocked tests; do not f
 | Fresh B → A creation with tags, A → B edit, then B → A edit | MANUALLY VALIDATED IN EDGE — PASS, all converged on the same identity; recorded 2026-09-28 |
 | Existing behavior regression after hardening | NOT YET VALIDATED |
 
-## SINGLE-DEVICE UI TESTING — new features (NOT YET VALIDATED)
+## SINGLE-DEVICE UI TESTING — new features (A–C PASSED; D baseline evidence carried forward)
 
 Build with the README commands, verify the expected ID, reload the unpacked extension at `edge://extensions`, and open a fresh New Tab. Back up Favorites and use a disposable, uniquely named dashboard test root. These are steps for the user to execute manually after the build. Record version/revision, results and any errors; automated passes do not mark these steps PASS.
 
@@ -121,7 +146,7 @@ Run each query in the existing search field:
 
 1. Create a disposable Favorite titled `Bookmarklet label test`, with no tags, using exactly `javascript:alert('Better Bookmarks test')`. Click Save: an **Executable bookmarklet** warning explains that it can execute code in a web page and only trusted code should be saved.
 2. Cancel the warning: the editor remains open and no Favorite is created. Save again and explicitly confirm: exactly one real Favorite is created.
-3. Inspect its URL in native Edge Favorites. It is `javascript:` with the supplied code. Record any browser canonicalization. The dashboard must never execute the code when viewing or clicking its title; it says to run it through Edge Favorites. Merely opening/viewing the existing bookmarklet must not prompt.
+3. Inspect its URL in native Edge Favorites. It is `javascript:` with the supplied code. Record any browser canonicalization. The dashboard must never execute the code when viewing the bookmarklet. Its title is non-clickable and it says to run it through Edge Favorites; this interaction was explicitly accepted during manual testing. Merely opening/viewing the existing bookmarklet must not prompt.
 4. Verify the dashboard shows `JS`, Edit's user Tags field is empty, and Diagnostics has no stableId or new synchronized metadata for this untagged Favorite.
 5. Search `js`: it appears. Clear search. Add user tag `original-only`, confirm the warning again, and save. This explicit user-tag assignment now creates the ordinary metadata identity; `JS` remains separate.
 6. Rename it and move it between test folders through Edge Favorites. The open dashboard updates live, `JS` remains, and `original-only` remains with the same stableId.
@@ -144,10 +169,10 @@ Every save whose resulting URL is `javascript:` prompts, including title/tag-onl
 | New manual UI suite | Result |
 | --- | --- |
 | Prerequisite: current loaded extension uses latest repository build | MANUALLY COMPLETED — PASS, user confirmation 2026-09-29; exact installed version/revision and Edge version not supplied |
-| A: targeted search | NOT YET VALIDATED |
-| B: HTTP system label and metadata absence | NOT YET VALIDATED |
-| C: bookmarklet warning/cancel/save, code fidelity, JS/copy behavior | NOT YET VALIDATED |
-| D: post-change regression | NOT YET VALIDATED |
+| A: targeted search | MANUALLY VALIDATED IN EDGE — PASS (2026-09-29); all query checks and clearing passed, native-order coverage reused from baseline |
+| B: HTTP system label and metadata absence | MANUALLY VALIDATED IN EDGE — PASS (2026-09-29), all checks reported passed; Favorites-count typo corrected to 36 before creation and 37 afterwards |
+| C: bookmarklet warning/cancel/save, code fidelity, JS/copy behavior | MANUALLY VALIDATED IN EDGE — PASS (2026-09-29); non-clickable title with Edge Favorites instruction accepted; unsupported-scheme check used mailto |
+| D: post-change regression | PRIOR BASELINE EVIDENCE CARRIED FORWARD — validated checks not repeated per user request; A–C provide overlapping current-build evidence, not a fresh complete D run |
 
 ## Preparation
 
@@ -288,7 +313,7 @@ Optional transport-only probe: in the extension worker DevTools, inspect `chrome
 | Bookmarklet confirmation logic/preservation, scheme policy, JS/HTTP labels, targeted parsing/matching, no label metadata writes and copy isolation | AUTOMATED TESTED — pure logic and mocked/in-memory service/repository tests only; does not validate Edge mutation acceptance, warning rendering or Microsoft transport |
 | Baseline Edge unpacked load / Favorites CRUD, structure/order, user tags/search, live rename/move and copied-tag isolation | MANUALLY VALIDATED IN EDGE — user report above |
 | Same development ID on independently built machines | MANUALLY VALIDATED IN EDGE — `nfhbegeoeafnpejpjdljhgagefbpafal` on both |
-| New bookmarklet/system-label/targeted-search UI and post-change regression | NOT YET VALIDATED — Edge discovery succeeded on 2026-09-29; extension inspection rejected by HTTP/HTTPS-only browser URL policy before A–D could run |
+| New bookmarklet/system-label/targeted-search UI and post-change regression | A–C MANUALLY PASSED (2026-09-29); D prior baseline evidence carried forward without a fresh complete post-change rerun |
 | New Tab prompt/override handling and worker suspension/wakeup | NOT YET VALIDATED explicitly |
 | Initial A → B tag transport/association | MANUALLY VALIDATED IN EDGE — user confirmed before the 2026-09-28 incident; full environment worksheet not supplied |
 | B → A new Favorite metadata transport | MANUALLY VALIDATED IN EDGE — PASS on fresh retest recorded 2026-09-28; earlier failed observation retained above |
