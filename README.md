@@ -2,7 +2,7 @@
 
 A Manifest V3 New Tab dashboard over your **real Microsoft Edge Favorites**. Favorites own titles, URLs, folders, hierarchy and ordering. The extension stores only tags and identity/reconciliation metadata; there is no separate bookmark database or backend.
 
-**Baseline single-device behavior and sequential two-way metadata synchronization are manually validated in real Edge.** On 2026-09-28 the user reported successful fresh B → A creation with tags, followed by A → B and B → A tag edits on the same identity, all converging correctly. Cross-device sync is generally working reliably for this tested workflow. The earlier metadata-loss incident remains documented with its cause unresolved; broader mutation-matrix and feature-specific checks remain pending. The development ID matches on two independently built machines. A local `storage.sync.set()` success alone is still not remote acknowledgement. See [the manual test results](docs/cross-device-test.md).
+**Baseline single-device behavior and sequential two-way metadata synchronization are manually validated in real Edge.** On 2026-09-28 the user reported successful fresh B → A creation with tags, followed by A → B and B → A tag edits on the same identity, all converging correctly. Cross-device sync is generally working reliably for this tested workflow. The earlier metadata-loss incident remains documented with its cause unresolved; the planned A–G session is complete within recorded scope, with D using accepted prior baseline evidence; deferred ambiguity/delivery cases remain outside that scope. The development ID matches on two independently built machines. A local `storage.sync.set()` success alone is still not remote acknowledgement. See [the manual test results](docs/cross-device-test.md).
 
 ## Build
 
@@ -21,7 +21,7 @@ npm run extension:id
 
 ## Load in Windows Microsoft Edge
 
-1. Build as above.
+1. For the validated test baseline, use the committed `dist/` without rebuilding. For deliberate implementation changes, build as above and commit source and generated artifact together.
 2. Open `edge://extensions` in the intended Microsoft account profile.
 3. Enable **Developer mode**.
 4. Select **Load unpacked**, then select this repository's **dist** folder (the folder containing `manifest.json`).
@@ -32,7 +32,7 @@ npm run extension:id
 
 Existing Favorite folders can also be selected as the root. Root selection is device-local; select the corresponding synchronized folder independently on B. **All Favorites — enable edits** deliberately allows broader modifications. Missing/deleted roots do not silently fall back to writable all-Favorites mode.
 
-To update a build, run `npm run build`, click **Reload** for the extension at `edge://extensions`, then open a fresh new tab. `npm run dev` builds in watch/development mode; still load `dist`, reload the extension, and reopen the tab after changes. Do not load the repository root or use a localhost preview to test browser APIs. No hot-reload extension plugin is required.
+To test a committed build, pull the intended revision and reload its committed `dist/`. After deliberate implementation changes, run `npm run build`, click **Reload** for the extension at `edge://extensions`, then open a fresh new tab. `npm run dev` builds in watch/development mode; still load `dist`, reload the extension, and reopen the tab after changes. Do not load the repository root or use a localhost preview to test browser APIs. No hot-reload extension plugin is required.
 
 ## What works
 
@@ -71,7 +71,8 @@ Local check results and live-test status are recorded in the test worksheet. If 
 - **AUTOMATED TESTED:** pure logic and mocked/in-memory repository/service tests, typecheck, lint, production package and deterministic ID checks. These do not prove browser UI or Microsoft transport; exact results are in the worksheet.
 - **MANUALLY VALIDATED IN EDGE:** user-reported baseline unpacked loading, same ID on two independent builds, complete Favorites hierarchy/order, dashboard creation/title/URL edits/moves/deletion, user-tag add/remove/search, native rename/move updating the open dashboard, mapped tags surviving rename/move, and native copy/paste appearing immediately without inheriting user tags. Exact versions/times and private exports were not supplied.
 - **MANUALLY VALIDATED IN EDGE (cross-device):** initial A → B tags were loaded on B. Following the recorded failure, fresh B → A creation with tags succeeded, then A → B and B → A tag edits converged on the same identity (user report recorded 2026-09-28).
-- **NOT YET VALIDATED:** new bookmarklet confirmation/preservation in Edge, derived labels and targeted-search UI; Stage 1 journal/event/preflight-specific checks in Edge, the remaining cross-device mutation matrix, and full architecture validation beyond the successful sequential creation/tag-edit workflow.
+- **MANUALLY VALIDATED IN EDGE (2026-09-29–30):** A–C including C.6–C.10; D accepted prior baseline; Stage 1 journal/event/preflight E1–E4; cross-device F1–F8/G1–G3 including worker wakeup, isolation, deletion and recreation. No outstanding functional test failures in the completed session. Bookmarklet titles are intentionally non-clickable with “Run this bookmarklet through Edge Favorites.” The HTTP fixture count correction is 36 → 37.
+- **DEFERRED COVERAGE:** fresh duplicate ambiguity, mutations before first mapping, natural metadata-first receipt, extension-disabled evidence loss and production identity testing. These are not failed checks or prerequisites for the next UI/UX session; historical metadata-loss cause remains unresolved.
 
 ## Roadmap
 

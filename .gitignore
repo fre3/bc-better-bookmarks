@@ -1,4 +1,5 @@
 node_modules/
+docs/manual-results/
 .env
 .env.*
 *.log
