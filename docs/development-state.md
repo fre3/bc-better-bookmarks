@@ -36,6 +36,12 @@ Or run `npm run check`.
 
 Automated checks do not constitute Edge UI or Microsoft sync verification.
 
+## Build artifact handoff
+
+`dist/` is intentionally version-controlled so the native Windows Codex Desktop/Edge checkout can test the exact artifact produced by the WSL/CLI development checkout. Implementation work should regenerate `dist/` with `npm run build` (normally through `npm run check`) and commit resulting artifact changes together with the source. The Windows testing checkout should pull and load the committed `dist/` without rebuilding it independently.
+
+At the time this policy was introduced, `dist/` was still absent from Git because it had previously been ignored. The next WSL/CLI build must add the actual generated `dist/` contents; do not synthesize or rebuild them from another environment merely to populate Git.
+
 ## Browser/UI verification
 
 Status: **A–C PASSED — manual Edge evidence; D baseline evidence carried forward (2026-09-29)**
