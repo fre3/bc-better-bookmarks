@@ -36,11 +36,14 @@ Or run `npm run check`.
 
 Automated checks do not constitute Edge UI or Microsoft sync verification.
 
-## Build artifact handoff
+## Version and build artifact handoff
+
+Current source/test-build version: **0.1.1**. `package.json` is canonical; `public/manifest.json` must match, and the build check requires `dist/manifest.json` to match as well. Patch versions are bumped for deliberately handed-off materially changed Edge test builds, not for every commit.
+
 
 `dist/` is intentionally version-controlled so the native Windows Codex Desktop/Edge checkout can test the exact artifact produced by the WSL/CLI development checkout. Implementation work should regenerate `dist/` with `npm run build` (normally through `npm run check`) and commit resulting artifact changes together with the source. The Windows testing checkout should pull and load the committed `dist/` without rebuilding it independently.
 
-At the time this policy was introduced, `dist/` was still absent from Git because it had previously been ignored. The next WSL/CLI build must add the actual generated `dist/` contents; do not synthesize or rebuild them from another environment merely to populate Git.
+After a source version bump, the WSL/CLI checkout must run `npm run check` and commit the regenerated `dist/` so the Windows testing checkout receives the exact same versioned artifact. Do not rebuild the handoff artifact independently on Windows.
 
 ## Browser/UI verification
 
