@@ -1,12 +1,14 @@
 # Development State
 
 Last updated: 2026-10-01
-Current branch: `feature/ui-ux-redesign`. Current browser-review build: **0.1.2**, source/artifact commit `cb8798d` (documentation follows).
+Current branch: `feature/ui-ux-redesign`. Current browser-review build: **0.1.3**, source/artifact commit `d06d6f3` (focused catalogue correction pass).
 Validated functional baseline: `1217369dd10638942d80107d5f33d7f61491d075` (0.1.1 source/artifact plus completed handoff), preserved by `master`, `archive/mvp-validated-0.1.1`, and annotated tag `mvp-validated-0.1.1`. None of those references are advanced by the redesign.
 
 ## Current checkpoint and next action
 
-Browsing/search foundation is implemented; **stop for user visual review before implementing Edit mode/inline CRUD**. The catalogue has dynamic All bookmarks/root navigation, ordered folder/loose-bookmark sections, typographic items, inline nested expansion, hover/focus tags, collapsed/peek/open cards, the supplied dither shadow, and keyboard-first filtered search. Browse scope remains separate from the saved mutation scope. Existing MVP management/diagnostics remain available behind Manage. Folder tags and drag/drop are deferred; sync, metadata, search and persistence architecture are unchanged.
+The user manually reviewed 0.1.2 in Edge with real bookmarks, screenshots, keyboard testing and a recording. Search, root navigation, scope handling, build/runtime stability and most keyboard behavior were reported working well. The requested focused correction pass is implemented in 0.1.3: continuous inline titles with trailing `.75em` favicons and semicolons; explicit hidden resting tags; one expanded ancestor path; full-bleed sheets with upward transparent top-edge shadows and increasing downward z-order; lower header labels; 2.5-line header-triggered pointer-transparent peeks; instant scroll anchoring when switching fully open cards.
+
+The browsing/search foundation remains the only implementation scope; **stop for user visual review before implementing Edit mode/inline CRUD**. The catalogue has dynamic All bookmarks/root navigation, ordered folder/loose-bookmark sections, typographic items, inline nested expansion, hover/focus tags, collapsed/peek/open cards, the supplied dither shadow, and keyboard-first filtered search. Browse scope remains separate from the saved mutation scope. Existing MVP management/diagnostics remain available behind Manage. Folder tags and drag/drop are deferred; sync, metadata, search and persistence architecture are unchanged.
 
 The authoritative development checkout is **WSL `/home/dev/projects/bc-better-bookmarks`**. Dependencies, builds, automated tests and repository changes run there. A Windows checkout is only a clone and must not be assumed to contain the toolchain. This supersedes the prior native-Windows-only handoff. Windows Edge loads the generated artifact; no Windows clone was modified.
 
@@ -14,11 +16,11 @@ See [ui-ux-design.md](ui-ux-design.md) for implementation decisions, favicon doc
 
 ## Current verification and artifact
 
-Node 24 in WSL; `npm ci` completed. `npm run check` passes: typecheck, lint, **135 tests across 8 files**, production build and deterministic extension identity check. New automated coverage exercises root/loose-section ordering, mixed-query filtering/ancestry, tag explanations, browse/search state, keyboard-key classification, markup semantics, inert collapsed content and safe favicon URL construction. Existing functional tests remain unchanged.
+Node 24 in WSL; `npm ci` completed. `npm run check` passes: typecheck, lint, **136 tests across 8 files**, production build and deterministic extension identity check. New automated coverage exercises root/loose-section ordering, mixed-query filtering/ancestry, tag explanations, browse/search state, keyboard-key classification, markup semantics, inert collapsed content and safe favicon URL construction. Existing functional tests remain unchanged.
 
-Versions in package, lockfile and source/generated manifests are **0.1.2**. `dist/` is regenerated and tracked with source. Public manifest key/development ID remain unchanged: `nfhbegeoeafnpejpjdljhgagefbpafal`. Only `favicon` permission was added for the extension-local endpoint; no external favicon service or host permissions. SVG artwork is byte-identical to the supplied file, now in `src/ui/assets/shadow.svg`.
+Versions in package, lockfile and source/generated manifests are **0.1.3**. `dist/` is regenerated and tracked with source. Public manifest key/development ID remain unchanged: `nfhbegeoeafnpejpjdljhgagefbpafal`. The existing `favicon` permission remains unchanged in this correction pass; no external favicon service or host permissions. SVG artwork is byte-identical to the supplied file, now in `src/ui/assets/shadow.svg`.
 
-These are local automated checks, **not visual success or Microsoft sync evidence**. Edge visual review has not yet occurred. Verify installed-Edge favicon behavior, card layering, text/tag clipping, nested indentation, responsive layout, and the preferred inline/break variant using the checklist. The completed real Edge functional/sync session below remains accepted and has not been reopened.
+These are local automated checks, **not visual success or Microsoft sync evidence**. The user-reported 0.1.2 review is accepted within its stated scope; **0.1.3 visual review is pending**. Use the focused checklist for inline wrapping, resting tags, one-branch expansion, full-bleed top-edge shadows, non-blocking peeks and card-switch viewport context. An optional Chromium/synthetic-data harness could not launch because WSL lacks `libnspr4.so`; no rendered check passed. Its tooling stayed under `/tmp`, with no new project dependency or system library installation. The completed real Edge functional/sync session below remains accepted and has not been reopened.
 
 ## Completed validation
 

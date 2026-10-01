@@ -4,7 +4,7 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated functional baseline is preserved at `mvp-validated-0.1.1`. The UI/UX feature branch has reached the browsing/search checkpoint (0.1.2), awaiting visual review before Edit mode/inline CRUD. Preserve behavior, identity rules and accepted bookmarklet handling. Folder tags require a separately authorized metadata-model extension and remain deferred; their intended overlay styling is recorded in `ui-ux-design.md`. Drag/drop is also deferred. Start with `development-state.md` for current status.
+The validated functional baseline is preserved at `mvp-validated-0.1.1`. The UI/UX feature branch has reached the browsing/search correction checkpoint (0.1.3), awaiting visual review before Edit mode/inline CRUD. Preserve behavior, identity rules and accepted bookmarklet handling. Folder tags require a separately authorized metadata-model extension and remain deferred; their intended overlay styling is recorded in `ui-ux-design.md`. Drag/drop is also deferred. Start with `development-state.md` for current status.
 
 ## System labels
 
