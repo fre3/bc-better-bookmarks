@@ -74,7 +74,7 @@ describe('catalogue projection over the browser tree', () => {
 describe('browse and temporary search state', () => {
   it('opens one section, restores browse expansions after search, and resets scope cleanly', () => {
     let state = catalogueReducer(initialCatalogueState, { type: 'section', id: 'one' });
-    state = catalogueReducer(state, { type: 'folder', id: 'nested' });
+    state = catalogueReducer(state, { type: 'folder', id: 'nested', ancestors: [] });
     state = catalogueReducer(state, { type: 'query', value: '#ai' });
     expect(state.openSection).toBe('one');
     state = catalogueReducer(state, { type: 'escape' });
@@ -94,9 +94,23 @@ describe('browse and temporary search state', () => {
     expect(state.openSection).toBeNull();
     expect(state.peekEpoch).toBe(3);
   });
-  it('collapsing a parent clears hidden descendant expansions', () => {
-    const state = { ...initialCatalogueState, expanded: ['parent', 'child', 'other'] };
-    expect(catalogueReducer(state, { type: 'folder', id: 'parent', descendants: ['child'] }).expanded).toEqual(['other']);
+  it('maintains one ancestor path through sibling switches, collapse and Escape', () => {
+    let state = catalogueReducer(initialCatalogueState, { type: 'folder', id: 'A', ancestors: [] });
+    state = catalogueReducer(state, { type: 'folder', id: 'A1', ancestors: ['A'] });
+    state = catalogueReducer(state, { type: 'folder', id: 'deep', ancestors: ['A', 'A1'] });
+    expect(state.expanded).toEqual(['A', 'A1', 'deep']);
+    state = catalogueReducer(state, { type: 'folder', id: 'A2', ancestors: ['A'] });
+    expect(state.expanded).toEqual(['A', 'A2']);
+    state = catalogueReducer(state, { type: 'folder', id: 'A2', ancestors: ['A'] });
+    expect(state.expanded).toEqual(['A']);
+    state = catalogueReducer(state, { type: 'folder', id: 'A1', ancestors: ['A'] });
+    state = catalogueReducer(state, { type: 'folder', id: 'B', ancestors: [] });
+    expect(state.expanded).toEqual(['B']);
+    state = catalogueReducer(state, { type: 'folder', id: 'B1', ancestors: ['B'] });
+    state = catalogueReducer(state, { type: 'escape' });
+    expect(state.expanded).toEqual(['B']);
+    state = catalogueReducer(state, { type: 'folder', id: 'B', ancestors: [] });
+    expect(state.expanded).toEqual([]);
   });
   it('starts search for printable keys and slash without stealing text editing, composition, shortcuts, or Space activation', () => {
     const key = { key: 'a', ctrlKey: false, metaKey: false, altKey: false, isComposing: false };

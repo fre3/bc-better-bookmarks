@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useReducer, useRef } from 'react';
 import type { Snapshot } from '../core/model';
 import { buildCatalogue, filterCatalogue } from './catalogue-model';
 import { catalogueReducer, initialCatalogueState, searchKey } from './catalogue-state';
@@ -12,6 +12,7 @@ export function Catalogue({ snapshot, suspended, onManage }: { snapshot: Snapsho
   const [state, dispatch] = useReducer(catalogueReducer, initialCatalogueState);
   const input = useRef<HTMLInputElement>(null);
   const searchButton = useRef<HTMLButtonElement>(null);
+  const scrollToSection = useRef<string | null>(null);
   const browsePosition = useRef({ scroll: 0, focus: null as HTMLElement | null });
   const model = useMemo(() => buildCatalogue(snapshot), [snapshot]);
   // A removed browser root must not leave an invisible, stale scope selected.
@@ -33,6 +34,12 @@ export function Catalogue({ snapshot, suspended, onManage }: { snapshot: Snapsho
     });
   }
   useEffect(() => { if (searching && !suspended) input.current?.focus(); }, [searching, suspended]);
+  useLayoutEffect(() => {
+    if (scrollToSection.current && scrollToSection.current === state.openSection) {
+      document.getElementById(`card-${state.openSection}`)?.scrollIntoView({ block: 'start', behavior: 'instant' });
+    }
+    scrollToSection.current = null;
+  }, [state.openSection]);
   useEffect(() => {
     if (suspended) return;
     const onKey = (event: KeyboardEvent) => {
@@ -76,7 +83,15 @@ export function Catalogue({ snapshot, suspended, onManage }: { snapshot: Snapsho
       <div className="search-caption"><span role="status">{visible.count} {visible.count === 1 ? 'result' : 'results'}</span><span id="search-syntax">plain text · #tag · @folder</span><button onClick={exitSearch}>Close search · Esc</button></div>
     </section>}
     <div className="section-stack" aria-label="Bookmark catalogue">
-      {visible.sections.map(section => <SectionCard key={section.id} section={section} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} onToggle={() => dispatch({ type: 'section', id: section.id })} onFolder={id => dispatch({ type: 'folder', id, descendants: snapshot.folders.filter(folder => folder.ancestorIds.includes(id)).map(folder => folder.id) })} />)}
+      {visible.sections.map((section, index) => <SectionCard key={section.id} section={section} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} onToggle={() => {
+        if (state.openSection && state.openSection !== section.id) scrollToSection.current = section.id;
+        dispatch({ type: 'section', id: section.id });
+      }} onFolder={id => {
+        const folder = snapshot.folders.find(candidate => candidate.id === id);
+        if (!folder) return;
+        const parentIndex = folder.ancestorIds.indexOf(section.parentId);
+        if (parentIndex >= 0) dispatch({ type: 'folder', id, ancestors: folder.ancestorIds.slice(parentIndex + 1) });
+      }} />)}
       {!visible.sections.length && <p className="empty-catalogue">{searching ? 'No matching bookmarks in this scope.' : 'No bookmarks or folders in this scope.'}</p>}
     </div>
   </div>;

@@ -24,12 +24,25 @@ describe('catalogue safety and semantics', () => {
     expect(markup).toContain('Run this bookmarklet through Edge Favorites.');
     expect(markup).toContain('#work');
   });
+  it('renders title then trailing favicon and semicolon, with distinct supplementary tags', () => {
+    vi.stubGlobal('chrome', { runtime: { id: 'test', getURL: (path: string) => `chrome-extension://test${path}` } });
+    const item = { kind: 'bookmark' as const, favorite: favorite(), tags: ['work'], ambiguous: false };
+    const browse = renderToStaticMarkup(<CatalogueItems items={[item, { ...item, favorite: favorite({ id: '21', title: 'Second' }) }]} expanded={[]} onToggle={() => undefined} query={null} />);
+    expect(browse).toMatch(/Azure <span class="bookmark-ending"><img[^>]*\/>;<\/span><\/a>/);
+    expect(browse).toContain('class="bookmark-tags all-annotations"');
+    expect(browse).not.toContain('tag-match');
+    expect(browse).not.toContain('<br');
+    const search = renderToStaticMarkup(<CatalogueItems items={[item]} expanded={[]} onToggle={() => undefined} query="#work" />);
+    expect(search).toContain('tag-match');
+    expect(search).toContain('bookmark-tags matched-annotations');
+  });
   it('retains native links and associated annotations, and makes collapsed content inert', () => {
     const section = { id: 'loose:r', title: 'Bookmarks', rootId: 'r', rootTitle: 'Workspaces', parentId: 'r', children: [{ kind: 'bookmark' as const, favorite: favorite(), tags: ['work'], ambiguous: false }] };
-    const props = { section, allRoots: true, query: null, expanded: [], peekEpoch: 0, onToggle: () => undefined, onFolder: () => undefined };
+    const props = { section, stackIndex: 1, stackSize: 3, allRoots: true, query: null, expanded: [], peekEpoch: 0, onToggle: () => undefined, onFolder: () => undefined };
     const collapsed = renderToStaticMarkup(<SectionCard {...props} open={false} />);
     expect(collapsed).toContain('aria-expanded="false"');
     expect(collapsed).toContain('inert=""');
+    expect(collapsed).toContain('style="z-index:1"');
     expect(collapsed).not.toContain('href=');
     const open = renderToStaticMarkup(<SectionCard {...props} open />);
     expect(open).toContain('href="https://azure.com/"');
