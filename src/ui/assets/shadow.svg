@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="7px" height="20px" viewBox="0 0 7 20" style="enable-background:new 0 0 7 20;" xml:space="preserve">
+<style type="text/css">
+	.st0{clip-path:url(#SVGID_00000017480190269085102380000016314262376259176078_);}
+</style>
+<g>
+	<defs>
+		<rect id="SVGID_1_" x="-0.0000068" y="3.2731624" width="7.0000138" height="16.7268372"/>
+	</defs>
+	<clipPath id="SVGID_00000157994939847631870870000013397845887346823055_">
+		<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+	</clipPath>
+	<g style="clip-path:url(#SVGID_00000157994939847631870870000013397845887346823055_);">
+		<circle cx="3.5" cy="20" r="2.0337398"/>
+		<circle cx="3.5" cy="14.7015047" r="1.5143435"/>
+		<circle cx="3.5" cy="9.4030104" r="0.9949473"/>
+		<circle cx="3.5" cy="4.1045151" r="0.475551"/>
+	</g>
+	<g style="clip-path:url(#SVGID_00000157994939847631870870000013397845887346823055_);">
+		<circle cx="-0.0000068" cy="17.1328754" r="1.6938539"/>
+		<circle cx="-0.0000068" cy="11.8478899" r="1.1927041"/>
+		<circle cx="-0.0000068" cy="6.5629029" r="0.6915544"/>
+		<circle cx="-0.0000068" cy="1.2779162" r="0.1904047"/>
+	</g>
+	<g style="clip-path:url(#SVGID_00000157994939847631870870000013397845887346823055_);">
+		<circle cx="7" cy="17.1328754" r="1.6938539"/>
+		<circle cx="7" cy="11.8478899" r="1.1927041"/>
+		<circle cx="7" cy="6.5629029" r="0.6915544"/>
+		<circle cx="7" cy="1.2779162" r="0.1904047"/>
+	</g>
+</g>
+</svg>
