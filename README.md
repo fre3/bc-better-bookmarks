@@ -4,9 +4,15 @@ A Manifest V3 New Tab dashboard over your **real Microsoft Edge Favorites**. Fav
 
 **Baseline single-device behavior and sequential two-way metadata synchronization are manually validated in real Edge.** On 2026-09-28 the user reported successful fresh B → A creation with tags, followed by A → B and B → A tag edits on the same identity, all converging correctly. Cross-device sync is generally working reliably for this tested workflow. The earlier metadata-loss incident remains documented with its cause unresolved; the planned A–G session is complete within recorded scope, with D using accepted prior baseline evidence; deferred ambiguity/delivery cases remain outside that scope. The development ID matches on two independently built machines. A local `storage.sync.set()` success alone is still not remote acknowledgement. See [the manual test results](docs/cross-device-test.md).
 
+## UI/UX visual-review checkpoint
+
+Build **0.1.2** on `feature/ui-ux-redesign` introduces the typographic browse/search catalogue. All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. **Manage** retains the existing MVP editing and diagnostic controls pending the separate Edit-mode redesign. Browsing roots never changes the saved mutation scope. Folder tags remain deferred.
+
+Read [the design decisions, Edge load instructions and visual checklist](docs/ui-ux-design.md) before reviewing this checkpoint. Automated checks pass; the redesigned UI has not yet been visually validated in Edge. The preserved functional baseline remains at tag `mvp-validated-0.1.1`.
+
 ## Build
 
-Install Node.js **24 LTS** (includes npm). In this repository, using PowerShell, bash, or a terminal:
+Development runs in the authoritative **WSL** checkout `/home/dev/projects/bc-better-bookmarks` with Node.js **24 LTS**. Run dependency installation, builds and automated tests there; a Windows clone is not the development toolchain:
 
 ```sh
 npm ci
@@ -27,7 +33,7 @@ npm run extension:id
 4. Select **Load unpacked**, then select this repository's **dist** folder (the folder containing `manifest.json`).
 5. Verify the extension is enabled and its ID is **`nfhbegeoeafnpejpjdljhgagefbpafal`**. It must match on both machines, independent of the checkout path.
 6. Open a new tab. Accept/keep the extension's New Tab change if Edge asks. Disable a competing New Tab extension if necessary.
-7. Leave the initial read-only mode until test setup is ready. Under **Category management / test folder setup**, choose a writable parent (such as Favorites bar), create a uniquely named `Dashboard Test YYYY-MM-DD` folder. The new folder becomes this device's dashboard root. Existing Favorites are not moved.
+7. Open **Manage** to access the existing controls. Leave the initial read-only edit scope until test setup is ready. Under **Category management / test folder setup**, choose a writable parent (such as Favorites bar), create a uniquely named `Dashboard Test YYYY-MM-DD` folder. The new folder becomes this device's dashboard root. Existing Favorites are not moved.
 8. Add a test link. Verify it also exists in Edge's native Favorites UI (`Ctrl+Shift+O`).
 
 Existing Favorite folders can also be selected as the root. Root selection is device-local; select the corresponding synchronized folder independently on B. **All Favorites — enable edits** deliberately allows broader modifications. Missing/deleted roots do not silently fall back to writable all-Favorites mode.
