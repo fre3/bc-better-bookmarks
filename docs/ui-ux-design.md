@@ -69,7 +69,17 @@ Privileged New Tab/extension pages are for user-controlled Edge review. No autom
 5. **Peek traversal:** move down successive collapsed headers. Each peek should expose about 2.5 lines, overlay subsequent cards without moving them, and allow the next header to receive hover/click through the preview. The preview's contents are not interactive. Tab-focus provides equivalent peek; opening makes content interactive. Ending peek restores natural stack order.
 6. **Viewport context and smoke check:** open a very large card, scroll to another section, then open it; its header must remain clearly visible. Check sticky open headers and Escape. Briefly confirm `/`, typing, mixed search, root switching/provenance and search restoration still behave as in the accepted 0.1.2 review.
 
-No Edit mode, drag/drop or folder tags were added. Automated type/logic/markup/build checks are not visual acceptance. An optional synthetic-data Chromium layout harness was prepared under `/tmp`, but could not launch because WSL lacks `libnspr4.so`; no rendered-check pass is claimed. No project dependency or system library was added for that experiment. The corrected appearance and pointer/scroll behavior remain for user-controlled Edge review.
+No Edit mode, drag/drop or folder tags were added. Automated type/logic/markup/build checks are not visual acceptance. After the user installed the Chromium dependencies in WSL, the temporary synthetic-data harness passed checks of full-bleed geometry, transparent upward shadows, natural/peek stacking, line-relative peek height with no reflow, pointer passthrough, inline wrapping, favicon size/filter, tag visibility states, sibling branch replacement, card-switch header visibility, search restoration and narrow viewport overflow. No page errors were reported. Synthetic screenshots at 1280px and 390px were inspected. The test assertion was corrected to derive expected dimensions from the fluid font size; no application fix or rebuild was needed. This is a local Chromium fixture result, not installed-Edge visual acceptance or Microsoft sync evidence. The corrected appearance still awaits user-controlled Edge review. No project dependency was added.
+
+The temporary check can be rerun in WSL while its `/tmp` files remain available:
+
+```sh
+cd /home/dev/projects/bc-better-bookmarks
+node /tmp/bb-catalogue-browser-check/build-fixture.mjs
+PLAYWRIGHT_BROWSERS_PATH=/tmp/bb-catalogue-browsers node /tmp/bb-catalogue-browser-check/check.mjs
+```
+
+The fixture imports current catalogue source and styles, uses synthetic bookmarks/icons, and runs in a separate headless browser profile. Screenshots are `/tmp/bb-catalogue-browser-check/wide.png` and `narrow.png`. No private Favorites or privileged Edge pages are accessed. Chromium must run outside the agent's process sandbox.
 
 ## Files changed in this correction pass
 
