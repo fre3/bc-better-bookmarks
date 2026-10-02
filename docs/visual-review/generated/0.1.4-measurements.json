@@ -1,0 +1,98 @@
+{
+  "closed": [
+    {
+      "height": 70,
+      "labelTop": 26,
+      "labelBottom": 44,
+      "clearanceToShadowBox": 6
+    },
+    {
+      "height": 70,
+      "labelTop": 26,
+      "labelBottom": 44,
+      "clearanceToShadowBox": 6
+    },
+    {
+      "height": 70,
+      "labelTop": 26,
+      "labelBottom": 44,
+      "clearanceToShadowBox": 6
+    },
+    {
+      "height": 70,
+      "labelTop": 26,
+      "labelBottom": 44,
+      "clearanceToShadowBox": 6
+    }
+  ],
+  "peek": {
+    "previewHeight": 138.484375,
+    "lineHeight": "55.398px",
+    "lipTop": 386.484375,
+    "bodyBottom": 386.484375,
+    "lipBackground": "rgb(255, 255, 255)",
+    "lipPointerEvents": "none",
+    "shadowBackground": "rgba(0, 0, 0, 0)",
+    "shadowTop": "-20px"
+  },
+  "httpAnnotationCount": 103,
+  "rest": [],
+  "hover": [
+    {
+      "id": "annotation-one",
+      "height": 10,
+      "text": "#reference · #work · HTTP"
+    }
+  ],
+  "metrics": {
+    "font": "46.398px / 55.398px Georgia, \"Times New Roman\", Times, serif",
+    "range": {
+      "x": 49.203125,
+      "y": 250,
+      "width": 174.875,
+      "height": 51,
+      "top": 250,
+      "right": 224.078125,
+      "bottom": 301,
+      "left": 49.203125
+    },
+    "annotation": {
+      "x": 49.203125,
+      "y": 303,
+      "width": 117.484375,
+      "height": 10,
+      "top": 303,
+      "right": 166.6875,
+      "bottom": 313,
+      "left": 49.203125
+    },
+    "fontAscent": 41,
+    "fontDescent": 10,
+    "inkAscent": 31,
+    "inkDescent": 10
+  },
+  "clearance": {
+    "above": 2,
+    "below": 4.398000000000025
+  },
+  "focus": [
+    {
+      "id": "annotation-two",
+      "height": 10,
+      "text": "HTTP"
+    }
+  ],
+  "afterBlur": [],
+  "search": [
+    {
+      "id": "annotation-one",
+      "height": 10,
+      "text": "#reference"
+    }
+  ],
+  "afterSearch": [],
+  "switchHeader": {
+    "top": 248,
+    "bottom": 318
+  }
+}

@@ -1,6 +1,6 @@
 # Typographic catalogue — browsing/search checkpoint
 
-Status: **0.1.3 browsing correction pass**, awaiting renewed Edge visual review. The user manually reviewed 0.1.2 using real bookmarks, screenshots, keyboard testing and a recording; search, roots, scope handling, runtime stability and most keyboard behavior were reported working well. No new Edit mode, inline CRUD redesign, drag/drop, or folder-tag persistence. The validated 0.1.1 baseline remains at `1217369dd10638942d80107d5f33d7f61491d075` on `master`, `archive/mvp-validated-0.1.1`, and annotated tag `mvp-validated-0.1.1`.
+Status: **0.1.4 sheet/annotation correction pass**, awaiting renewed Edge visual review. The user manually reviewed 0.1.2 using real bookmarks, screenshots, keyboard testing and a recording; search, roots, scope handling, runtime stability and most keyboard behavior were reported working well. No new Edit mode, inline CRUD redesign, drag/drop, or folder-tag persistence. The validated 0.1.1 baseline remains at `1217369dd10638942d80107d5f33d7f61491d075` on `master`, `archive/mvp-validated-0.1.1`, and annotated tag `mvp-validated-0.1.1`.
 
 ## Implemented presentation
 
@@ -9,12 +9,13 @@ Status: **0.1.3 browsing correction pass**, awaiting renewed Edge visual review.
 - Textual folders use bold italic titles ending in `/`, a normal 16px direct-child item count, and `.2em` count spacing. Counts include direct subfolders and bookmarks, not a recursive total.
 - Browse expansion is a single ordered ancestor path: opening a sibling replaces the old sibling and all its descendants; collapsing an open folder truncates the path there. Required ancestors remain open. Search continues to show all matching ancestry as context without changing the stored browse path. Expanded children begin inline wherever they fit and stay at exactly 85% of the main catalogue size at every depth. Inline margins provide `.6em` separation; cloned inline padding gives continuation fragments a subtle hanging inset. Its visual quality needs Edge review.
 - `EXPANSION_END` in `src/ui/Catalogue.tsx` selects `'inline'` (current) or `'break'`. The latter adds a break after expanded folders directly inside a section. Nested expansions remain inline. For a temporary visual comparison, change the catalogue element's `data-expansion-end` attribute in DevTools without modifying source.
-- Bookmark tags are explicitly hidden in resting browse state (both display and visibility rules). They appear as `#tag · #tag` in an absolutely positioned 12px overlay, without changing layout. Item hover and keyboard focus show all tags; search automatically shows tags that explain a targeted or otherwise-hidden tag match. Long annotations clip at the viewport without a horizontal page scrollbar. Derived JS/HTTP labels, unsafe-link instructions, and ambiguous-metadata notices remain visible as small annotations; they are not user tags.
+- All bookmark annotations are hidden in resting browse state. The HTTP text seen in the 0.1.3 Edge screenshot came from derived URL-status labels in a separate always-visible `essential-info` path, not bookmark tags. That path now uses `status-annotation` and the same item-local reveal rules. Only the bookmark’s own hover/focus reveals its tags, status, unsafe-link instructions and ambiguity notice. Search automatically reveals relevant tag explanations without exposing unrelated status labels. Annotations are absolute, single-line, 10px/10px sans, 2px below the item box; the smaller size is intentional to fit the interline space without changing catalogue leading. No wrapping or layout reflow; long annotations clip at the viewport without a horizontal page scrollbar. Non-navigating bookmarklets retain their keyboard focus and associated safety explanation.
 - Folder-tag styling remains part of the intended design: the same hidden/hover/focus overlay, aligned to the folder title rather than its count. **Folder tags are deferred** because the validated metadata model supports only bookmark tags. This checkpoint adds no storage for them.
 
 ## Cards and interaction
 
-- Each first-level folder becomes a full-bleed white sheet. The outer stack cancels the main gutter using negative margins, not `100vw`; inner wrappers restore the gutter for labels and catalogue text. Navigation remains guttered. Collapsed headers remain 70px with 16px labels; 20px top padding in the label control shifts the label lower for more breathing room. Header-only hover or keyboard focus exposes **2.5 fluid catalogue line boxes**. Peek is absolutely positioned and adds no document height.
+- Each first-level folder becomes a full-bleed white sheet. The outer stack cancels the main gutter using negative margins, not `100vw`; inner wrappers restore the gutter for labels and catalogue text. Navigation remains guttered. Collapsed headers remain 70px with 16px labels. Removing the previous 20px top padding centers the text at 26–44px in the measured header, with 6px remaining before the following shadow’s 20px box. This accounts for the visible exposed surface rather than pushing the label toward the next dither. Header-only hover or keyboard focus exposes **2.5 fluid catalogue line boxes**. Peek is absolutely positioned and adds no document height.
+- The peek surface ends with an opaque presentation of the following sheet’s header/lip. Its own transparent top shadow overlays the partial last preview line, so the concealment belongs to a sheet rather than a bare text-container crop; white covers underlying seams. This decorative following label is inert and `aria-hidden`, with no button. Real following headers retain their original document positions and pointer hit targets. The visual label and its actual hit target can therefore differ during peek; review this compromise in Edge. On the last section the cap is blank, without a fictitious following label or shadow.
 - Peek content is inert and excluded from assistive navigation until the header opens the card. The peeking sheet and preview body have `pointer-events: none`, with pointer events restored only on its header; underlying headers remain reachable through the visual preview. Enter/Space on the header opens it; only one browse card is open at a time. Open cards participate in normal flow and have a small sticky header. Clicking the open header collapses it. Escape unwinds nested expansion, then the open card, and dismisses peek. Pointer and keyboard-focus peeks are tracked separately. When switching fully open cards, a layout effect calls instant `scrollIntoView` on the new section with a 12px scroll margin, preserving header visibility after the preceding card collapses. Position is constrained by the remaining document height; no smooth animation is used.
 - The physical order increases downward: the first section is the back card, and each later section is above it. Every section except the first owns a transparent **top-edge** `::before` shadow at `top: -20px`, cast onto the preceding card. There is no bottom shadow or white-backed separator. The supplied SVG is byte-for-byte unchanged at `src/ui/assets/shadow.svg`, used as a 7×20px repeating horizontal tile; its dense lower edge already faces the foreground sheet, so it is not flipped. Its clear areas reveal the preceding sheet. During peek only, that card receives a z-index above every resting card; it returns to its natural order afterward. Fully open cards keep their natural z-order and flow height, so the following card casts its top-edge shadow onto their lower boundary. Vite may inline this small file in the built CSS. No blurred shadows or animation libraries. There is no transition motion to suppress.
 - The renderer exposes section/item IDs and separates catalogue projection, browse state, section cards, and item rendering. This provides boundaries for later Edit-mode drag targets without implementing dragging, insertion markers, or a second data model.
@@ -56,34 +57,56 @@ On this machine the Windows-visible path is `\\wsl.localhost\Ubuntu-24.04\home\d
 
 The committed `dist/` is already built; rebuilding is unnecessary merely to review this checkpoint. `wslpath -w` prints the exact Windows-visible folder to select in Edge. Do not build or install dependencies in a Windows clone. This feature branch has not been pushed, so pulling the remote Windows clone will not obtain this checkpoint yet.
 
-In the intended Windows Edge profile, open `edge://extensions`. For an existing extension whose loaded path is this WSL `dist/`, click **Reload**, then open a fresh New Tab. If the existing extension points to a Windows clone, use **Load unpacked** with the Windows path printed above; verify that the extension's Details now show that path and version **0.1.3** before testing. Do not remove/uninstall the existing extension merely to change paths; uninstalling can discard profile-local metadata. If Edge does not permit switching the loaded path, stop and report that loading issue rather than resetting the profile. Expected ID: `nfhbegeoeafnpejpjdljhgagefbpafal`.
+In the intended Windows Edge profile, open `edge://extensions`. For an existing extension whose loaded path is this WSL `dist/`, click **Reload**, then open a fresh New Tab. If the existing extension points to a Windows clone, use **Load unpacked** with the Windows path printed above; verify that the extension's Details now show that path and version **0.1.4** before testing. Do not remove/uninstall the existing extension merely to change paths; uninstalling can discard profile-local metadata. If Edge does not permit switching the loaded path, stop and report that loading issue rather than resetting the profile. Expected ID: `nfhbegeoeafnpejpjdljhgagefbpafal`.
 
 Privileged New Tab/extension pages are for user-controlled Edge review. No automated Edge visual or Microsoft sync validation is claimed.
 
-## Focused visual regression checklist (0.1.3)
+## Focused visual regression checklist (0.1.4)
 
-1. **Continuous flow:** verify multiple bookmarks share lines, long titles wrap naturally, and every item reads title → enlarged trailing favicon → semicolon → whitespace. Check wide and narrow windows; hover/keyboard focus should still color the icon. No horizontal page scrollbar.
-2. **Tags:** with pointer and focus elsewhere, tags must be hidden. Hover or Tab-focus one bookmark to reveal its tags without reflow. Search a tag-only match to reveal its explanation; Escape must restore normal hidden-tag behavior. JS/HTTP and safety/ambiguity notices remain separate from user tags.
-3. **One browse branch:** open A → A1, then A2: A stays open and A1 closes. Open sibling B: all of A closes. Clicking an open folder closes it and its descendants. Children can start inline and stay at one nested size with the existing hanging inset. Keep the inline ending for this pass.
-4. **Sheets and dither:** verify opaque white surfaces and shadow edges reach both viewport sides while text stays guttered. Later/lower cards must lie above earlier ones; their transparent top-edge shadows extend upward onto the previous card. The first card has no preceding shadow. Inspect the increased space above labels and the boundary following a fully open card.
-5. **Peek traversal:** move down successive collapsed headers. Each peek should expose about 2.5 lines, overlay subsequent cards without moving them, and allow the next header to receive hover/click through the preview. The preview's contents are not interactive. Tab-focus provides equivalent peek; opening makes content interactive. Ending peek restores natural stack order.
-6. **Viewport context and smoke check:** open a very large card, scroll to another section, then open it; its header must remain clearly visible. Check sticky open headers and Escape. Briefly confirm `/`, typing, mixed search, root switching/provenance and search restoration still behave as in the accepted 0.1.2 review.
+1. **Collapsed composition:** compare with `visual-review/mockup-sections-closed-approved.png`. Labels should have breathing room above the next sheet’s upward dither; spacing stays about 70px and surfaces remain full-bleed. Check wide/narrow windows.
+2. **Annotation isolation:** open an HTTP-heavy section. Put pointer outside the catalogue and keyboard focus on Search: no annotations should show. Hover or Tab-focus one bookmark: only its annotation appears, in the interline space without touching either line or moving content. Search a tag match, then Escape: explanation appears during search and disappears afterward. Check wrapped titles and nested-size text with actual Windows fonts.
+3. **Peek construction:** compare with `visual-review/mockup-section-peek-approved.png`. The raised white surface covers underlying seams; the final partial line is concealed by the following sheet’s upward dither/white lip. Inspect the 2.5-line preview, copied following label, and blank cap on the last section.
+4. **Peek interaction:** move down successive actual 70px headers, then repeat with keyboard focus. Peek must not reflow or block underlying headers. The decorative following label is not an extra control; click the real header to open the card.
+5. **Open/context regression:** compare label/content spacing and revealed annotation placement with `visual-review/mockup-section-fully-open-approved.png`. Scroll a long open card and switch sections: the new header stays visible. Briefly check sticky headers, inline prose/nesting, `/`, mixed search, scope switching and Escape.
 
-No Edit mode, drag/drop or folder tags were added. Automated type/logic/markup/build checks are not visual acceptance. After the user installed the Chromium dependencies in WSL, the temporary synthetic-data harness passed checks of full-bleed geometry, transparent upward shadows, natural/peek stacking, line-relative peek height with no reflow, pointer passthrough, inline wrapping, favicon size/filter, tag visibility states, sibling branch replacement, card-switch header visibility, search restoration and narrow viewport overflow. No page errors were reported. Synthetic screenshots at 1280px and 390px were inspected. The test assertion was corrected to derive expected dimensions from the fluid font size; no application fix or rebuild was needed. This is a local Chromium fixture result, not installed-Edge visual acceptance or Microsoft sync evidence. The corrected appearance still awaits user-controlled Edge review. No project dependency was added.
+No Edit mode, drag/drop, folder-tag persistence or sync changes. The mockup’s annotations illustrate placement, not permanent visibility. User-controlled Edge visual acceptance is still required.
 
-The temporary check can be rerun in WSL while its `/tmp` files remain available:
+## Rendered evidence (WSL Chromium, synthetic data)
+
+All three supplied approved mockups and the Edge HTTP screenshot were opened and visually inspected. Original 0.1.3 renders of collapsed, peek and open states were inspected before source changes. Final renders were inspected after the corrections. The local Linux font fallback is not evidence of exact Windows Georgia appearance.
+
+`npm run check` passes typecheck, lint, **137 tests across 8 files**, build and extension identity verification. The temporary Chromium harness and focused failure-case suite pass; no browser page errors were reported. Preserved checks include inline wrapping, icon placement/filter, folder-branch state, full-bleed geometry, natural/peek stacking, no-reflow pointer passthrough, search restoration and card-switch header visibility. The focused suite checks overflow at 390, 1280 and 1920px.
+
+Measured results from the 1406px capture:
+
+| State / geometry | Observed result |
+| --- | --- |
+| 103 HTTP annotations, pointer outside and focus on Search | 0 visible |
+| Own bookmark hover / keyboard focus | 1 visible in either case |
+| Focus moved elsewhere | 0 visible |
+| Tag-match search | 1 relevant tag annotation; no HTTP status |
+| Escape from search | 0 visible |
+| Revealed annotation | 10px high; 2px above and about 4.4px below using local text/font metrics |
+| Collapsed sheet / label | 70px; text at 26–44px; 6px before next shadow box |
+| Peek body | 138.48px = 2.5 × 55.398px line height |
+| Following-sheet lip | Opaque white, meets body boundary, pointer-transparent; transparent shadow at −20px |
+
+Captures: [collapsed](visual-review/generated/0.1.4-collapsed.png), [peek](visual-review/generated/0.1.4-peek.png), [open, no annotations](visual-review/generated/0.1.4-open.png), [one hovered annotation](visual-review/generated/0.1.4-annotation.png), [raw measurements](visual-review/generated/0.1.4-measurements.json). These contain synthetic bookmarks and local placeholder icons only. The supplied reference images and Edge media are preserved locally, not staged for publication.
+
+Temporary rerun commands, while the `/tmp` files remain available:
 
 ```sh
 cd /home/dev/projects/bc-better-bookmarks
 node /tmp/bb-catalogue-browser-check/build-fixture.mjs
 PLAYWRIGHT_BROWSERS_PATH=/tmp/bb-catalogue-browsers node /tmp/bb-catalogue-browser-check/check.mjs
+PLAYWRIGHT_BROWSERS_PATH=/tmp/bb-catalogue-browsers node /tmp/bb-catalogue-browser-check/failure-cases.mjs
 ```
 
-The fixture imports current catalogue source and styles, uses synthetic bookmarks/icons, and runs in a separate headless browser profile. Screenshots are `/tmp/bb-catalogue-browser-check/wide.png` and `narrow.png`. No private Favorites or privileged Edge pages are accessed. Chromium must run outside the agent's process sandbox.
+The fixture imports current catalogue source/styles, uses synthetic HTTP bookmarks/icons and runs in a separate headless profile. No private Favorites or privileged Edge pages are accessed. Chromium must run outside the agent’s process sandbox. No project dependency was added.
 
 ## Files changed in this correction pass
 
-- UI: `src/ui/Catalogue.tsx`, `CatalogueItems.tsx`, `SectionCard.tsx`, `catalogue-state.ts`, and `style.css`.
-- Regression tests: `tests/catalogue.test.ts` and `tests/catalogue-markup.test.tsx` (branch transitions, title/icon/punctuation order, annotations and natural stacking).
-- Version/artifact: `package.json`, `package-lock.json`, `public/manifest.json`, `dist/manifest.json`, `dist/index.html`, `dist/index.js`, and replacement hashed CSS. No dependency, permission, manifest-key, worker, browser-adapter, core/search or persistence changes.
-- Documentation: this design/checklist, `docs/development-state.md`, and current-version/status references in README and roadmap.
+- UI: `src/ui/Catalogue.tsx`, `CatalogueItems.tsx`, `SectionCard.tsx`, `style.css`.
+- Regression test: `tests/catalogue-markup.test.tsx` (separate URL-status annotation path and associated description).
+- Version/artifact: package/lockfile, source/generated manifests, `dist/index.html`, `dist/index.js` and replacement hashed CSS. No dependency, permission, manifest-key, SVG, worker, browser-adapter, core/search or persistence changes.
+- Documentation: this design/checklist, current handoff, README/roadmap status and synthetic captures/measurements.
