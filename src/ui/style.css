@@ -30,7 +30,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .section-stack { isolation: isolate; margin-inline: calc(-1 * var(--page-gutter)); }
 .section-slot { position: relative; height: var(--header-height); scroll-margin-top: 12px; }
 .section-sheet { position: absolute; inset: 0 0 auto; background: white; }
-.section-slot:not(:first-child) .section-sheet::before {
+.has-top-shadow::before {
   /* This foreground sheet casts a transparent shadow upward onto its predecessor.
      The tile's denser bottom edge already faces the sheet; no artwork flip. */
   content: ''; position: absolute; top: -20px; left: 0; right: 0; height: 20px;
@@ -40,13 +40,18 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .section-inner { padding-inline: var(--page-gutter); }
 .section-header { height: var(--header-height); background: white; }
 .section-header h2 { height: 100%; margin: 0; font-size: 16px; font-weight: normal; }
-.section-header button, .section-label { text-align: left; width: 100%; height: 100%; padding-top: 20px; overflow-wrap: anywhere; }
-.section-label { display: flex; align-items: center; }
+.section-header button, .section-label { display: flex; align-items: center; text-align: left; width: 100%; height: 100%; padding-block: 0; overflow-wrap: anywhere; }
 .root-provenance { color: #686868; }
 .section-content { display: none; }
-.is-peeking .section-sheet { pointer-events: none; }
-.is-peeking .section-header { pointer-events: auto; }
-.is-peeking .section-content { display: block; height: calc(2.5 * var(--catalogue-line)); overflow: hidden; pointer-events: none; }
+.is-peeking > .section-sheet { pointer-events: none; }
+.is-peeking > .section-sheet > .section-header { pointer-events: auto; }
+.is-peeking .section-content { display: block; height: calc(2.5 * var(--catalogue-line)); overflow: clip; pointer-events: none; }
+.peek-successor {
+  /* A foreground lip conceals the partial line and covers any underlying seams.
+     Its shadow belongs to the following sheet, never to the raised sheet bottom. */
+  position: relative; background: white; height: var(--header-height); pointer-events: none;
+}
+.peek-successor .section-header { pointer-events: none; }
 .section-slot.is-open { height: auto; }
 .is-open .section-sheet { position: relative; }
 .is-open .section-content { display: block; padding-bottom: 32px; }
@@ -75,16 +80,20 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .expansion-break { display: none; }
 [data-expansion-end="break"] .expansion-break { display: initial; }
 .item-annotation {
-  position: absolute; left: 0; top: 100%; z-index: 1;
-  font: 12px/1 Helvetica, Arial, sans-serif; letter-spacing: 0; white-space: nowrap;
+  position: absolute; left: 0; top: calc(100% + 2px); z-index: 1;
+  font: 10px/10px Helvetica, Arial, sans-serif; letter-spacing: 0; white-space: nowrap;
+  visibility: hidden; max-height: 10px; overflow: clip; width: max-content;
   pointer-events: none; color: #515151;
 }
-.bookmark-tags { visibility: hidden; }
-.all-annotations, .matched-annotations { display: none; margin-right: 8px; }
+.bookmark-item:hover > .item-annotation, .bookmark-item:focus-within > .item-annotation,
+.tag-match > .item-annotation { visibility: visible; }
+.all-annotations, .matched-annotations, .status-annotation { display: none; }
+.all-annotations, .matched-annotations { margin-right: 8px; }
 .bookmark-item:hover > .item-annotation > .all-annotations,
-.bookmark-item:focus-within > .item-annotation > .all-annotations { display: inline; visibility: visible; }
-.matched-annotations { display: none; }
-.tag-match > .item-annotation > .matched-annotations { display: inline; visibility: visible; }
+.bookmark-item:focus-within > .item-annotation > .all-annotations,
+.bookmark-item:hover > .item-annotation > .status-annotation,
+.bookmark-item:focus-within > .item-annotation > .status-annotation { display: inline; }
+.tag-match > .item-annotation > .matched-annotations { display: inline; }
 .tag-match:hover > .item-annotation > .matched-annotations,
 .tag-match:focus-within > .item-annotation > .matched-annotations { display: none; }
 .empty-folder { font: 16px/1.5 Helvetica, Arial, sans-serif; letter-spacing: 0; color: #686868; }

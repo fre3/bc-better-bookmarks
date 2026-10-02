@@ -4,6 +4,7 @@ import { CatalogueItems } from './CatalogueItems';
 
 interface Props {
   section: CatalogueSection;
+  nextSection?: CatalogueSection;
   stackIndex: number;
   stackSize: number;
   allRoots: boolean;
@@ -15,21 +16,21 @@ interface Props {
   onFolder: (id: string) => void;
 }
 
-export function SectionCard({ section, stackIndex, stackSize, allRoots, open, query, expanded, peekEpoch, onToggle, onFolder }: Props) {
+export function SectionCard({ section, nextSection, stackIndex, stackSize, allRoots, open, query, expanded, peekEpoch, onToggle, onFolder }: Props) {
   const [pointerPeek, setPointerPeek] = useState(-1);
   const [focusPeek, setFocusPeek] = useState(-1);
   const peek = !open && (pointerPeek === peekEpoch || focusPeek === peekEpoch);
   const contentId = `section-content-${section.id}`;
   return <section id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${peek ? ' is-peeking' : ''}`} data-section-id={section.id}
     style={{ zIndex: peek ? stackSize : stackIndex }}>
-    <div className="section-sheet">
+    <div className={`section-sheet${stackIndex > 0 ? ' has-top-shadow' : ''}`}>
       <div className="section-header" onPointerEnter={e => { if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={() => setPointerPeek(-1)}>
         <h2 className="section-inner">
-        {query !== null ? <span className="section-label"><span>{section.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
+        {query !== null ? <span className="section-label"><span className="section-heading-text">{section.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
           <button id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}
             onFocus={e => { if (e.currentTarget.matches(':focus-visible')) setFocusPeek(peekEpoch); }} onBlur={() => setFocusPeek(-1)}
             onClick={() => { setPointerPeek(-1); setFocusPeek(-1); onToggle(); }}>
-            {section.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}
+            <span className="section-heading-text">{section.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span>
           </button>}
         </h2>
       </div>
@@ -38,6 +39,11 @@ export function SectionCard({ section, stackIndex, stackSize, allRoots, open, qu
           {section.children.length ? <CatalogueItems items={section.children} expanded={expanded} onToggle={onFolder} query={query} /> : <span className="empty-folder">Empty folder</span>}
         </div>}
       </div>
+      {peek && <div className={`peek-successor${nextSection ? ' has-top-shadow' : ''}`} data-sheet-owner={nextSection?.id} aria-hidden="true" inert>
+        {/* Presentation of the following sheet's lip, not a second interactive
+            header. Real headers retain their flow positions and hit targets. */}
+        {nextSection && <div className="section-header"><div className="section-inner section-label"><span>{nextSection.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {nextSection.rootTitle}</span>}</span></div></div>}
+      </div>}
     </div>
   </section>;
 }

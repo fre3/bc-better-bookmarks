@@ -36,6 +36,13 @@ describe('catalogue safety and semantics', () => {
     expect(search).toContain('tag-match');
     expect(search).toContain('bookmark-tags matched-annotations');
   });
+  it('keeps URL-status labels on the item annotation path, separate from tags', () => {
+    const markup = renderToStaticMarkup(<CatalogueItems items={[{ kind: 'bookmark', favorite: favorite({ url: 'http://example.com/', systemLabels: ['HTTP'] }), tags: [], ambiguous: false }]} expanded={[]} onToggle={() => undefined} query={null} />);
+    expect(markup).toContain('<span class="status-annotation">HTTP</span>');
+    expect(markup).not.toContain('bookmark-tags');
+    expect(markup).not.toContain('essential-info');
+    expect(markup).toContain('aria-describedby="annotation-20"');
+  });
   it('retains native links and associated annotations, and makes collapsed content inert', () => {
     const section = { id: 'loose:r', title: 'Bookmarks', rootId: 'r', rootTitle: 'Workspaces', parentId: 'r', children: [{ kind: 'bookmark' as const, favorite: favorite(), tags: ['work'], ambiguous: false }] };
     const props = { section, stackIndex: 1, stackSize: 3, allRoots: true, query: null, expanded: [], peekEpoch: 0, onToggle: () => undefined, onFolder: () => undefined };

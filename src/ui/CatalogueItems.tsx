@@ -33,15 +33,17 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0 }: 
     const icon = faviconUrl(favorite.url);
     const revealed = query !== null ? matchingTags(favorite, tags, query) : [];
     const explanation = !href ? (isBookmarklet(favorite.url) ? 'Run this bookmarklet through Edge Favorites.' : "Open this Favorite using Edge's Favorites UI.") : '';
-    const essential = [...favorite.systemLabels, explanation, ambiguous ? 'Ambiguous metadata — inspect diagnostics in Manage' : ''].filter(Boolean).join(' · ');
-    const annotations = tags.length > 0 || Boolean(essential);
+    // URL status is derived from the Favorite, not a user tag. It uses the same
+    // item-local reveal rules rather than a permanently visible annotation path.
+    const statusText = [...favorite.systemLabels, explanation, ambiguous ? 'Ambiguous metadata — inspect diagnostics in Manage' : ''].filter(Boolean).join(' · ');
+    const annotations = tags.length > 0 || Boolean(statusText);
     const label = <>{favorite.title || '(untitled)'}{icon ? <> <span className="bookmark-ending"><img className="favicon" src={icon} alt="" width="32" height="32" loading="lazy" decoding="async" onError={e => { e.currentTarget.style.visibility = 'hidden'; }} />;</span></> : ';'}</>;
     return <Fragment key={favorite.id}><span className={`catalogue-item bookmark-item${revealed.length ? ' tag-match' : ''}${ambiguous ? ' ambiguous' : ''}`} data-item-id={favorite.id}>
       {href ? <a id={`bookmark-${favorite.id}`} className="bookmark-title" href={href} aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}>{label}</a> : <span id={`bookmark-${favorite.id}`} className="bookmark-title non-navigating" tabIndex={0} aria-describedby={`annotation-${favorite.id}`}>{label}</span>}
       {annotations && <span id={`annotation-${favorite.id}`} className="item-annotation">
         {tags.length > 0 && <span className="bookmark-tags all-annotations">{tags.map(tag => `#${tag}`).join(' · ')}</span>}
         {revealed.length > 0 && <span className="bookmark-tags matched-annotations" aria-hidden="true">{revealed.map(tag => `#${tag}`).join(' · ')}</span>}
-        {essential && <span className="essential-info">{essential}</span>}
+        {statusText && <span className="status-annotation">{statusText}</span>}
       </span>}
     </span>{' '}</Fragment>;
   })}</>;
