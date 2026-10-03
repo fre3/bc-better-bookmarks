@@ -1,7 +1,8 @@
 /** Disposable UI routing only; no bookmark, metadata or mutation commands. */
 export const DASHBOARD_SEARCH_COMMAND = 'open-dashboard-search';
 export interface DashboardTab { id: number; windowId: number; active: boolean; dashboard: boolean }
-export interface SearchRequest { id: string; tabId: number; windowId: number }
+export interface SearchIntent { id: string; allBookmarks: boolean }
+export interface SearchRequest extends SearchIntent { tabId: number; windowId: number }
 export type SearchDelivery = 'accepted' | 'blocked' | 'not-ready';
 export interface DashboardLaunchBrowser {
   tabs(windowId: number): Promise<DashboardTab[]>;
@@ -23,17 +24,19 @@ export class DashboardLauncher {
     this.queue = next.catch(() => undefined);
     return next;
   }
-  open(windowId: number): Promise<void> {
+  open(windowId: number, originTabId?: number): Promise<void> {
     const running = this.opening.get(windowId);
     if (running) return running;
     const work = this.enqueue(async () => {
       const tabs = await this.browser.tabs(windowId);
-      const existing = tabs.find(tab => tab.active && tab.dashboard) ?? tabs.find(tab => tab.dashboard);
+      const origin = originTabId ?? tabs.find(tab => tab.active)?.id;
+      const existing = tabs.find(tab => tab.id === origin && tab.dashboard) ?? tabs.find(tab => tab.dashboard);
       const tabId = existing?.id ?? await this.browser.create(windowId);
       // The launch is tied to the invoking window, never the most recent window
       // at some later point in readiness handling.
       if (existing) await this.browser.activate(tabId);
-      await this.browser.save({ id: this.token(), tabId, windowId });
+      const pending = (await this.browser.pending()).find(request => request.tabId === tabId);
+      await this.browser.save({ id: this.token(), tabId, windowId, allBookmarks: origin !== tabId || pending?.allBookmarks === true });
       await this.deliver(tabId);
     });
     this.opening.set(windowId, work);

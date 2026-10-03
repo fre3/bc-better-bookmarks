@@ -35,7 +35,7 @@ describe('dashboard command routing and readiness', () => {
     await f.launcher.open(1);
     expect(f.browser.activate).toHaveBeenCalledWith(2);
     expect(f.browser.create).not.toHaveBeenCalled();
-    expect(f.browser.deliver).toHaveBeenCalledWith({ id: 'request-1', tabId: 2, windowId: 1 });
+    expect(f.browser.deliver).toHaveBeenCalledWith({ id: 'request-1', tabId: 2, windowId: 1, allBookmarks: false });
     expect(f.pending.size).toBe(0);
   });
   it('reuses a same-window dashboard and leaves the original site intact', async () => {
@@ -44,6 +44,21 @@ describe('dashboard command routing and readiness', () => {
     expect(f.tabs[0]).toEqual(tab(1, 1, false, false));
     expect(f.browser.activate).toHaveBeenCalledWith(2);
     expect(f.browser.create).not.toHaveBeenCalled();
+  });
+  it('uses the captured origin even if activation has changed by the time routing starts', async () => {
+    const f = fixture([tab(1, 1, false, false), tab(2, 1, true)]);
+    await f.launcher.open(1, 1);
+    expect(f.browser.deliver).toHaveBeenLastCalledWith(expect.objectContaining({ tabId: 2, allBookmarks: true }));
+    await f.launcher.open(1, 2);
+    expect(f.browser.deliver).toHaveBeenLastCalledWith(expect.objectContaining({ allBookmarks: false }));
+  });
+  it('retains an external launch scope through loading, repeated commands and cold readiness', async () => {
+    const f = fixture([tab(1, 1, true, false)]); f.outcome('not-ready');
+    await f.launcher.open(1, 1);
+    await f.launcher.open(1, 20);
+    expect(f.browser.create).toHaveBeenCalledTimes(1);
+    f.outcome('accepted'); await f.make().ready(20);
+    expect(f.browser.deliver).toHaveBeenLastCalledWith(expect.objectContaining({ allBookmarks: true }));
   });
   it('creates in the invoking window rather than switching to another window', async () => {
     const f = fixture([tab(1, 1, true, false), tab(2, 2)]);

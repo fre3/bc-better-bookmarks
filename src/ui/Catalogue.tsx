@@ -1,16 +1,17 @@
 import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
 import type { Snapshot } from '../core/model';
 import { buildCatalogue, filterCatalogue } from './catalogue-model';
-import { catalogueReducer, initialCatalogueState, searchKey } from './catalogue-state';
+import { catalogueReducer, initialCatalogueState, rootShortcut, searchKey } from './catalogue-state';
 import { SectionCard } from './SectionCard';
 import { moveToSearchPage, takeSearchHandoff } from '../browser/dashboard-launch';
+import type { SearchIntent } from '../core/dashboard-launch';
 import { catalogueHandoff } from './catalogue-handoff';
 
 // Change to 'break' to compare the first-level expansion ending in Edge.
 // Nested expansions always remain inline.
 const EXPANSION_END: 'inline' | 'break' = 'inline';
 
-export function Catalogue({ snapshot, suspended, searchRequest = '', onManage }: { snapshot: Snapshot; suspended: boolean; searchRequest?: string; onManage: () => void }) {
+export function Catalogue({ snapshot, suspended, searchRequest, onManage }: { snapshot: Snapshot; suspended: boolean; searchRequest?: SearchIntent; onManage: () => void }) {
   const [handoff] = useState(() => typeof location === 'undefined' ? undefined : catalogueHandoff(takeSearchHandoff()));
   const [state, dispatch] = useReducer(catalogueReducer, handoff?.state ?? initialCatalogueState);
   const [launchError, setLaunchError] = useState('');
@@ -27,9 +28,14 @@ export function Catalogue({ snapshot, suspended, searchRequest = '', onManage }:
   const searching = state.query !== null;
   const visible = useMemo(() => filterCatalogue(model, snapshot.favorites, scope, state.query ?? '', searching), [model, snapshot.favorites, scope, state.query, searching]);
 
-  function startSearch(value = '') {
-    browsePosition.current = { scroll: window.scrollY, focus: document.activeElement instanceof HTMLElement ? document.activeElement : null, focusId: document.activeElement?.id ?? null };
-    dispatch({ type: 'query', value });
+  const roots = [{ id: '*', title: 'All bookmarks' }, ...model.roots];
+  function switchScope(id: string) {
+    dispatch({ type: 'scope', id });
+    if (searching) input.current?.focus({ preventScroll: true });
+  }
+  function startSearch(value = '', allBookmarks = false) {
+    if (!searching) browsePosition.current = { scroll: window.scrollY, focus: document.activeElement instanceof HTMLElement ? document.activeElement : null, focusId: document.activeElement?.id ?? null };
+    dispatch({ type: 'query', value, allBookmarks });
   }
   function exitSearch() {
     dispatch({ type: 'escape' });
@@ -44,11 +50,11 @@ export function Catalogue({ snapshot, suspended, searchRequest = '', onManage }:
   useEffect(() => { if (searching && !suspended) input.current?.focus(); }, [searching, suspended]);
   useLayoutEffect(() => {
     if (suspended) return;
-    if (searchRequest && consumedSearchRequest.current !== searchRequest) {
-      consumedSearchRequest.current = searchRequest;
+    if (searchRequest && consumedSearchRequest.current !== searchRequest.id) {
+      consumedSearchRequest.current = searchRequest.id;
       selectRequested.current = true;
       // Do not overwrite the existing query or Escape's browse position.
-      if (!searching) { startSearch(); return; }
+      if (!searching || searchRequest.allBookmarks) { startSearch(state.query ?? '', searchRequest.allBookmarks); return; }
     }
     if (searching && selectRequested.current && input.current) {
       selectRequested.current = false;
@@ -79,6 +85,11 @@ export function Catalogue({ snapshot, suspended, searchRequest = '', onManage }:
     if (suspended) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.isComposing) return;
+      const target = event.target instanceof Element ? event.target : null;
+      const editingText = Boolean(target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]'));
+      const excluded = Boolean(target?.closest('dialog, [role="dialog"]')) || (editingText && target !== input.current);
+      const root = rootShortcut(event, roots, excluded);
+      if (root !== undefined) { event.preventDefault(); switchScope(root); return; }
       if (event.key === 'Escape') {
         event.preventDefault();
         if (searching) exitSearch();
@@ -91,8 +102,6 @@ export function Catalogue({ snapshot, suspended, searchRequest = '', onManage }:
         return;
       }
       if (searching) return;
-      const target = event.target instanceof Element ? event.target : null;
-      const editingText = Boolean(target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])'));
       const value = searchKey(event, editingText);
       if (value !== undefined) { event.preventDefault(); startSearch(value); }
     };
@@ -103,10 +112,11 @@ export function Catalogue({ snapshot, suspended, searchRequest = '', onManage }:
   return <div className="catalogue" data-expansion-end={EXPANSION_END} hidden={suspended}>
     <header className="catalogue-navigation">
       <nav aria-label="Bookmark roots">
-        {[{ id: '*', title: 'All bookmarks' }, ...model.roots].map(root => <button key={root.id} aria-current={scope === root.id ? 'page' : undefined} onClick={() => {
-          dispatch({ type: 'scope', id: root.id });
-          if (searching) browsePosition.current = { scroll: 0, focus: searchButton.current, focusId: null };
-        }}>{root.title || '(untitled root)'}</button>)}
+        {roots.map((root, index) => <button key={root.id} aria-current={scope === root.id ? 'page' : undefined}
+          title={index < 9 ? `${root.title} · Alt+${index + 1}` : root.title}
+          aria-keyshortcuts={index < 9 ? `Alt+${index + 1}` : undefined}
+          aria-description={index < 9 ? `Switch root with Alt+${index + 1}` : undefined}
+          onClick={() => switchScope(root.id)}>{root.title || '(untitled root)'}</button>)}
       </nav>
       <div className="navigation-actions">
         <button ref={searchButton} onClick={() => searching ? input.current?.focus() : startSearch()}>Search /</button>

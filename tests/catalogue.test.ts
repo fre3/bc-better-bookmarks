@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { flattenTree } from '../src/core/logic';
 import type { FavoriteNode, Snapshot } from '../src/core/model';
 import { buildCatalogue, filterCatalogue, matchingTags } from '../src/ui/catalogue-model';
-import { catalogueReducer, initialCatalogueState, searchKey } from '../src/ui/catalogue-state';
+import { catalogueReducer, initialCatalogueState, rootShortcut, searchKey } from '../src/ui/catalogue-state';
 import { favorite, record } from './fixtures';
 
 function fixture() {
@@ -118,5 +118,38 @@ describe('browse and temporary search state', () => {
     expect(searchKey({ ...key, key: '/' }, false)).toBe('');
     expect(searchKey(key, true)).toBeUndefined();
     for (const override of [{ ctrlKey: true }, { metaKey: true }, { altKey: true }, { isComposing: true }, { key: ' ' }, { key: 'Enter' }]) expect(searchKey({ ...key, ...override }, false)).toBeUndefined();
+  });
+});
+
+describe('temporary scope and local root shortcuts', () => {
+  it('restores the original branch after external commands, queries and root changes', () => {
+    const browse = { ...initialCatalogueState, scope: 'work', openSection: 'dev', expanded: ['A', 'A1'] };
+    let state = catalogueReducer(browse, { type: 'query', value: '', allBookmarks: true });
+    expect(state.scope).toBe('*');
+    state = catalogueReducer(state, { type: 'query', value: 'azure' });
+    state = catalogueReducer(state, { type: 'scope', id: 'bar' });
+    state = catalogueReducer(state, { type: 'query', value: state.query!, allBookmarks: true });
+    expect(state.query).toBe('azure');
+    state = catalogueReducer(state, { type: 'escape' });
+    expect(state).toMatchObject({ scope: 'work', openSection: 'dev', expanded: ['A', 'A1'], query: null, browseReturn: undefined });
+    state = catalogueReducer(state, { type: 'scope', id: 'bar' });
+    state = catalogueReducer(state, { type: 'query', value: '/' });
+    expect(state.scope).toBe('bar');
+    expect(state.browseReturn?.scope).toBe('bar');
+  });
+  const roots = [{ id: '*' }, { id: 'arbitrary-root' }, { id: 'other' }];
+  const event = { key: '2', altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, isComposing: false, getModifierState: () => false };
+  it('maps displayed order, tolerating fewer or reordered roots', () => {
+    expect(rootShortcut(event, roots, false)).toBe('arbitrary-root');
+    expect(rootShortcut(event, [roots[0], roots[2], roots[1]], false)).toBe('other');
+    expect(rootShortcut({ ...event, key: '1' }, roots, false)).toBe('*');
+    expect(rootShortcut({ ...event, key: '9' }, roots, false)).toBeUndefined();
+  });
+  it('excludes editing, composition, extra modifiers, German AltGr and browser navigation', () => {
+    expect(rootShortcut(event, roots, true)).toBeUndefined();
+    for (const override of [{ altKey: false }, { ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { isComposing: true }, { key: '²', ctrlKey: true }, { key: '³', getModifierState: () => true }, { getModifierState: () => true }, { key: 'ArrowLeft' }, { key: 'ArrowRight' }]) {
+      expect(rootShortcut({ ...event, ...override }, roots, false)).toBeUndefined();
+    }
+    expect(searchKey({ ...event, altKey: false }, false)).toBe('2');
   });
 });

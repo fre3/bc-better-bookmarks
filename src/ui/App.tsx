@@ -4,6 +4,7 @@ import type { Command, Snapshot } from '../core/model';
 import { Catalogue } from './Catalogue';
 import { LegacyManagement } from './LegacyManagement';
 import { onDashboardSearch, dashboardShortcut, openShortcutSettings } from '../browser/dashboard-launch';
+import type { SearchIntent } from '../core/dashboard-launch';
 import './legacy.css';
 
 export function App() {
@@ -12,7 +13,7 @@ export function App() {
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const [managing, setManaging] = useState(false);
-  const [searchRequest, setSearchRequest] = useState('');
+  const [searchRequest, setSearchRequest] = useState<SearchIntent>();
   const [shortcut, setShortcut] = useState<string>();
   useEffect(() => onDashboardSearch(id => {
     if (!snapshot) return 'not-ready';

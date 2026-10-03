@@ -12,7 +12,7 @@ chrome.commands.onCommand.addListener((command, tab) => {
   if (command !== DASHBOARD_SEARCH_COMMAND) return;
   // Capture the invocation's window before entering the routing queue.
   void (tab ? Promise.resolve(tab) : chrome.tabs.query({ active: true, lastFocusedWindow: true }).then(tabs => tabs[0]))
-    .then(current => { if (current && !current.incognito) return dashboardLauncher.open(current.windowId); }).catch(launchError);
+    .then(current => { if (current && !current.incognito) return dashboardLauncher.open(current.windowId, current.id); }).catch(launchError);
 });
 chrome.tabs.onActivated.addListener(({ tabId, windowId }) => { void dashboardLauncher.activated(tabId, windowId).catch(launchError); });
 chrome.tabs.onRemoved.addListener(tabId => { void dashboardLauncher.cancel(tabId).catch(launchError); });

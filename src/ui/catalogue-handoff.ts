@@ -16,5 +16,8 @@ export function catalogueHandoff(value: unknown): CatalogueHandoff | undefined {
     typeof handoff.browseScroll !== 'number' || !Number.isFinite(handoff.browseScroll) ||
     typeof handoff.scroll !== 'number' || !Number.isFinite(handoff.scroll) ||
     !(handoff.browseFocusId === null || typeof handoff.browseFocusId === 'string')) return;
+  if (s.browseReturn && (typeof s.browseReturn.scope !== 'string' ||
+    !(s.browseReturn.openSection === null || typeof s.browseReturn.openSection === 'string') ||
+    !Array.isArray(s.browseReturn.expanded) || !s.browseReturn.expanded.every(id => typeof id === 'string'))) return;
   return handoff as CatalogueHandoff;
 }

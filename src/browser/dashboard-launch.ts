@@ -1,4 +1,4 @@
-import type { DashboardLaunchBrowser, SearchDelivery, SearchRequest } from '../core/dashboard-launch';
+import type { DashboardLaunchBrowser, SearchDelivery, SearchIntent, SearchRequest } from '../core/dashboard-launch';
 import { DASHBOARD_SEARCH_COMMAND } from '../core/dashboard-launch';
 
 const PREFIX = 'dashboard-search:';
@@ -49,13 +49,13 @@ export async function dashboardShortcut(): Promise<string | undefined> {
 export function openShortcutSettings() { void chrome.tabs.create({ url: 'edge://extensions/shortcuts' }); }
 
 /** Register before announcing readiness, so requests cannot fall in a load gap. */
-export function onDashboardSearch(callback: (requestId: string) => SearchDelivery): () => void {
+export function onDashboardSearch(callback: (request: SearchIntent) => SearchDelivery): () => void {
   if (!globalThis.chrome?.runtime?.id) return () => undefined;
   let disposed = false;
   let tabId: number | undefined;
-  const listener = (message: { event?: string; tabId?: number; id?: string }, sender: chrome.runtime.MessageSender, respond: (value: unknown) => void) => {
+  const listener = (message: { event?: string; tabId?: number; id?: string; allBookmarks?: boolean }, sender: chrome.runtime.MessageSender, respond: (value: unknown) => void) => {
     if (sender.id !== chrome.runtime.id || message.event !== 'dashboard-search' || tabId === undefined || message.tabId !== tabId || typeof message.id !== 'string') return false;
-    respond({ status: callback(message.id) });
+    respond({ status: callback({ id: message.id, allBookmarks: message.allBookmarks === true }) });
     return false;
   };
   chrome.runtime.onMessage.addListener(listener);
