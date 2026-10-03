@@ -13,6 +13,15 @@
 * { box-sizing: border-box; }
 body { margin: 0; overflow-x: clip; }
 main { padding: 0 var(--page-gutter) 80px; }
+.catalogue-page { min-height: 100svh; display: flex; flex-direction: column; padding-bottom: 0; }
+.catalogue {
+  flex: 1; display: flex; flex-direction: column; min-width: 0;
+  margin-inline: calc(-1 * var(--page-gutter)); padding-inline: var(--page-gutter);
+  /* Full-width clipping contains a final preview without adding scrollable
+     overflow below the footer; all top shadows remain inside these bounds. */
+  overflow: clip;
+}
+.catalogue > * { flex-shrink: 0; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; border: 0; border-radius: 0; padding: 0; background: none; }
 button:hover { text-decoration: underline; }
@@ -29,6 +38,20 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .catalogue-navigation [aria-current] { text-decoration: underline; text-underline-offset: .2em; }
 .navigation-actions { margin-left: auto; display: flex; gap: 28px; flex-shrink: 0; }
 .section-stack { isolation: isolate; margin-inline: calc(-1 * var(--page-gutter)); }
+/* Reserve the final collapsed card's preview footprint before the footer.
+   This room exists at rest: peeking never changes layout or covers the links.
+   An open final card/search supplies its own flow height instead. */
+.section-stack.has-final-preview { padding-bottom: calc(2.5 * var(--catalogue-line)); }
+.catalogue-footer {
+  position: relative; z-index: 1; margin-top: auto;
+  margin-inline: calc(-1 * var(--page-gutter)); min-height: 70px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  gap: 14px 32px; padding: 22px var(--page-gutter);
+  background: #000; color: #fff; font: 400 16px/1.4 Helvetica, Arial, sans-serif;
+}
+.catalogue-footer a { text-decoration: none; overflow-wrap: anywhere; }
+.catalogue-footer a:last-child { margin-left: auto; }
+.catalogue-footer a:hover, .catalogue-footer a:focus-visible { text-decoration: underline; }
 .section-slot { position: relative; scroll-margin-top: 12px; }
 .section-sheet { position: relative; background: white; }
 .has-top-shadow::before {

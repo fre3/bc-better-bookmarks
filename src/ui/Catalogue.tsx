@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } fro
 import type { Snapshot } from '../core/model';
 import { buildCatalogue, filterCatalogue } from './catalogue-model';
 import { catalogueReducer, initialCatalogueState, rootShortcut, searchKey } from './catalogue-state';
+import { CatalogueFooter } from './CatalogueFooter';
 import { SectionCard } from './SectionCard';
 import { moveToSearchPage, takeSearchHandoff } from '../browser/dashboard-launch';
 import type { SearchIntent } from '../core/dashboard-launch';
@@ -128,7 +129,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       <input ref={input} type="text" aria-label="Search bookmarks" aria-describedby="search-syntax" value={state.query ?? ''} onChange={e => dispatch({ type: 'query', value: e.target.value })} autoComplete="off" spellCheck={false} placeholder="Search bookmarks" />
       <div className="search-caption"><span role="status">{visible.count} {visible.count === 1 ? 'result' : 'results'}</span><span id="search-syntax">plain text · #tag · @folder</span><button onClick={exitSearch}>Close search · Esc</button></div>
     </section>}
-    <div className="section-stack" aria-label="Bookmark catalogue">
+    <div className={`section-stack${visible.sections.length && !searching && state.openSection !== visible.sections.at(-1)?.id ? ' has-final-preview' : ''}`} aria-label="Bookmark catalogue">
       {visible.sections.map((section, index) => <SectionCard key={section.id} section={section} nextSection={visible.sections[index + 1]} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended} onToggle={() => {
         if (state.openSection && state.openSection !== section.id) scrollToSection.current = section.id;
         dispatch({ type: 'section', id: section.id });
@@ -140,5 +141,6 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       }} />)}
       {!visible.sections.length && <p className="empty-catalogue">{searching ? 'No matching bookmarks in this scope.' : 'No bookmarks or folders in this scope.'}</p>}
     </div>
+    <CatalogueFooter />
   </div>;
 }

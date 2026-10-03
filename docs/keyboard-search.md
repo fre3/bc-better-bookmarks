@@ -1,4 +1,4 @@
-# Dashboard search and preview controls — 0.1.9 Edge checkpoint
+# Dashboard search and preview controls — 0.1.10 Edge checkpoint
 
 The browser-scoped command is `open-dashboard-search`, described as **Open dashboard in search mode**, with **Ctrl+Shift+B suggested on Windows**. It is not an OS-global shortcut. The user confirmed this default; Ctrl+B is only an optional user reassignment. Alt+Shift+F is not used.
 
@@ -14,7 +14,7 @@ await chrome.commands.getAll()
 
 Normal `Ctrl+T` continues to leave focus in Edge's address bar. The user-confirmed fallback remains **Ctrl+T → Ctrl+F6 → type**. If the command prepares search but typing stays in browser chrome, use **Ctrl+F6**, then type. No simulated keystrokes or delay-based focus loops are implemented.
 
-Reload the existing WSL `dist/` extension at `edge://extensions`, retain the existing `tabs` permission (none added in 0.1.9), verify **0.1.9**, and open a fresh New Tab. The artifact is already built:
+Reload the existing WSL `dist/` extension at `edge://extensions`, retain the existing `tabs` permission (none added in 0.1.9), verify **0.1.10**, and open a fresh New Tab. The artifact is already built:
 
 ```text
 \\wsl.localhost\Ubuntu-24.04\home\dev\projects\bc-better-bookmarks\dist
@@ -48,9 +48,9 @@ Chromium's [tab-update implementation](https://chromium.googlesource.com/chromiu
 
 The user validated **0.1.8 main Ctrl+Shift+B workflows and shortcut configurability in Edge**. The existing limitation from an already-open dashboard's address bar is accepted: search may open/select its query while actual typing remains in the address bar. **Ctrl+F6** transfers focus when needed. This limitation was not reinvestigated in 0.1.9; ordinary Ctrl+T is unchanged. No new permission is required.
 
-0.1.9 passes `npm run check`: typecheck, lint, 170 tests across 10 files, build/version verification and unchanged extension identity. Unit coverage includes command origin before activation, loading/cold readiness, coalescing, original Escape restoration and root shortcut exclusions, plus scroll/preference behavior. Synthetic DOM checks exercise query/focus/selection, scroll/branch restoration and modifier exclusions. These alone do not establish native shortcut behavior.
+0.1.10 passes `npm run check`: typecheck, lint, 175 tests across 11 files, build/version verification and unchanged extension identity. Unit coverage includes command origin before activation, loading/cold readiness, coalescing, original Escape restoration and root shortcut exclusions, plus scroll/preference behavior. Synthetic DOM checks exercise query/focus/selection, scroll/branch restoration and modifier exclusions. These alone do not establish native shortcut behavior.
 
-An isolated WSL Chromium profile additionally used **native X11 input with German XKB layout**: external command switched to All bookmarks; Alt+1/2 retained input selection; AltGr+2 typed `²`; Ctrl+Arrow retained word editing; Escape restored the original root/branch. Local setting reload and Manage draft protection passed without preference sync writes. The temporary copy used Linux Ctrl+Shift+Y only; the shipped command continues suggesting Windows Ctrl+Shift+B. Native Windows Edge 0.1.9 acceptance and the actual assignment in that profile are user-controlled.
+An isolated WSL Chromium profile additionally used **native X11 input with German XKB layout**: external command switched to All bookmarks; Alt+1/2 retained input selection; AltGr+2 typed `²`; Ctrl+Arrow retained word editing; Escape restored the original root/branch. Local setting reload and Manage draft protection passed without preference sync writes. The temporary copy used Linux Ctrl+Shift+Y only; the shipped command continues suggesting Windows Ctrl+Shift+B. The user subsequently accepted temporary All bookmarks/Escape restoration, top-row Alt+1–9, the 1000ms delay, Windows Alt+numpad character entry and the address-bar limitation. The actual shortcut assignment remains user-controlled.
 
 Earlier 0.1.8 isolated Chromium evidence (fresh launch typing, cold worker, repeated invocation, website preservation) remains in `visual-review/generated/0.1.8-command-results.json`; it is not a new test claim. Current reports are `visual-review/generated/0.1.9-*`. No completed manual sync tests were reopened.
 
@@ -62,7 +62,7 @@ The user accepts top-number-row Alt+1–9 and Windows Alt+numpad character entry
 
 **Manage → Auto-scroll peek previews** is local to this device, defaults on when unset, and can be disabled independently. Mouse hover shows the normal static preview immediately, then waits **1 second** before scrolling overflowing content at **one computed line every 2.75 seconds**. It stops at the end. Leaving, switching, opening, search/root changes, disabling, page hiding or reduced motion cancel/reset. Keyboard-only previews remain static. A hidden-page return needs a fresh hover, so background time causes no jump. The sheet edge and real header targets never scroll; existing pointer passthrough and no-reflow behavior remain.
 
-## Native Edge 0.1.9 checklist
+## Accepted keyboard behavior and future regression checklist
 
 1. Leave the dashboard on Favorites bar with a section/folder open; invoke **Ctrl+Shift+B from another website**. Search uses All bookmarks; Escape restores the original view and scroll.
 2. During search, use **Alt+1/2/3**. Query and input focus/selection remain; Escape still restores the original view. Repeat the command and change roots before Escape.
@@ -72,3 +72,5 @@ The user accepts top-number-row Alt+1–9 and Windows Alt+numpad character entry
 6. Confirm static keyboard peek, reduced motion, the disable toggle (including reload), stationary page/header targets, and no reappearing coverage gaps at narrow widths/zoom.
 
 The accepted already-open-address-bar case may still need Ctrl+F6; no new investigation is requested. Stop for user Edge review. Website thumbnails, Edit-mode redesign, drag/drop and synchronization changes remain deferred.
+
+For the current overlap/footer review, use [the 0.1.10 focused checklist](development-state.md#files-and-edge-review). The keyboard behaviors above are accepted baseline evidence, not an outstanding request to repeat the entire shortcut investigation.

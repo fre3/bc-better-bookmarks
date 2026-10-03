@@ -54,7 +54,7 @@ export function App() {
     } finally { setBusy(false); }
   }
   if (!snapshot) return <main><h1>Better Bookmarks</h1><p role="status">{error || 'Reading Edge Favorites…'}</p><button onClick={() => void execute({ type: 'snapshot' })}>Retry</button></main>;
-  return <main>
+  return <main className={managing ? undefined : 'catalogue-page'}>
     {error && <p className="status-error" role="alert">{error}</p>}
     {notice && <p role="status">{notice}</p>}
     {snapshot.errors.length > 0 && <details className="status-error"><summary>{snapshot.errors.length} diagnostic warnings/errors</summary><ul>{snapshot.errors.map((message, i) => <li key={i}>{message}</li>)}</ul></details>}
