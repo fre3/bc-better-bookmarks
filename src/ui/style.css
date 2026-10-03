@@ -38,10 +38,6 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .catalogue-navigation [aria-current] { text-decoration: underline; text-underline-offset: .2em; }
 .navigation-actions { margin-left: auto; display: flex; gap: 28px; flex-shrink: 0; }
 .section-stack { isolation: isolate; margin-inline: calc(-1 * var(--page-gutter)); }
-/* Reserve the final collapsed card's preview footprint before the footer.
-   This room exists at rest: peeking never changes layout or covers the links.
-   An open final card/search supplies its own flow height instead. */
-.section-stack.has-final-preview { padding-bottom: calc(2.5 * var(--catalogue-line)); }
 .catalogue-footer {
   position: relative; z-index: 1; margin-top: auto;
   margin-inline: calc(-1 * var(--page-gutter)); min-height: 70px;
@@ -80,7 +76,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .is-peeking > .section-sheet, .is-leaving > .section-sheet { pointer-events: none; }
 .is-peeking > .section-sheet > .section-header, .is-leaving > .section-sheet > .section-header { pointer-events: auto; }
 .is-peeking .section-reveal { visibility: visible; transition-delay: 0s; }
-.is-peeking .section-content { height: calc(2.5 * var(--catalogue-line)); transition-duration: 140ms; }
+.is-peeking .section-content { height: var(--peek-height, calc(2.5 * var(--catalogue-line))); transition-duration: 140ms; }
 .peek-successor {
   /* The following sheet's opaque lip and transparent shadow travel together
      as the absolute preview body changes height; the document never reflows. */

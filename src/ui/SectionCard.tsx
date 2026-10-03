@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import type { CatalogueSection } from './catalogue-model';
 import { CatalogueItems } from './CatalogueItems';
 import { useCatalogueAnnotations } from './useCatalogueAnnotations';
 import { usePeekScroll } from './usePeekScroll';
+import { usePeekRoom } from './usePeekRoom';
 import { usePeekCoverage } from './usePeekCoverage';
 
 interface Props {
@@ -37,10 +38,12 @@ export function SectionCard({ section, nextSection, stackIndex, stackSize, allRo
   const preview = !open && (peek || retainedPreview);
   const slot = usePeekCoverage(preview);
   const flow = useCatalogueAnnotations();
-  usePeekScroll(autoScrollPeek && mouseHover && pointerPeek === peekEpoch && peek && query === null, flow);
+  const peekHeight = usePeekRoom(slot, preview, !nextSection);
+  const showingPeek = peek && peekHeight !== 0;
+  usePeekScroll(autoScrollPeek && mouseHover && pointerPeek === peekEpoch && showingPeek && query === null, flow);
   const contentId = `section-content-${section.id}`;
-  return <section ref={slot} id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${peek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
-    style={{ zIndex: peek ? stackSize + 1 : preview ? stackSize : stackIndex }}>
+  return <section ref={slot} id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${showingPeek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
+    style={{ zIndex: showingPeek ? stackSize + 1 : preview ? stackSize : stackIndex, '--peek-height': peekHeight === undefined ? undefined : `${peekHeight}px` } as CSSProperties}>
     <div className="section-sheet has-top-shadow">
       <div className="section-header" onPointerEnter={e => { setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={() => { setMouseHover(false); setPointerPeek(-1); }}>
         <h2 className="section-inner">

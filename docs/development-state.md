@@ -1,7 +1,7 @@
 # Development State
 
 Last updated: 2026-10-03
-Current branch: `feature/ui-ux-redesign`. Browser-review build: **0.1.10**.
+Current branch: `feature/ui-ux-redesign`. Browser-review build: **0.1.11** (footer boundary implemented; covered-label summary follows in a separate commit).
 Validated baseline: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated tag `mvp-validated-0.1.1`.
 
 ## Current checkpoint and next action
@@ -18,7 +18,7 @@ Inspected the three `release 0.1.9 - section overlap -1/-2/-3.png` images, sampl
 
 **Footer:** full-width black surface with regular white 16px system sans labels, 70px minimum height (grows if wrapping), normal gutters, and the unchanged transparent top-edge dither. Exact links are `BC Better Bookmarks by FRE3` → `https://www.fre3.eu/?source=bcbb` and `GitHub` → `https://github.com/fre3`, both `target="_blank" rel="noopener"`, with underline/focus feedback. It is outside the card collection in browse/search, including empty results, and hidden with the catalogue in Manage. Flex layout places it at the viewport bottom on short pages and after content on long ones.
 
-**Layout detail to review:** a collapsed final section reserves 2.5 line boxes before the footer, even at rest. This is needed for a full-depth final peek without reflow or hiding footer links. Opening the final section/search removes that reserve because content supplies its own flow height. The footer remains above preview overflow and the full-width catalogue clips overflow below its own bottom; no extra document height appears during peek. No fixed/sticky footer and no interactive footer copies.
+**Final-section boundary (0.1.11):** the permanent 2.5-line reservation is removed. The normal collapsed 85px header is followed directly by the footer on long pages. Short pages retain natural flex space above the viewport-bottom footer. Final peek uses only that existing room, up to 2.5 lines; if fewer than one whole readable line remains after the footer's upward dither, preview is suppressed. Click/keyboard opening remains available. Footer geometry and expanded-content spacing are unchanged by hover; no upward-opening preview or copied footer links.
 
 Typography, annotation visibility/anchoring, accepted annotation-frame overlap, wrapping, focus contours, 140ms/90ms peek and 220ms open animation, delayed-scroll speed (one line/2750ms), pointer passthrough and reduced-motion behavior remain. No bookmark, metadata, mutation or sync architecture changes. Thumbnails, folder tags, Edit-mode redesign and drag/drop remain deferred.
 

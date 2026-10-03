@@ -46,6 +46,12 @@ export function usePeekCoverage(active: boolean) {
           }
         }
       }
+      // The final blank lip must not extend into the footer. Its real footer
+      // supplies the boundary/shadow; there is no copied footer or link.
+      if (!label) {
+        const footer = section.closest('.catalogue')?.querySelector('.catalogue-footer');
+        if (footer) bottom = Math.min(bottom, Math.max(top, footer.getBoundingClientRect().top));
+      }
       cover.style.height = `${bottom - top}px`;
     };
     // The animated body's ResizeObserver runs before paint on entry and exit.
