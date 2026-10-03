@@ -10,7 +10,8 @@ export function usePeekCoverage(active: boolean) {
     const section = slot.current;
     if (!active || !section) return;
     const content = section.querySelector<HTMLElement>('.section-content')!;
-    const cover = section.querySelector<HTMLElement>('.peek-successor')!;
+    const cover = section.querySelector<HTMLElement>('.peek-successor');
+    if (!cover) return; // Final preview ends directly at the real footer edge.
     const label = cover.querySelector<HTMLElement>('.section-header');
     const update = () => {
       const top = cover.getBoundingClientRect().top;
@@ -47,12 +48,6 @@ export function usePeekCoverage(active: boolean) {
             if (fragment.bottom > bottom) bottom = fragment.bottom;
           }
         }
-      }
-      // The final blank lip must not extend into the footer. Its real footer
-      // supplies the boundary/shadow; there is no copied footer or link.
-      if (!label) {
-        const footer = section.closest('.catalogue')?.querySelector('.catalogue-footer');
-        if (footer) bottom = Math.min(bottom, Math.max(top, footer.getBoundingClientRect().top));
       }
       cover.style.height = `${bottom - top}px`;
       cover.style.setProperty('--peek-label-height', `${minimum}px`);

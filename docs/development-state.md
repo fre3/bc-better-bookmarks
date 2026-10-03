@@ -1,7 +1,7 @@
 # Development State
 
 Last updated: 2026-10-03
-Current branch: `feature/ui-ux-redesign`. Browser-review build: **0.1.11**.
+Current branch: `feature/ui-ux-redesign`. Browser-review build: **0.1.12** (footer geometry implemented; summary presentation follows).
 Validated baseline: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated tag `mvp-validated-0.1.1`.
 
 ## Current checkpoint and next action
@@ -12,11 +12,19 @@ After the user accepts this visual checkpoint, close visual work and start **`fe
 
 Accepted behavior remains: **1000ms** preview-scroll delay; temporary All bookmarks search/Escape restoration; **top-number-row Alt+1–9**; Windows Alt+numpad character entry as a documented platform interaction; and the previously documented address-bar focus limitation. No symbol suppression added. Dashboard search remains **Ctrl+Shift+B**, with native user reassignment respected. Ctrl+F6 remains the accepted focus-transfer fallback; ordinary Ctrl+T is unchanged.
 
+## Revised footer decision — 0.1.12
+
+The user explicitly superseded the stationary-footer/suppressed-preview rule. All normal previews now retain 2.5 lines. A temporary spacer after the unchanged section stack makes room for the furthest active or exiting preview/cover; natural short-page flex space is consumed first. Measurement uses the stable stack bottom, never the moving footer. The final preview has no copied header/lip: the real footer supplies its sole lower dither edge. Exit measurements remove the temporary space with the existing reveal animation. No automatic scroll is introduced.
+
+Scroll anchoring is disabled within the catalogue so moving the footer does not reposition real headers. If a user manually scrolls into temporary space, removing it may clamp to the new document bottom. Resulting geometry-only pointer entries cannot restart peek until actual pointer movement; no delay or hover suppression during ordinary traversal. Resting and expanded footer spacing are unchanged.
+
+Inspected all three supplied `release 0.1.11 - Peek summaries.png`, `release 0.1.11 - Peek Footer 1.png`, `release 0.1.11 - Peek Footer 2.png`. No reference was missing. Initial check passes 182 tests / 13 files plus typecheck, lint and 0.1.12 build. Rendered desktop/narrow/final/preceding previews retain full depth, stable header positions, minimal non-accumulating extension and cleanup, including manual bottom clamping. Final evidence/handoff follows the summary presentation commit.
+
 ## Implemented corrections
 
 Visually inspected all five supplied references: `release 0.1.10 - footer - open.png`, `release 0.1.10 - footer - collapsed.png`, `release 0.1.10 - peek-1.png`, `release 0.1.10 - peek-2.png`, and `release 0.1.10 - peek-3.png`. None were missing. Supplied images/videos remain untouched and untracked.
 
-**Footer boundary:** removed the permanent 2.5-line preview reservation. On long pages the final collapsed 85px header is followed immediately by the footer's upward dither. Short pages retain only their natural flex space above the viewport-bottom footer. A final-section preview uses that existing room, up to 2.5 lines. If fewer than one complete readable line remains after the footer's upward shadow, preview is suppressed; click/keyboard opening still works. No upward preview, copied footer links, hover-induced reflow, scrolling or footer movement. Expanded-content spacing and all footer link behavior are unchanged. This is the deliberate final-section boundary behavior, not a missing preview bug.
+**Previous 0.1.11 footer boundary (superseded by 0.1.12):** removed the permanent 2.5-line preview reservation. On long pages the final collapsed 85px header is followed immediately by the footer's upward dither. Short pages retain only their natural flex space above the viewport-bottom footer. A final-section preview uses that existing room, up to 2.5 lines. If fewer than one complete readable line remains after the footer's upward shadow, preview is suppressed; click/keyboard opening still works. No upward preview, copied footer links, hover-induced reflow, scrolling or footer movement. Expanded-content spacing and all footer link behavior are unchanged. This is the deliberate final-section boundary behavior, not a missing preview bug.
 
 **Covered-section summary:** the existing bounded opaque lip now shows every section label intersected by the preview plus cover, including partial labels. Fully readable labels below it are excluded. Membership comes from rendered heading bounds, recomputed with animated geometry, resizing, fonts and scrolling. Catalogue order is preserved. At the representative desktop size MB30 shows `Baustoffe | FRE3 | Career · Favorites bar`; Baustoffe shows `FRE3 | Career | Crypto · Favorites bar`. Wider/larger type can cover four labels; the count is not hard-coded.
 

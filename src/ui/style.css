@@ -20,7 +20,9 @@ main { padding: 0 var(--page-gutter) 80px; }
   /* Full-width clipping contains a final preview without adding scrollable
      overflow below the footer; all top shadows remain inside these bounds. */
   overflow: clip;
+  overflow-anchor: none;
 }
+.peek-footer-space { height: 0; pointer-events: none; }
 .catalogue > * { flex-shrink: 0; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; border: 0; border-radius: 0; padding: 0; background: none; }
@@ -76,7 +78,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .is-peeking > .section-sheet, .is-leaving > .section-sheet { pointer-events: none; }
 .is-peeking > .section-sheet > .section-header, .is-leaving > .section-sheet > .section-header { pointer-events: auto; }
 .is-peeking .section-reveal { visibility: visible; transition-delay: 0s; }
-.is-peeking .section-content { height: var(--peek-height, calc(2.5 * var(--catalogue-line))); transition-duration: 140ms; }
+.is-peeking .section-content { height: calc(2.5 * var(--catalogue-line)); transition-duration: 140ms; }
 .peek-successor {
   /* The following sheet's opaque lip and transparent shadow travel together
      as the absolute preview body changes height; the document never reflows. */

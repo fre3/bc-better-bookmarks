@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { CatalogueSection } from './catalogue-model';
 import { CatalogueItems } from './CatalogueItems';
 import { useCatalogueAnnotations } from './useCatalogueAnnotations';
 import { usePeekScroll } from './usePeekScroll';
 import { PeekSummary } from './PeekSummary';
-import { usePeekRoom } from './usePeekRoom';
 import { usePeekCoverage } from './usePeekCoverage';
 
 interface Props {
@@ -44,14 +43,13 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
     return (sections ?? (nextSection ? [nextSection] : [])).filter(item => ids.has(item.id));
   }, [sections, nextSection, coveredIds]);
   const flow = useCatalogueAnnotations();
-  const peekHeight = usePeekRoom(slot, preview, !nextSection);
-  const showingPeek = peek && peekHeight !== 0;
+  const showingPeek = peek;
   usePeekScroll(autoScrollPeek && mouseHover && pointerPeek === peekEpoch && showingPeek && query === null, flow);
   const contentId = `section-content-${section.id}`;
   return <section ref={slot} id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${showingPeek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
-    style={{ zIndex: showingPeek ? stackSize + 1 : preview ? stackSize : stackIndex, '--peek-height': peekHeight === undefined ? undefined : `${peekHeight}px` } as CSSProperties}>
+    style={{ zIndex: showingPeek ? stackSize + 1 : preview ? stackSize : stackIndex }}>
     <div className="section-sheet has-top-shadow">
-      <div className="section-header" onPointerEnter={e => { setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={() => { setMouseHover(false); setPointerPeek(-1); }}>
+      <div className="section-header" onPointerEnter={e => { setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch' && !e.currentTarget.closest<HTMLElement>('.catalogue')?.dataset.peekClamped) setPointerPeek(peekEpoch); }} onPointerMove={e => { if (!e.movementX && !e.movementY) return; const catalogue = e.currentTarget.closest<HTMLElement>('.catalogue'); if (catalogue?.dataset.peekClamped) { delete catalogue.dataset.peekClamped; if (e.pointerType === 'mouse') { setMouseHover(true); setPointerPeek(peekEpoch); } } }} onPointerLeave={() => { setMouseHover(false); setPointerPeek(-1); }}>
         <h2 className="section-inner">
         {query !== null ? <span className="section-label"><span className="section-heading-text">{section.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
           <button id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}
@@ -67,7 +65,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
           {section.children.length ? <CatalogueItems items={section.children} expanded={expanded} onToggle={onFolder} query={query} /> : <span className="empty-folder">Empty folder</span>}
         </div>}
       </div>
-      {preview && <div className={`peek-successor${nextSection ? ' has-top-shadow' : ''}`} data-sheet-owner={nextSection?.id} aria-hidden="true" inert>
+      {preview && nextSection && <div className={`peek-successor${nextSection ? ' has-top-shadow' : ''}`} data-sheet-owner={nextSection?.id} aria-hidden="true" inert>
         {/* Presentation of the following sheet's lip, not a second interactive
             header. Real headers retain their flow positions and hit targets. */}
         {nextSection && <div className="section-header peek-header-measure"><div className="section-inner section-label"><span className="section-heading-text">{nextSection.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {nextSection.rootTitle}</span>}</span></div></div>}

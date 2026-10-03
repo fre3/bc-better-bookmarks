@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } fro
 import type { Snapshot } from '../core/model';
 import { buildCatalogue, filterCatalogue } from './catalogue-model';
 import { catalogueReducer, initialCatalogueState, rootShortcut, searchKey } from './catalogue-state';
+import { usePeekFooter } from './usePeekFooter';
 import { CatalogueFooter } from './CatalogueFooter';
 import { SectionCard } from './SectionCard';
 import { moveToSearchPage, takeSearchHandoff } from '../browser/dashboard-launch';
@@ -16,6 +17,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
   const [handoff] = useState(() => typeof location === 'undefined' ? undefined : catalogueHandoff(takeSearchHandoff()));
   const [state, dispatch] = useReducer(catalogueReducer, handoff?.state ?? initialCatalogueState);
   const [launchError, setLaunchError] = useState('');
+  const peekFooter = usePeekFooter();
   const input = useRef<HTMLInputElement>(null);
   const searchButton = useRef<HTMLButtonElement>(null);
   const scrollToSection = useRef<string | null>(null);
@@ -141,6 +143,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       }} />)}
       {!visible.sections.length && <p className="empty-catalogue">{searching ? 'No matching bookmarks in this scope.' : 'No bookmarks or folders in this scope.'}</p>}
     </div>
+    <div ref={peekFooter} className="peek-footer-space" aria-hidden="true" />
     <CatalogueFooter />
   </div>;
 }
