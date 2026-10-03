@@ -7,7 +7,7 @@
   --catalogue-size: clamp(42px, 3.3vw, 69px);
   --nested-size: calc(var(--catalogue-size) * .85);
   --catalogue-line: calc(var(--catalogue-size) + 9px);
-  --header-height: 70px;
+  --header-height: 85px;
   --page-gutter: clamp(20px, 3.5vw, 72px);
 }
 * { box-sizing: border-box; }
@@ -24,12 +24,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .catalogue-navigation { min-height: 108px; display: flex; align-items: center; gap: 24px; padding-block: 24px; }
 .catalogue-navigation nav { display: flex; flex-wrap: wrap; gap: 14px 28px; }
-.catalogue-navigation button { text-align: left; line-height: 1.4; }
+.catalogue-navigation button { text-align: left; line-height: 1.4; text-transform: uppercase; letter-spacing: .15em; font-size: 16px; font-weight: 400; overflow-wrap: anywhere; }
+.catalogue-navigation nav { min-width: 0; }
 .catalogue-navigation [aria-current] { text-decoration: underline; text-underline-offset: .2em; }
 .navigation-actions { margin-left: auto; display: flex; gap: 28px; flex-shrink: 0; }
 .section-stack { isolation: isolate; margin-inline: calc(-1 * var(--page-gutter)); }
-.section-slot { position: relative; height: var(--header-height); scroll-margin-top: 12px; }
-.section-sheet { position: absolute; inset: 0 0 auto; background: white; }
+.section-slot { position: relative; scroll-margin-top: 12px; }
+.section-sheet { position: relative; background: white; }
 .has-top-shadow::before {
   /* This foreground sheet casts a transparent shadow upward onto its predecessor.
      The tile's denser bottom edge already faces the sheet; no artwork flip. */
@@ -38,32 +39,45 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
   pointer-events: none;
 }
 .section-inner { padding-inline: var(--page-gutter); }
-.section-header { height: var(--header-height); background: white; }
-.section-header h2 { height: 100%; margin: 0; font-size: 16px; font-weight: normal; }
-.section-header button, .section-label { display: flex; align-items: center; text-align: left; width: 100%; height: 100%; padding-block: 0; overflow-wrap: anywhere; }
-.root-provenance { color: #686868; }
-.section-content { display: none; }
-.is-peeking > .section-sheet { pointer-events: none; }
-.is-peeking > .section-sheet > .section-header { pointer-events: auto; }
-.is-peeking .section-content { display: block; height: calc(2.5 * var(--catalogue-line)); overflow: clip; pointer-events: none; }
+.section-header { min-height: var(--header-height); background: white; }
+.section-header h2 { margin: 0; font: inherit; }
+.section-header button, .section-label {
+  display: flex; align-items: center; text-align: left; width: 100%; min-height: var(--header-height);
+  padding-block: 26px 34px; overflow-wrap: anywhere; font: 700 17.6px/1.25 Helvetica, Arial, sans-serif;
+}
+.section-header button:hover { text-decoration: none; }
+.root-provenance { color: #686868; font-weight: 400; }
+.section-reveal {
+  position: absolute; top: 100%; inset-inline: 0; background: white; pointer-events: none;
+  visibility: hidden; transition: visibility 0s 90ms;
+}
+.section-content { height: 0; overflow: clip; transition: height 90ms ease-out; }
+.is-peeking > .section-sheet, .is-leaving > .section-sheet { pointer-events: none; }
+.is-peeking > .section-sheet > .section-header, .is-leaving > .section-sheet > .section-header { pointer-events: auto; }
+.is-peeking .section-reveal { visibility: visible; transition-delay: 0s; }
+.is-peeking .section-content { height: calc(2.5 * var(--catalogue-line)); transition-duration: 140ms; }
 .peek-successor {
-  /* A foreground lip conceals the partial line and covers any underlying seams.
-     Its shadow belongs to the following sheet, never to the raised sheet bottom. */
-  position: relative; background: white; height: var(--header-height); pointer-events: none;
+  /* The following sheet's opaque lip and transparent shadow travel together
+     as the absolute preview body changes height; the document never reflows. */
+  position: relative; background: white; min-height: var(--header-height); pointer-events: none;
 }
 .peek-successor .section-header { pointer-events: none; }
-.section-slot.is-open { height: auto; }
-.is-open .section-sheet { position: relative; }
-.is-open .section-content { display: block; padding-bottom: 32px; }
+.is-open .section-reveal { position: relative; top: auto; visibility: visible; pointer-events: auto; transition: none; }
+.is-open .section-content { height: auto; overflow: visible; padding-bottom: 32px; transition: none; }
+.is-open .section-content > .catalogue-flow { animation: catalogue-open 170ms ease-out; }
 .is-open .section-header { position: sticky; top: 0; z-index: 2; }
+@keyframes catalogue-open { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 .catalogue-flow { font-family: var(--catalogue-font); font-size: var(--catalogue-size); letter-spacing: -.01em; line-height: calc(1em + 9px); overflow-wrap: anywhere; padding-bottom: 16px; }
 .catalogue-item { position: relative; display: inline; vertical-align: baseline; }
 .folder-item { display: inline-block; max-width: 100%; }
 .bookmark-title { text-decoration: none; font-weight: normal; }
 .bookmark-title:hover, .bookmark-title:focus-visible { text-decoration: underline; text-decoration-thickness: auto; text-underline-offset: .08em; }
 .non-navigating { cursor: default; }
+.bookmark-tail { display: inline-block; max-width: 100%; overflow-wrap: anywhere; vertical-align: baseline; }
 .bookmark-ending { white-space: nowrap; }
-.favicon { width: .75em; height: .75em; object-fit: contain; vertical-align: -.06em; filter: grayscale(1); }
+.favicon-frame { display: inline-block; padding: .1em; background: #eee; line-height: 0; vertical-align: -.01em; margin-right: .12em; }
+.favicon { display: block; width: auto; height: .8em; vertical-align: top; filter: grayscale(1); }
+.favicon-placeholder { width: .8em; background: #d0d0d0; }
 .bookmark-item:hover .favicon, .bookmark-item:focus-within .favicon { filter: grayscale(0); }
 .folder-trigger { font: inherit; line-height: inherit; letter-spacing: inherit; text-align: left; }
 .folder-trigger:hover { text-decoration: none; }
@@ -111,5 +125,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
   .navigation-actions { margin-left: 0; }
   .search-caption button { margin-left: 0; }
 }
-/* Peek is immediate; there are no motion effects, including under reduced motion. */
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .section-slot .section-reveal, .section-slot .section-content { transition: none; }
+  .is-open .section-content > .catalogue-flow { animation: none; }
+}

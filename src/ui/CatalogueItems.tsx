@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import { BookmarkLabel } from './BookmarkLabel';
 import { faviconUrl } from '../browser/favicon';
 import { isBookmarklet, safeHref } from '../core/logic';
 import { matchingTags } from './catalogue-model';
@@ -37,7 +38,7 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0 }: 
     // item-local reveal rules rather than a permanently visible annotation path.
     const statusText = [...favorite.systemLabels, explanation, ambiguous ? 'Ambiguous metadata — inspect diagnostics in Manage' : ''].filter(Boolean).join(' · ');
     const annotations = tags.length > 0 || Boolean(statusText);
-    const label = <>{favorite.title || '(untitled)'}{icon ? <> <span className="bookmark-ending"><img className="favicon" src={icon} alt="" width="32" height="32" loading="lazy" decoding="async" onError={e => { e.currentTarget.style.visibility = 'hidden'; }} />;</span></> : ';'}</>;
+    const label = <BookmarkLabel title={favorite.title} icon={icon} />;
     return <Fragment key={favorite.id}><span className={`catalogue-item bookmark-item${revealed.length ? ' tag-match' : ''}${ambiguous ? ' ambiguous' : ''}`} data-item-id={favorite.id}>
       {href ? <a id={`bookmark-${favorite.id}`} className="bookmark-title" href={href} aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}>{label}</a> : <span id={`bookmark-${favorite.id}`} className="bookmark-title non-navigating" tabIndex={0} aria-describedby={`annotation-${favorite.id}`}>{label}</span>}
       {annotations && <span id={`annotation-${favorite.id}`} className="item-annotation">

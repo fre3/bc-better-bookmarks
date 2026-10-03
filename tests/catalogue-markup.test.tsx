@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { BookmarkLabel } from '../src/ui/BookmarkLabel';
 import { CatalogueItems } from '../src/ui/CatalogueItems';
 import { SectionCard } from '../src/ui/SectionCard';
 import { faviconUrl } from '../src/browser/favicon';
@@ -28,13 +29,20 @@ describe('catalogue safety and semantics', () => {
     vi.stubGlobal('chrome', { runtime: { id: 'test', getURL: (path: string) => `chrome-extension://test${path}` } });
     const item = { kind: 'bookmark' as const, favorite: favorite(), tags: ['work'], ambiguous: false };
     const browse = renderToStaticMarkup(<CatalogueItems items={[item, { ...item, favorite: favorite({ id: '21', title: 'Second' }) }]} expanded={[]} onToggle={() => undefined} query={null} />);
-    expect(browse).toMatch(/Azure <span class="bookmark-ending"><img[^>]*\/>;<\/span><\/a>/);
+    expect(browse).toMatch(/<span class="bookmark-tail">Azur<span class="bookmark-ending">e <span class="favicon-frame" aria-hidden="true"><img[^>]*\/><\/span>;<\/span><\/span><\/a>/);
     expect(browse).toContain('class="bookmark-tags all-annotations"');
     expect(browse).not.toContain('tag-match');
     expect(browse).not.toContain('<br');
     const search = renderToStaticMarkup(<CatalogueItems items={[item]} expanded={[]} onToggle={() => undefined} query="#work" />);
     expect(search).toContain('tag-match');
     expect(search).toContain('bookmark-tags matched-annotations');
+  });
+  it('groups only the final word with favicon punctuation and handles empty titles', () => {
+    const label = renderToStaticMarkup(<BookmarkLabel title="A long title finalword" icon="icon.png" />);
+    expect(label).toMatch(/^A long title <span class="bookmark-tail">finalwor<span class="bookmark-ending">d /);
+    expect(renderToStaticMarkup(<BookmarkLabel title="   " />)).toContain('(untitled<span');
+    expect(renderToStaticMarkup(<BookmarkLabel title="Title 👩‍💻" />)).toContain('bookmark-ending">👩‍💻 ');
+    expect(renderToStaticMarkup(<BookmarkLabel title="Fallback" />)).toContain('favicon-placeholder');
   });
   it('keeps URL-status labels on the item annotation path, separate from tags', () => {
     const markup = renderToStaticMarkup(<CatalogueItems items={[{ kind: 'bookmark', favorite: favorite({ url: 'http://example.com/', systemLabels: ['HTTP'] }), tags: [], ambiguous: false }]} expanded={[]} onToggle={() => undefined} query={null} />);
