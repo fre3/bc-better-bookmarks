@@ -1,19 +1,26 @@
-import { useEffect, useLayoutEffect, useMemo, useReducer, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
 import type { Snapshot } from '../core/model';
 import { buildCatalogue, filterCatalogue } from './catalogue-model';
 import { catalogueReducer, initialCatalogueState, searchKey } from './catalogue-state';
 import { SectionCard } from './SectionCard';
+import { moveToSearchPage, takeSearchHandoff } from '../browser/dashboard-launch';
+import { catalogueHandoff } from './catalogue-handoff';
 
 // Change to 'break' to compare the first-level expansion ending in Edge.
 // Nested expansions always remain inline.
 const EXPANSION_END: 'inline' | 'break' = 'inline';
 
-export function Catalogue({ snapshot, suspended, onManage }: { snapshot: Snapshot; suspended: boolean; onManage: () => void }) {
-  const [state, dispatch] = useReducer(catalogueReducer, initialCatalogueState);
+export function Catalogue({ snapshot, suspended, searchRequest = '', onManage }: { snapshot: Snapshot; suspended: boolean; searchRequest?: string; onManage: () => void }) {
+  const [handoff] = useState(() => typeof location === 'undefined' ? undefined : catalogueHandoff(takeSearchHandoff()));
+  const [state, dispatch] = useReducer(catalogueReducer, handoff?.state ?? initialCatalogueState);
+  const [launchError, setLaunchError] = useState('');
   const input = useRef<HTMLInputElement>(null);
   const searchButton = useRef<HTMLButtonElement>(null);
   const scrollToSection = useRef<string | null>(null);
-  const browsePosition = useRef({ scroll: 0, focus: null as HTMLElement | null });
+  const browsePosition = useRef({ scroll: handoff?.browseScroll ?? 0, focus: null as HTMLElement | null, focusId: handoff?.browseFocusId ?? null as string | null });
+  const consumedSearchRequest = useRef(handoff?.requestId ?? '');
+  const selectRequested = useRef(Boolean(handoff));
+  const restoreScroll = useRef(handoff?.scroll);
   const model = useMemo(() => buildCatalogue(snapshot), [snapshot]);
   // A removed browser root must not leave an invisible, stale scope selected.
   const scope = model.roots.some(root => root.id === state.scope) ? state.scope : '*';
@@ -21,19 +28,47 @@ export function Catalogue({ snapshot, suspended, onManage }: { snapshot: Snapsho
   const visible = useMemo(() => filterCatalogue(model, snapshot.favorites, scope, state.query ?? '', searching), [model, snapshot.favorites, scope, state.query, searching]);
 
   function startSearch(value = '') {
-    browsePosition.current = { scroll: window.scrollY, focus: document.activeElement instanceof HTMLElement ? document.activeElement : null };
+    browsePosition.current = { scroll: window.scrollY, focus: document.activeElement instanceof HTMLElement ? document.activeElement : null, focusId: document.activeElement?.id ?? null };
     dispatch({ type: 'query', value });
   }
   function exitSearch() {
     dispatch({ type: 'escape' });
     requestAnimationFrame(() => {
       const target = browsePosition.current.focus;
-      const restored = target?.isConnected ? target : target?.id ? document.getElementById(target.id) : null;
+      const id = target?.id || browsePosition.current.focusId;
+      const restored = target?.isConnected ? target : id ? document.getElementById(id) : null;
       (restored ?? searchButton.current)?.focus({ preventScroll: true });
       window.scrollTo({ top: browsePosition.current.scroll, behavior: 'instant' });
     });
   }
   useEffect(() => { if (searching && !suspended) input.current?.focus(); }, [searching, suspended]);
+  useLayoutEffect(() => {
+    if (suspended) return;
+    if (searchRequest && consumedSearchRequest.current !== searchRequest) {
+      consumedSearchRequest.current = searchRequest;
+      selectRequested.current = true;
+      // Do not overwrite the existing query or Escape's browse position.
+      if (!searching) { startSearch(); return; }
+    }
+    if (searching && selectRequested.current && input.current) {
+      selectRequested.current = false;
+      try {
+        if (restoreScroll.current === undefined && moveToSearchPage({ state, requestId: consumedSearchRequest.current, browseScroll: browsePosition.current.scroll, browseFocusId: browsePosition.current.focus?.id || browsePosition.current.focusId, scroll: window.scrollY })) return;
+      } catch {
+        setLaunchError('Could not preserve this catalogue for search launch. Press Ctrl+F6 to move focus into the page, then type.');
+      }
+      const restoring = restoreScroll.current !== undefined;
+      if (restoring) {
+        window.scrollTo({ top: restoreScroll.current, behavior: 'instant' });
+        restoreScroll.current = undefined;
+      }
+      // Navigation already transferred browser focus. Never re-activate a page
+      // the user left while its restored snapshot was loading.
+      if (!restoring && document.visibilityState === 'visible') window.focus();
+      input.current.focus();
+      input.current.select();
+    }
+  });
   useLayoutEffect(() => {
     if (scrollToSection.current && scrollToSection.current === state.openSection) {
       document.getElementById(`card-${state.openSection}`)?.scrollIntoView({ block: 'start', behavior: 'instant' });
@@ -70,7 +105,7 @@ export function Catalogue({ snapshot, suspended, onManage }: { snapshot: Snapsho
       <nav aria-label="Bookmark roots">
         {[{ id: '*', title: 'All bookmarks' }, ...model.roots].map(root => <button key={root.id} aria-current={scope === root.id ? 'page' : undefined} onClick={() => {
           dispatch({ type: 'scope', id: root.id });
-          if (searching) browsePosition.current = { scroll: 0, focus: searchButton.current };
+          if (searching) browsePosition.current = { scroll: 0, focus: searchButton.current, focusId: null };
         }}>{root.title || '(untitled root)'}</button>)}
       </nav>
       <div className="navigation-actions">
@@ -78,6 +113,7 @@ export function Catalogue({ snapshot, suspended, onManage }: { snapshot: Snapsho
         <button onClick={onManage}>Manage</button>
       </div>
     </header>
+    {launchError && <p role="alert">{launchError}</p>}
     {searching && <section className="search-mode" aria-label="Search catalogue">
       <input ref={input} type="text" aria-label="Search bookmarks" aria-describedby="search-syntax" value={state.query ?? ''} onChange={e => dispatch({ type: 'query', value: e.target.value })} autoComplete="off" spellCheck={false} placeholder="Search bookmarks" />
       <div className="search-caption"><span role="status">{visible.count} {visible.count === 1 ? 'result' : 'results'}</span><span id="search-syntax">plain text · #tag · @folder</span><button onClick={exitSearch}>Close search · Esc</button></div>

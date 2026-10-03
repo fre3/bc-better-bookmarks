@@ -11,7 +11,11 @@ assert.equal(sourceManifest.version, packageJson.version, 'public/manifest.json 
 assert.equal(manifest.version, packageJson.version, 'Built extension version must match package.json.');
 assert.equal(extensionId, 'nfhbegeoeafnpejpjdljhgagefbpafal', 'Development identity changed; do not rotate the key accidentally.');
 assert.equal(manifest.key, sourceManifest.key);
-assert.deepEqual(manifest.permissions, ['bookmarks', 'storage', 'favicon']);
+assert.deepEqual(manifest.permissions, ['bookmarks', 'storage', 'favicon', 'tabs']);
+assert.deepEqual(manifest.commands['open-dashboard-search'], {
+  description: 'Open dashboard in search mode', suggested_key: { windows: 'Ctrl+Shift+B' }, global: false,
+});
+assert.ok(existsSync('dist/search.html'));
 assert.ok(existsSync(`dist/${manifest.chrome_url_overrides.newtab}`));
 assert.ok(existsSync(`dist/${manifest.background.service_worker}`));
 assert.ok(!readFileSync('dist/index.html', 'utf8').includes('/src/'));

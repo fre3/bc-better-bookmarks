@@ -4,7 +4,7 @@ export default defineConfig({
   build: {
     target: 'es2022',
     rollupOptions: {
-      input: { index: 'index.html', background: 'src/background.ts' },
+      input: { index: 'index.html', search: 'search.html', background: 'src/background.ts' },
       output: { entryFileNames: '[name].js', chunkFileNames: 'assets/[name]-[hash].js' },
     },
   },

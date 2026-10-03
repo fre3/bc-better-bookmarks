@@ -3,6 +3,22 @@ import { BrowserMetadataRepository } from './browser/metadata';
 import { DashboardService } from './core/service';
 import type { Command } from './core/model';
 import { storageChangeLogs } from './core/metadata-diagnostics';
+import { DashboardLauncher, DASHBOARD_SEARCH_COMMAND } from './core/dashboard-launch';
+import { dashboardLaunchBrowser, dashboardUrl } from './browser/dashboard-launch';
+
+const dashboardLauncher = new DashboardLauncher(dashboardLaunchBrowser);
+const launchError = (error: unknown) => console.error('Dashboard search command failed', error);
+chrome.commands.onCommand.addListener((command, tab) => {
+  if (command !== DASHBOARD_SEARCH_COMMAND) return;
+  // Capture the invocation's window before entering the routing queue.
+  void (tab ? Promise.resolve(tab) : chrome.tabs.query({ active: true, lastFocusedWindow: true }).then(tabs => tabs[0]))
+    .then(current => { if (current && !current.incognito) return dashboardLauncher.open(current.windowId); }).catch(launchError);
+});
+chrome.tabs.onActivated.addListener(({ tabId, windowId }) => { void dashboardLauncher.activated(tabId, windowId).catch(launchError); });
+chrome.tabs.onRemoved.addListener(tabId => { void dashboardLauncher.cancel(tabId).catch(launchError); });
+chrome.tabs.onUpdated.addListener((tabId, change) => {
+  if (change.url && !dashboardUrl(change.url)) void dashboardLauncher.cancel(tabId).catch(launchError);
+});
 
 const service = new DashboardService(new BrowserBookmarksRepository(), new BrowserMetadataRepository(), {
   extensionId: chrome.runtime.id, version: chrome.runtime.getManifest().version,
@@ -21,6 +37,10 @@ function refresh(reason: string) {
 }
 // Register synchronously at module evaluation, before any async initialization.
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (sender.id === chrome.runtime.id && message?.event === 'dashboard-search-ready' && sender.tab?.id !== undefined && sender.frameId === 0 && dashboardUrl(sender.url)) {
+    void dashboardLauncher.ready(sender.tab.id).then(() => sendResponse({ ok: true }), error => sendResponse({ ok: false, error: String(error) }));
+    return true;
+  }
   if (sender.id !== chrome.runtime.id || !message?.command) return false;
   void enqueue(() => service.command(message.command as Command)).then(
     snapshot => { sendResponse({ ok: true, snapshot }); if (message.command.type !== 'snapshot') notify(); },

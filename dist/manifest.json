@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Better Bookmarks — Technical MVP",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Edge Favorites dashboard with experimental synchronized tags and identity diagnostics.",
   "permissions": [
     "bookmarks",
     "storage",
-    "favicon"
+    "favicon",
+    "tabs"
   ],
   "chrome_url_overrides": {
     "newtab": "index.html"
@@ -19,5 +20,14 @@
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'"
   },
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvkpcHoiGWERmQoFDZbSCv23V0oASm4ZpMIFk4BarKxkDYoPeHmMe8LHJ+q9uSAs76mCXWVXSZKkU+32ly6Uhhi5Xipd+AEPqW1fFVpWRDmifPmE36ja1VxiCcxBlkVNQDyUe9etl2svHks/WYuXGdIZeIzPdog/m7b+3SlThwIDnw1mlt1CDvEF3Q6yc7awehkAgQNT/rVefwnY1Yq51YO0pCWKgbChvu8OONH5jxnvXJf/zLt0drMoq2OflOiJ5nM3+03y0QLTOwWtG6RrvlOSoaZFfQZA8weaSa4sxsgqrkIIbNzJDQZjt6DvxGyGASIGaFjPZarQy2/Fr+CnAhQIDAQAB"
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvkpcHoiGWERmQoFDZbSCv23V0oASm4ZpMIFk4BarKxkDYoPeHmMe8LHJ+q9uSAs76mCXWVXSZKkU+32ly6Uhhi5Xipd+AEPqW1fFVpWRDmifPmE36ja1VxiCcxBlkVNQDyUe9etl2svHks/WYuXGdIZeIzPdog/m7b+3SlThwIDnw1mlt1CDvEF3Q6yc7awehkAgQNT/rVefwnY1Yq51YO0pCWKgbChvu8OONH5jxnvXJf/zLt0drMoq2OflOiJ5nM3+03y0QLTOwWtG6RrvlOSoaZFfQZA8weaSa4sxsgqrkIIbNzJDQZjt6DvxGyGASIGaFjPZarQy2/Fr+CnAhQIDAQAB",
+  "commands": {
+    "open-dashboard-search": {
+      "description": "Open dashboard in search mode",
+      "suggested_key": {
+        "windows": "Ctrl+Shift+B"
+      },
+      "global": false
+    }
+  }
 }

@@ -25,6 +25,8 @@ describe('real worker wiring with mocked chrome APIs', () => {
     const sync = { ...area(syncData), QUOTA_BYTES: QUOTAS.bytes, QUOTA_BYTES_PER_ITEM: QUOTAS.perItem, MAX_ITEMS: QUOTAS.items, MAX_WRITE_OPERATIONS_PER_MINUTE: QUOTAS.writesPerMinute, MAX_WRITE_OPERATIONS_PER_HOUR: QUOTAS.writesPerHour };
     const notify = vi.fn(async () => undefined);
     vi.stubGlobal('chrome', {
+      commands: { onCommand: event('command') },
+      tabs: { onActivated: event('tab-activated'), onRemoved: event('tab-removed'), onUpdated: event('tab-updated') },
       bookmarks: { getTree: vi.fn(async () => tree()), ...Object.fromEntries(['onCreated', 'onChanged', 'onMoved', 'onChildrenReordered', 'onImportBegan', 'onImportEnded', 'onRemoved'].map(name => [name, event(`bookmarks.${name}`)])) },
       storage: { sync, local: area(localData), onChanged: event('storage') },
       runtime: { id: 'test', getManifest: () => ({ version: 'test' }), sendMessage: notify, onMessage: event('message'), onStartup: event('startup'), onInstalled: event('installed') },

@@ -3,6 +3,7 @@ import { onDashboardChanged, sendCommand } from '../browser/client';
 import type { Command, Snapshot } from '../core/model';
 import { Catalogue } from './Catalogue';
 import { LegacyManagement } from './LegacyManagement';
+import { onDashboardSearch, dashboardShortcut, openShortcutSettings } from '../browser/dashboard-launch';
 import './legacy.css';
 
 export function App() {
@@ -11,6 +12,24 @@ export function App() {
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const [managing, setManaging] = useState(false);
+  const [searchRequest, setSearchRequest] = useState('');
+  const [shortcut, setShortcut] = useState<string>();
+  useEffect(() => onDashboardSearch(id => {
+    if (!snapshot) return 'not-ready';
+    if (managing || busy) {
+      setNotice('Search shortcut paused while Manage or a save is active. Finish editing, return to the catalogue, then invoke it again.');
+      return 'blocked';
+    }
+    setSearchRequest(id);
+    return 'accepted';
+  }), [snapshot, managing, busy]);
+  useEffect(() => {
+    if (!managing) return;
+    let disposed = false;
+    const read = () => { void dashboardShortcut().then(value => { if (!disposed) setShortcut(value); }).catch(() => { if (!disposed) setShortcut(undefined); }); };
+    read(); window.addEventListener('focus', read);
+    return () => { disposed = true; window.removeEventListener('focus', read); };
+  }, [managing]);
   useEffect(() => {
     let disposed = false;
     let timer: ReturnType<typeof setTimeout>;
@@ -36,9 +55,10 @@ export function App() {
     {error && <p className="status-error" role="alert">{error}</p>}
     {notice && <p role="status">{notice}</p>}
     {snapshot.errors.length > 0 && <details className="status-error"><summary>{snapshot.errors.length} diagnostic warnings/errors</summary><ul>{snapshot.errors.map((message, i) => <li key={i}>{message}</li>)}</ul></details>}
-    <Catalogue snapshot={snapshot} suspended={managing} onManage={() => { setManaging(true); setNotice(''); }} />
+    <Catalogue snapshot={snapshot} suspended={managing} searchRequest={searchRequest} onManage={() => { setManaging(true); setNotice(''); }} />
     {managing && <>
       <div className="management-heading"><span>Existing management controls · editing redesign follows visual review</span><button onClick={() => { setManaging(false); setNotice(''); }}>Back to catalogue</button></div>
+      <p>Dashboard search shortcut: {shortcut === undefined ? 'assignment unavailable' : shortcut || 'unassigned'}. <button onClick={openShortcutSettings}>Keyboard shortcut settings</button>. New Tab fallback: Ctrl+F6, then type.</p>
       <LegacyManagement s={snapshot} busy={busy} execute={execute} />
     </>}
   </main>;
