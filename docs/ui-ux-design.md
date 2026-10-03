@@ -1,6 +1,6 @@
 # Typographic catalogue — browsing/search checkpoint
 
-Status: **0.1.8 command/slash-wrapping checkpoint**, awaiting Edge review. See [keyboard-search.md](keyboard-search.md) for the command and native-focus limitations; prior 0.1.7 visual evidence remains below. The user accepted 0.1.6's 14px additional leading, measured peek coverage and 220ms full-open reveal; these are preserved. The user manually reviewed 0.1.2 using real bookmarks, screenshots, keyboard testing and a recording; search, roots, scope handling, runtime stability and most keyboard behavior were reported working well. No new Edit mode, inline CRUD redesign, drag/drop, or folder-tag persistence. The validated 0.1.1 baseline remains at `1217369dd10638942d80107d5f33d7f61491d075` on `master`, `archive/mvp-validated-0.1.1`, and annotated tag `mvp-validated-0.1.1`.
+Status: **0.1.9 temporary-scope/root-shortcut/auto-scroll checkpoint**, awaiting Edge review. The user accepted 0.1.8 main command workflows and configurability, including the documented address-bar/Ctrl+F6 limitation. See [keyboard-search.md](keyboard-search.md) for the command and native-focus limitations; prior 0.1.7 visual evidence remains below. The user accepted 0.1.6's 14px additional leading, measured peek coverage and 220ms full-open reveal; these are preserved. The user manually reviewed 0.1.2 using real bookmarks, screenshots, keyboard testing and a recording; search, roots, scope handling, runtime stability and most keyboard behavior were reported working well. No new Edit mode, inline CRUD redesign, drag/drop, or folder-tag persistence. The validated 0.1.1 baseline remains at `1217369dd10638942d80107d5f33d7f61491d075` on `master`, `archive/mvp-validated-0.1.1`, and annotated tag `mvp-validated-0.1.1`.
 
 ## Implemented presentation
 
@@ -28,7 +28,7 @@ Status: **0.1.8 command/slash-wrapping checkpoint**, awaiting Edge review. See [
 - Each root's loose bookmarks form its own `Bookmarks` section. The section is placed at the first loose bookmark's position; remaining loose bookmarks retain their relative order within it. Interleaved loose bookmarks necessarily gather there, while folder and root order remain unchanged. Empty folders stay visible in browsing.
 - Printable keys start search when the document has focus; `/` starts an empty query. Space retains native button activation/page scrolling. Text fields, modifier shortcuts, and active composition are not intercepted. A browser-focused address bar receives its own typing; click the page or Search / to focus the catalogue first.
 - Search reuses `searchFavorites` unchanged, including mixed `plain #tag @folder` matching, case/whitespace behavior, URL text and system labels. Only matching bookmarks and their ancestor folders are shown, in source order; all matching sections/ancestors are open as context. Empty/no-match sections are hidden. Folder titles themselves do not introduce a second search algorithm.
-- Escape from search restores the preceding browse expansions, focus where available, and scroll position. Changing roots retains the active query but resets stored browse expansion/scroll return state. Search renders a small result count and syntax hint, with no token pills.
+- Escape from search restores the preceding browse expansions, focus where available, and scroll position. Changing roots retains the active query and the original pre-search restoration snapshot. Repeated search commands never replace that snapshot. Search renders a small result count and syntax hint, with no token pills.
 
 ## Existing management and safety
 
@@ -58,7 +58,7 @@ On this machine the Windows-visible path is `\\wsl.localhost\Ubuntu-24.04\home\d
 
 The committed `dist/` is already built; rebuilding is unnecessary merely to review this checkpoint. `wslpath -w` prints the exact Windows-visible folder to select in Edge. Do not build or install dependencies in a Windows clone. This feature branch has not been pushed, so pulling the remote Windows clone will not obtain this checkpoint yet.
 
-In the intended Windows Edge profile, open `edge://extensions`. For an existing extension whose loaded path is this WSL `dist/`, click **Reload**, then open a fresh New Tab. If the existing extension points to a Windows clone, use **Load unpacked** with the Windows path printed above; verify that the extension's Details now show that path and version **0.1.8** before testing. Do not remove/uninstall the existing extension merely to change paths; uninstalling can discard profile-local metadata. If Edge does not permit switching the loaded path, stop and report that loading issue rather than resetting the profile. Expected ID: `nfhbegeoeafnpejpjdljhgagefbpafal`.
+In the intended Windows Edge profile, open `edge://extensions`. For an existing extension whose loaded path is this WSL `dist/`, click **Reload**, then open a fresh New Tab. If the existing extension points to a Windows clone, use **Load unpacked** with the Windows path printed above; verify that the extension's Details now show that path and version **0.1.9** before testing. Do not remove/uninstall the existing extension merely to change paths; uninstalling can discard profile-local metadata. If Edge does not permit switching the loaded path, stop and report that loading issue rather than resetting the profile. Expected ID: `nfhbegeoeafnpejpjdljhgagefbpafal`.
 
 Privileged New Tab/extension pages are for user-controlled Edge review. No automated Edge visual or Microsoft sync validation is claimed.
 
@@ -69,7 +69,7 @@ Privileged New Tab/extension pages are for user-controlled Edge review. No autom
 3. **Keyboard focus:** Tab through closed/peek/open and sticky section headers; each label gets a complete compact rectangle within white. Open a section, then Tab to its first link and a wrapped link: one stop per item, complete visible contour and no movement. Review Windows font-specific contour spacing.
 4. **Retained interactions:** traverse headers downward, reverse peeks, click mid-transition and switch away from a long open section. Check opaque peek coverage during entry/exit, unchanged timing/depth, immediate card-switch position, Escape/search/root behavior and reduced motion. Repeat narrow and native Edge zoom checks.
 
-Natural-language automatic hyphenation is not enabled for unknown-language titles. No auto-scrolling, thumbnails, Edit mode, drag/drop, sync work or new permissions. Stop for user review before another refinement.
+Natural-language automatic hyphenation is not enabled for unknown-language titles. Delayed auto-scrolling is implemented in 0.1.9 as specified below. No thumbnails, Edit mode, drag/drop, sync work or new permissions. Stop for user review before another refinement.
 
 ## Reference inspection and rendered evidence (0.1.7)
 
@@ -146,3 +146,17 @@ Locally cached website thumbnails may later take precedence over favicons. Actua
 - No dependency, permission, manifest-key, SVG, worker, browser-adapter, core/search, metadata or persistence changes.
 
 0.1.8 additionally changes command/browser routing, the App/Catalogue handoff, build entry points/manifests, wrapping and related tests; see [the keyboard handoff](keyboard-search.md) and current `development-state.md`.
+
+## 0.1.9 temporary scope, root shortcuts and preview scrolling
+
+Commands capture origin before tab activation. An external-tab command temporarily switches search to All bookmarks, while dashboard-origin search retains its current scope. Navigation reflects the temporary scope. One original snapshot (root, open section, expanded path, scroll/focus) survives repeated commands, query edits and root changes until Escape. This snapshot is included in the existing one-shot explicit-search navigation handoff. It is disposable UI state, not mutation scope or synchronized metadata.
+
+Root shortcuts use displayed order and root IDs: Alt+1 is All bookmarks, Alt+2 the first actual root, through Alt+9 if available. Search input focus/query/selection are retained. Tooltips, `aria-keyshortcuts` and descriptions provide help without new visible chrome. Exact Alt+number only: exclude Ctrl/Meta/Shift/AltGraph/composition, dialogs and non-search editing controls. Manage suspends catalogue key handling.
+
+Manage exposes **Auto-scroll peek previews**, default enabled when absent, persisted solely to `chrome.storage.local` under `ui:auto-scroll-peek` through the existing worker queue. It does not share the sync metadata model. Opt-out is respected before motion starts on a new page; changes propagate to other open dashboards. Save errors are visible in Manage. The user can compare scrolling independently of search improvements.
+
+Mouse-hover preview starts static. After **1500ms** of continuous hover on the same real header, only overflowing inert content translates upward at **one computed catalogue line / 2750ms**. A single cancellable RAF loop stops at the content end; ResizeObserver remeasures content/viewport and speed on size changes. It never expands folders or announces content. Heading, opaque sheet/lip, transparent dither, real header targets and page geometry do not move. Annotations share the content's coordinate space and move with it; preview annotations remain hidden under existing visibility rules.
+
+Leave/switch/open/collapse/search/root change, disabling, hiding or reduced motion cancels and resets. Keyboard-only previews never scroll. Hidden-page return and a change back from reduced motion do not resume an old hover; fresh hover starts a full delay. Each frame also checks visibility/reduced motion before painting, covering queued event delivery. Cleanup removes timers, frames, listeners and observers; no state updates happen per animation frame. The existing 140ms/90ms sheet transition and 220ms full-open reveal are untouched. Normal opening begins at offset zero and retains prompt layout/context scrolling.
+
+Evidence: [static peek](visual-review/generated/0.1.9-static-peek.png), [scrolling peek](visual-review/generated/0.1.9-scrolling-peek.png), [navigation](visual-review/generated/0.1.9-navigation.json), [scroll lifecycle](visual-review/generated/0.1.9-scroll.json), [coverage](visual-review/generated/0.1.9-coverage.json), [isolated extension/German layout](visual-review/generated/0.1.9-extension.json). These are synthetic/local Chromium evidence, not native Edge visual acceptance. See the six-point review checklist in [keyboard-search.md](keyboard-search.md).

@@ -1,0 +1,11 @@
+{
+  "layout": "rules:      evdev\nmodel:      pc105\nlayout:     de\n",
+  "externalAllAndOriginalEscape": true,
+  "nativeGermanAltNumberAndAltGr": true,
+  "ctrlArrowAndQuerySelection": true,
+  "localOptOut": {
+    "ui:auto-scroll-peek": false
+  },
+  "manageDraftAndPreferencePreserved": true,
+  "note": "Native X11 input on German XKB layout in isolated WSL Chromium, temporary Linux command Ctrl+Shift+Y. Native Windows Edge checks remain for the user; accepted address-bar focus limitation not reinvestigated."
+}

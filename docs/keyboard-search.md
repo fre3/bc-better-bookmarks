@@ -1,4 +1,4 @@
-# Dashboard search command — 0.1.8 Edge checkpoint
+# Dashboard search and preview controls — 0.1.9 Edge checkpoint
 
 The browser-scoped command is `open-dashboard-search`, described as **Open dashboard in search mode**, with **Ctrl+Shift+B suggested on Windows**. It is not an OS-global shortcut. The user confirmed this default; Ctrl+B is only an optional user reassignment. Alt+Shift+F is not used.
 
@@ -14,7 +14,7 @@ await chrome.commands.getAll()
 
 Normal `Ctrl+T` continues to leave focus in Edge's address bar. The user-confirmed fallback remains **Ctrl+T → Ctrl+F6 → type**. If the command prepares search but typing stays in browser chrome, use **Ctrl+F6**, then type. No simulated keystrokes or delay-based focus loops are implemented.
 
-Reload the existing WSL `dist/` extension at `edge://extensions`, review the added `tabs` permission, verify **0.1.8**, and open a fresh New Tab. The artifact is already built:
+Reload the existing WSL `dist/` extension at `edge://extensions`, retain the existing `tabs` permission (none added in 0.1.9), verify **0.1.9**, and open a fresh New Tab. The artifact is already built:
 
 ```text
 \\wsl.localhost\Ubuntu-24.04\home\dev\projects\bc-better-bookmarks\dist
@@ -27,7 +27,7 @@ No push was made; a remote Windows clone will not receive this checkpoint by pul
 - Prefer the current dashboard; otherwise reuse one in the invoking window, in browser tab order. Create an active `search.html` tab in that same window only when no identifiable dashboard exists there. The website tab is not navigated or closed. Other windows' dashboards are not selected.
 - A serialized UI routing queue coalesces overlapping invocations. A session-only request keyed by tab ID survives service-worker suspension. The page registers its listener before announcing readiness; snapshot loading returns “not ready” until the catalogue mounts. Accepted/blocked requests are removed, so readiness notifications do not repeatedly steal focus.
 - Leaving the target tab/window, closing it or navigating away cancels pending focus work. Readiness does not reactivate a tab the user left. The browser adapter validates own extension pages and sender identity. No website content script is involved.
-- Existing root, query, open section and expanded branch are retained; an existing query is selected for replacement. Escape uses the existing catalogue reducer and restores its browse position. A new dashboard starts at All bookmarks with empty search.
+- The originating tab is captured before activation. Commands from another tab temporarily select **All bookmarks**. Dashboard-origin commands, typing, `/` and Search retain the current scope. An existing query is selected for replacement. A single pre-search snapshot restores the original root, section, expanded branch and scroll/focus on Escape; repeated commands or root changes do not replace it. A new dashboard starts at All bookmarks with empty search.
 - When browser chrome has focus, an explicit renderer navigation to `search.html?launch=<random token>` is attempted. Before navigation, a one-shot **tab-local sessionStorage handoff** preserves catalogue state, query and Escape's scroll/focus target. This is transient UI state, not bookmark/metadata persistence or sync. It is consumed once after the new page's snapshot is ready. A page already focused can use the existing input without navigation. Ordinary New Tab never initiates this route.
 - **Manage or an active save blocks the command**, showing a notice. It does not unmount Manage, discard a draft, navigate away, bypass mutation guards, or queue a surprise focus change after editing. Finish editing, return to the catalogue and invoke again.
 - If the transient handoff cannot be stored, navigation is refused and a Ctrl+F6 fallback message appears; existing catalogue state is retained.
@@ -36,7 +36,7 @@ No push was made; a remote Windows clone will not receive this checkpoint by pul
 
 ## Permissions and API evidence
 
-The single added permission is **`tabs`**. It permits inspection of `url`/`pendingUrl` to identify explicit dashboard tabs before their renderer is ready or after discard, avoiding duplicate creation. Discovery is limited to the invoking window. `runtime.getContexts` identifies our live New Tab behind Edge's virtual New Tab URL; an unrelated New Tab provider is not assumed to be ours. A discarded virtual New Tab without an identifiable live context cannot safely be distinguished from another provider; an explicit `search.html` tab remains identifiable by URL.
+The permission added in 0.1.8 was **`tabs`**; 0.1.9 adds none. It permits inspection of `url`/`pendingUrl` to identify explicit dashboard tabs before their renderer is ready or after discard, avoiding duplicate creation. Discovery is limited to the invoking window. `runtime.getContexts` identifies our live New Tab behind Edge's virtual New Tab URL; an unrelated New Tab provider is not assumed to be ours. A discarded virtual New Tab without an identifiable live context cannot safely be distinguished from another provider; an explicit `search.html` tab remains identifiable by URL.
 
 The permission also grants access to tab titles/favicon URLs at browser level, but the router does not store website URLs/titles, inspect website contents or inject scripts. No `activeTab`, host, scripting, history, webNavigation or global-shortcut permissions were added. Existing manifest key/extension identity are unchanged. Metadata writes remain in the existing worker service queue; the UI routing queue only owns transient launch requests in session storage.
 
@@ -44,34 +44,29 @@ Primary references: [Commands API](https://developer.chrome.com/docs/extensions/
 
 Chromium's [tab-update implementation](https://chromium.googlesource.com/chromium/src/+/4848e47a0e2bcfd75994cc21b8b31ea457a1395c/chrome/browser/extensions/api/tabs/tabs_api.cc) skips activation for an already active tab and marks API navigation to retain omnibox focus. Local probes also found that `window.focus()`/input focus and same-document hash/history changes did not reliably move native typing out of browser chrome. The implementation therefore uses renderer navigation with a state handoff when needed, not a `tabs.update(url)` or synthetic Ctrl+F6 workaround.
 
-## Verification and known focus limitation
+## Accepted baseline and current verification
 
-`npm run check` passes: typecheck, lint, **159 tests across 9 files**, production build/version verification and unchanged extension identity. Unit checks cover current/same-window selection, other-window isolation, coalesced requests, loading readiness, worker restart with a pending request, cancellation, blocked Manage requests, failure recovery, actual/unassigned shortcut reporting and validated one-shot state handoff.
+The user validated **0.1.8 main Ctrl+Shift+B workflows and shortcut configurability in Edge**. The existing limitation from an already-open dashboard's address bar is accepted: search may open/select its query while actual typing remains in the address bar. **Ctrl+F6** transfers focus when needed. This limitation was not reinvestigated in 0.1.9; ordinary Ctrl+T is unchanged. No new permission is required.
 
-An isolated **WSL Chromium** extension profile with native X11 keyboard input passed:
+0.1.9 passes `npm run check`: typecheck, lint, 170 tests across 10 files, build/version verification and unchanged extension identity. Unit coverage includes command origin before activation, loading/cold readiness, coalescing, original Escape restoration and root shortcut exclusions, plus scroll/preference behavior. Synthetic DOM checks exercise query/focus/selection, scroll/branch restoration and modifier exclusions. These alone do not establish native shortcut behavior.
 
-- Fresh New Tab command → actual `azure` characters in search after explicit-route navigation.
-- Website → new explicit dashboard → actual `test` characters in search.
-- Existing query selection/replacement; root scope and expanded branch restored by Escape.
-- Unsaved Manage draft and website editor content unchanged.
-- Same-window dashboard reuse; eight rapid invocations without additional tabs.
-- Command-triggered service-worker restart with no pending request left behind.
+An isolated WSL Chromium profile additionally used **native X11 input with German XKB layout**: external command switched to All bookmarks; Alt+1/2 retained input selection; AltGr+2 typed `²`; Ctrl+Arrow retained word editing; Escape restored the original root/branch. Local setting reload and Manage draft protection passed without preference sync writes. The temporary copy used Linux Ctrl+Shift+Y only; the shipped command continues suggesting Windows Ctrl+Shift+B. Native Windows Edge 0.1.9 acceptance and the actual assignment in that profile are user-controlled.
 
-Those runs used a **temporary copy** with Linux Ctrl+Shift+Y to exercise the command. The shipped manifest only suggests Ctrl+Shift+B on Windows. A separate Linux probe of Ctrl+Shift+B returned an empty assignment, reinforcing that registration must be inspected. The actual assignment in the user's Windows Edge profile is **not observable here** and remains pending verification. No assignment was changed in that profile.
+Earlier 0.1.8 isolated Chromium evidence (fresh launch typing, cold worker, repeated invocation, website preservation) remains in `visual-review/generated/0.1.8-command-results.json`; it is not a new test claim. Current reports are `visual-review/generated/0.1.9-*`. No completed manual sync tests were reopened.
 
-**Remaining limitation:** in the isolated Chromium probe, invoking again from the address bar of an already-open explicit search page could leave native typing in the address bar, even though the query was selected and the explicit route was attempted. Use Ctrl+F6 in that case. Fresh New Tab and website launch passed locally, but no native Edge success is claimed for any focus case. This is not masked by arbitrary waits, repeated focus attempts or OS keystroke simulation in the extension. Native X11 events were test inputs only. Playwright focus emulation was explicitly disabled for address-bar investigation; actual typed input, rather than DOM focus alone, determined results.
+## Local root shortcuts and preview preference
 
-All eight native Edge checks below remain pending. Local extension/profile tests do not constitute Microsoft sync evidence. Temporary rerun scripts are in `/tmp/bb-catalogue-browser-check/command-extension.mjs` and `command-state-018.mjs`; summarized synthetic evidence is in `visual-review/generated/0.1.8-command-results.json`.
+**Alt+1** selects All bookmarks; **Alt+2** selects the first actual displayed root, continuing through **Alt+9** when available. Hover a root for its shortcut; accessible descriptions expose it too. Search keeps its query, focus and caret/selection. Missing numbers do nothing. Ctrl/Meta/Shift/AltGr/composition, Manage, other editable controls and dialogs are excluded. Plain numbers still search, and browser navigation/text-editing shortcuts remain available.
 
-## Native Edge checklist
+**Manage → Auto-scroll peek previews** is local to this device, defaults on when unset, and can be disabled independently. Mouse hover shows the normal static preview immediately, then waits **1.5 seconds** before scrolling overflowing content at **one computed line every 2.75 seconds**. It stops at the end. Leaving, switching, opening, search/root changes, disabling, page hiding or reduced motion cancel/reset. Keyboard-only previews remain static. A hidden-page return needs a fresh hover, so background time causes no jump. The sheet edge and real header targets never scroll; existing pointer passthrough and no-reflow behavior remain.
 
-1. Confirm **Open dashboard in search mode** and its actual assignment at `edge://extensions/shortcuts`; compare the read-only assignment shown in Manage.
-2. `Ctrl+T → type` still types in the address bar.
-3. `Ctrl+T → Ctrl+Shift+B → type` enters dashboard search. Judge actual characters, not a visible caret alone. If it fails, record the result and use the confirmed Ctrl+F6 fallback.
-4. From another website, **Ctrl+Shift+B** opens/reuses a dashboard in that window and typing reaches search. The original website remains intact. Ctrl+B applies only if manually reassigned; the confirmed default is Ctrl+Shift+B.
-5. Existing query is selected for replacement; Escape restores scope, expansion and browse position. Also try the explicit dashboard with the address bar focused and report whether the known Chromium limitation reproduces.
-6. Rapid repeated invocation creates no duplicate tabs; another window's dashboard is not selected. Try a fresh/cold worker and a loading dashboard.
-7. Reassigning works; removing the assignment is respected after reload/restart. Restore the preferred assignment manually if desired.
-8. Test while focused in a website text editor. If deliberately reassigned to Ctrl+B, check interaction with the editor's Bold command; do not assume Edge gives the extension precedence. Verify the editor content remains intact. In Manage, an unsaved draft must remain open and the shortcut must report that it is paused.
+## Native Edge 0.1.9 checklist
 
-Stop for user-controlled Edge review. Auto-scrolling, thumbnails, Edit-mode redesign, drag/drop and sync changes remain deferred.
+1. Leave the dashboard on Favorites bar with a section/folder open; invoke **Ctrl+Shift+B from another website**. Search uses All bookmarks; Escape restores the original view and scroll.
+2. During search, use **Alt+1/2/3**. Query and input focus/selection remain; Escape still restores the original view. Repeat the command and change roots before Escape.
+3. Verify plain-number searches, Ctrl+Arrow editing, **German AltGr input** and unaffected Manage fields. Check root tooltips/keyboard help and missing root numbers.
+4. Hover a long section: static preview, then delayed slow scrolling, stopping at the end. Short sections should not scroll.
+5. Leave/re-enter, switch headers and click during scrolling: preview resets and normal opening begins at the top. Switching away from a long open card keeps the new header visible.
+6. Confirm static keyboard peek, reduced motion, the disable toggle (including reload), stationary page/header targets, and no reappearing coverage gaps at narrow widths/zoom.
+
+The accepted already-open-address-bar case may still need Ctrl+F6; no new investigation is requested. Stop for user Edge review. Website thumbnails, Edit-mode redesign, drag/drop and synchronization changes remain deferred.

@@ -1,0 +1,37 @@
+{
+  "realTime": {
+    "initialStaticThrough": 1200,
+    "offsetAfter4300ms": 62.5904,
+    "computedLine": 60.398,
+    "noPageMovement": true,
+    "cover": {
+      "top": 428.984375,
+      "bottom": 513,
+      "inert": true,
+      "interactive": 0
+    }
+  },
+  "cancellation": [
+    "leave",
+    "disable preference",
+    "reduced motion",
+    "hidden document with no resume",
+    "opening",
+    "search",
+    "root switch"
+  ],
+  "keyboardStatic": true,
+  "resizeAndEnd": {
+    "end": 6988,
+    "maximum": 6988,
+    "stopped": true
+  },
+  "passthroughAndMidTransitionClick": true,
+  "cardSwitchHeaderY": 11.78125,
+  "shortContent": {
+    "contentHeight": 77,
+    "viewportHeight": 151,
+    "transformAfter3100ms": "",
+    "freshHeaderDelayPreserved": true
+  }
+}
