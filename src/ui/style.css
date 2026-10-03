@@ -6,7 +6,7 @@
   --catalogue-font: Georgia, "Times New Roman", Times, serif;
   --catalogue-size: clamp(42px, 3.3vw, 69px);
   --nested-size: calc(var(--catalogue-size) * .85);
-  --catalogue-line: calc(var(--catalogue-size) + 9px);
+  --catalogue-line: calc(var(--catalogue-size) + 14px);
   --header-height: 85px;
   --page-gutter: clamp(20px, 3.5vw, 72px);
 }
@@ -59,15 +59,18 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .peek-successor {
   /* The following sheet's opaque lip and transparent shadow travel together
      as the absolute preview body changes height; the document never reflows. */
-  position: relative; background: white; min-height: var(--header-height); pointer-events: none;
+  position: relative; background: white; height: var(--header-height); pointer-events: none;
+  /* Preserve this sheet's upward shadow while clipping its bottom to the next
+     real shadow boundary, including any overlapped label padding. */
+  clip-path: inset(-20px 0 0);
 }
 .peek-successor .section-header { pointer-events: none; }
 .is-open .section-reveal { position: relative; top: auto; visibility: visible; pointer-events: auto; transition: none; }
 .is-open .section-content { height: auto; overflow: visible; padding-bottom: 32px; transition: none; }
-.is-open .section-content > .catalogue-flow { animation: catalogue-open 170ms ease-out; }
+.is-open .section-content > .catalogue-flow { animation: catalogue-open 220ms ease-out; }
 .is-open .section-header { position: sticky; top: 0; z-index: 2; }
 @keyframes catalogue-open { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
-.catalogue-flow { font-family: var(--catalogue-font); font-size: var(--catalogue-size); letter-spacing: -.01em; line-height: calc(1em + 9px); overflow-wrap: anywhere; padding-bottom: 16px; }
+.catalogue-flow { font-family: var(--catalogue-font); font-size: var(--catalogue-size); letter-spacing: -.01em; line-height: calc(1em + 14px); overflow-wrap: anywhere; padding-bottom: 16px; }
 .catalogue-item { position: relative; display: inline; vertical-align: baseline; }
 .folder-item { display: inline-block; max-width: 100%; }
 .bookmark-title { text-decoration: none; font-weight: normal; }
@@ -85,7 +88,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .folder-trigger:hover .folder-title, .folder-trigger:focus-visible .folder-title { text-decoration: underline; }
 .folder-count { display: inline-block; font: 400 16px/1 Helvetica, Arial, sans-serif; letter-spacing: 0; font-style: normal; vertical-align: top; margin-left: .2em; padding-top: .55em; }
 .folder-children {
-  font-size: var(--nested-size); line-height: calc(1em + 9px);
+  font-size: var(--nested-size); line-height: calc(1em + 14px);
   margin-inline: .6em; padding-left: .3em;
   /* Repeated padding gives wrapped fragments a light hanging inset, while
      keeping every nested sequence in the same inline formatting context. */

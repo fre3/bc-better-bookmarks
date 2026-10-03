@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { CatalogueSection } from './catalogue-model';
 import { CatalogueItems } from './CatalogueItems';
+import { usePeekCoverage } from './usePeekCoverage';
 
 interface Props {
   section: CatalogueSection;
@@ -30,8 +31,9 @@ export function SectionCard({ section, nextSection, stackIndex, stackSize, allRo
     return () => window.clearTimeout(timeout);
   }, [peek, retainedPreview]);
   const preview = !open && (peek || retainedPreview);
+  const slot = usePeekCoverage(preview);
   const contentId = `section-content-${section.id}`;
-  return <section id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${peek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
+  return <section ref={slot} id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${peek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
     style={{ zIndex: peek ? stackSize + 1 : preview ? stackSize : stackIndex }}>
     <div className="section-sheet has-top-shadow">
       <div className="section-header" onPointerEnter={e => { if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={() => setPointerPeek(-1)}>
