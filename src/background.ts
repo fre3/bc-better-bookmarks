@@ -1,3 +1,4 @@
+import { savePeekPreference } from './browser/ui-preferences';
 import { BrowserBookmarksRepository } from './browser/bookmarks';
 import { BrowserMetadataRepository } from './browser/metadata';
 import { DashboardService } from './core/service';
@@ -39,6 +40,12 @@ function refresh(reason: string) {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (sender.id === chrome.runtime.id && message?.event === 'dashboard-search-ready' && sender.tab?.id !== undefined && sender.frameId === 0 && dashboardUrl(sender.url)) {
     void dashboardLauncher.ready(sender.tab.id).then(() => sendResponse({ ok: true }), error => sendResponse({ ok: false, error: String(error) }));
+    return true;
+  }
+  if (sender.id === chrome.runtime.id && message?.event === 'set-peek-preference' && typeof message.enabled === 'boolean') {
+    void enqueue(() => savePeekPreference(message.enabled)).then(
+      () => sendResponse({ ok: true }), error => sendResponse({ ok: false, error: String(error) }),
+    );
     return true;
   }
   if (sender.id !== chrome.runtime.id || !message?.command) return false;

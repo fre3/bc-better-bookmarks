@@ -5,9 +5,11 @@ import { Catalogue } from './Catalogue';
 import { LegacyManagement } from './LegacyManagement';
 import { onDashboardSearch, dashboardShortcut, openShortcutSettings } from '../browser/dashboard-launch';
 import type { SearchIntent } from '../core/dashboard-launch';
+import { usePeekPreference } from './usePeekPreference';
 import './legacy.css';
 
 export function App() {
+  const peekPreference = usePeekPreference();
   const [snapshot, setSnapshot] = useState<Snapshot>();
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -56,10 +58,12 @@ export function App() {
     {error && <p className="status-error" role="alert">{error}</p>}
     {notice && <p role="status">{notice}</p>}
     {snapshot.errors.length > 0 && <details className="status-error"><summary>{snapshot.errors.length} diagnostic warnings/errors</summary><ul>{snapshot.errors.map((message, i) => <li key={i}>{message}</li>)}</ul></details>}
-    <Catalogue snapshot={snapshot} suspended={managing} searchRequest={searchRequest} onManage={() => { setManaging(true); setNotice(''); }} />
+    <Catalogue snapshot={snapshot} suspended={managing} autoScrollPeek={peekPreference.enabled} searchRequest={searchRequest} onManage={() => { setManaging(true); setNotice(''); }} />
     {managing && <>
       <div className="management-heading"><span>Existing management controls · editing redesign follows visual review</span><button onClick={() => { setManaging(false); setNotice(''); }}>Back to catalogue</button></div>
       <p>Dashboard search shortcut: {shortcut === undefined ? 'assignment unavailable' : shortcut || 'unassigned'}. <button onClick={openShortcutSettings}>Keyboard shortcut settings</button>. New Tab fallback: Ctrl+F6, then type.</p>
+      <p><label><input type="checkbox" checked={peekPreference.enabled} disabled={!peekPreference.ready || peekPreference.saving} onChange={e => void peekPreference.update(e.target.checked)} /> Auto-scroll peek previews</label> <small>On this device · starts after 1.5 seconds · disabled by reduced motion</small></p>
+      {peekPreference.error && <p role="alert">{peekPreference.error}</p>}
       <LegacyManagement s={snapshot} busy={busy} execute={execute} />
     </>}
   </main>;
