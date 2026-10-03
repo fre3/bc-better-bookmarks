@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { CatalogueSection } from './catalogue-model';
 import { CatalogueItems } from './CatalogueItems';
+import { useCatalogueAnnotations } from './useCatalogueAnnotations';
 import { usePeekCoverage } from './usePeekCoverage';
 
 interface Props {
@@ -32,6 +33,7 @@ export function SectionCard({ section, nextSection, stackIndex, stackSize, allRo
   }, [peek, retainedPreview]);
   const preview = !open && (peek || retainedPreview);
   const slot = usePeekCoverage(preview);
+  const flow = useCatalogueAnnotations();
   const contentId = `section-content-${section.id}`;
   return <section ref={slot} id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${peek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
     style={{ zIndex: peek ? stackSize + 1 : preview ? stackSize : stackIndex }}>
@@ -48,7 +50,7 @@ export function SectionCard({ section, nextSection, stackIndex, stackSize, allRo
       </div>
       <div className="section-reveal">
       <div id={contentId} className="section-content" inert={!open} aria-hidden={!open}>
-        {(open || preview) && <div className="section-inner catalogue-flow">
+        {(open || preview) && <div ref={flow} className="section-inner catalogue-flow">
           {section.children.length ? <CatalogueItems items={section.children} expanded={expanded} onToggle={onFolder} query={query} /> : <span className="empty-folder">Empty folder</span>}
         </div>}
       </div>

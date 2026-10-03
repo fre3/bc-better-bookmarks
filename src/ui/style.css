@@ -46,6 +46,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
   padding-block: 26px 34px; overflow-wrap: anywhere; font: 700 17.6px/1.25 Helvetica, Arial, sans-serif;
 }
 .section-header button:hover { text-decoration: none; }
+.section-header button:focus-visible { outline: none; }
+.section-header button:focus-visible .section-heading-text { outline: 1px solid currentColor; outline-offset: 4px; }
 .root-provenance { color: #686868; font-weight: 400; }
 .section-reveal {
   position: absolute; top: 100%; inset-inline: 0; background: white; pointer-events: none;
@@ -67,16 +69,23 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .peek-successor .section-header { pointer-events: none; }
 .is-open .section-reveal { position: relative; top: auto; visibility: visible; pointer-events: auto; transition: none; }
 .is-open .section-content { height: auto; overflow: visible; padding-bottom: 32px; transition: none; }
+/* Room for the first link's outline below the opaque sticky header. Peek's
+   clipping and line-relative depth remain unchanged. */
+.is-open .catalogue-flow { padding-top: 6px; }
 .is-open .section-content > .catalogue-flow { animation: catalogue-open 220ms ease-out; }
 .is-open .section-header { position: sticky; top: 0; z-index: 2; }
 @keyframes catalogue-open { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
-.catalogue-flow { font-family: var(--catalogue-font); font-size: var(--catalogue-size); letter-spacing: -.01em; line-height: calc(1em + 14px); overflow-wrap: anywhere; padding-bottom: 16px; }
+/* Clip only at the full sheet width: long annotations and cloned hanging-inset
+   margins must not extend the page. Vertical focus contours remain visible. */
+.catalogue-flow { position: relative; overflow-x: clip; font-family: var(--catalogue-font); font-size: var(--catalogue-size); letter-spacing: -.01em; line-height: calc(1em + 14px); overflow-wrap: anywhere; padding-bottom: 16px; }
 .catalogue-item { position: relative; display: inline; vertical-align: baseline; }
 .folder-item { display: inline-block; max-width: 100%; }
-.bookmark-title { text-decoration: none; font-weight: normal; }
-.bookmark-title:hover, .bookmark-title:focus-visible { text-decoration: underline; text-decoration-thickness: auto; text-underline-offset: .08em; }
+.bookmark-item { position: static; }
+.bookmark-title { text-decoration: none; font-weight: normal; overflow-wrap: break-word; word-break: normal; }
+.bookmark-item:hover .bookmark-text, .bookmark-item:focus-within .bookmark-text { text-decoration: underline; text-decoration-thickness: auto; text-underline-offset: .08em; }
+/* Keep the native multiline contour out of the annotation's interline space. */
+.bookmark-title:focus-visible { outline-offset: -1px; }
 .non-navigating { cursor: default; }
-.bookmark-tail { display: inline-block; max-width: 100%; overflow-wrap: anywhere; vertical-align: baseline; }
 .bookmark-ending { white-space: nowrap; }
 .favicon-frame { display: inline-block; padding: .1em; background: #eee; line-height: 0; vertical-align: -.01em; margin-right: .12em; }
 .favicon { display: block; width: auto; height: .8em; vertical-align: top; filter: grayscale(1); }
@@ -97,7 +106,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .expansion-break { display: none; }
 [data-expansion-end="break"] .expansion-break { display: initial; }
 .item-annotation {
-  position: absolute; left: 0; top: calc(100% + 2px); z-index: 1;
+  position: absolute; left: 0; top: 0; z-index: 1;
   font: 10px/10px Helvetica, Arial, sans-serif; letter-spacing: 0; white-space: nowrap;
   visibility: hidden; max-height: 10px; overflow: clip; width: max-content;
   pointer-events: none; color: #515151;
