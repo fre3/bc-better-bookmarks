@@ -1,0 +1,14 @@
+[
+  "mid-transition click opens correct section; no stale summary",
+  "keyboard-only peek static with unchanged real accessible header",
+  "reduced-motion peek instant and static",
+  {
+    "resized": {
+      "text": "Next:Baust…|FRE3 · Favorites bar+1",
+      "width": 390,
+      "overflow": false
+    }
+  },
+  "root change clears old summary; scoped summary omits redundant provenance",
+  "search clears summary; empty results retain footer; Escape restores scope"
+]

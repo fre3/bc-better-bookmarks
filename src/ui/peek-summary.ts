@@ -1,19 +1,29 @@
 export interface CoveredLabel { id: string; title: string; rootId: string; rootTitle: string }
-export interface SummaryPart { text: string; kind: 'name' | 'provenance' | 'separator' | 'omitted'; index?: number }
+export interface SummaryPart { text: string; kind: 'prefix' | 'name' | 'provenance' | 'separator' | 'group-gap' | 'omitted'; index?: number }
 export type MeasureText = (text: string, bold: boolean) => number;
 export function labelIsCovered(top: number, bottom: number, overlayTop: number, overlayBottom: number) {
   return bottom > overlayTop && top < overlayBottom;
 }
+/** Horizontal spacing is shared by fitting and rendering (in font ems). */
+export function summaryGap(kind: SummaryPart['kind']): [number, number] {
+  if (kind === 'prefix') return [0, .4];
+  if (kind === 'separator') return [.5, .5];
+  if (kind === 'group-gap') return [.625, .625];
+  return [0, 0];
+}
+export function summaryWidth(segments: readonly SummaryPart[], measure: MeasureText, em: number) {
+  return segments.reduce((sum, part) => sum + measure(part.text, part.kind === 'name') + summaryGap(part.kind).reduce((a, b) => a + b, 0) * em, 0);
+}
 function parts(items: readonly CoveredLabel[], allRoots: boolean, omitted: number): SummaryPart[] {
-  const result: SummaryPart[] = [];
+  const result: SummaryPart[] = [{ text: 'Next:', kind: 'prefix' }];
   items.forEach((item, index) => {
-    if (index) result.push({ text: ' | ', kind: 'separator' });
+    if (index) result.push(allRoots && item.rootId !== items[index - 1].rootId ? { text: '', kind: 'group-gap' } : { text: '|', kind: 'separator' });
     result.push({ text: item.title || '(untitled)', kind: 'name', index });
     // Root identity, not display name, ends a consecutive provenance group.
     if (allRoots && item.rootId !== items[index + 1]?.rootId) result.push({ text: ` · ${item.rootTitle || '(untitled root)'}`, kind: 'provenance' });
   });
   if (omitted) {
-    if (items.length) result.push({ text: ' | ', kind: 'separator' });
+    if (items.length) result.push({ text: '', kind: 'group-gap' });
     result.push({ text: `+${omitted}`, kind: 'omitted' });
   }
   return result;
@@ -32,10 +42,10 @@ function shorten(text: string, width: number, measure: (value: string) => number
 
 /** Compact provenance first, then cap long names before dropping a trailing
  * suffix. Omitted count always refers to sections, never roots or text tokens. */
-export function fitPeekSummary(items: readonly CoveredLabel[], allRoots: boolean, width: number, measure: MeasureText): SummaryPart[] {
+export function fitPeekSummary(items: readonly CoveredLabel[], allRoots: boolean, width: number, measure: MeasureText, em = 17.6): SummaryPart[] {
   if (!items.length) return [];
   const natural = items.map(item => ({ ...item, title: item.title || '(untitled)' }));
-  const widthOf = (segments: SummaryPart[]) => segments.reduce((sum, part) => sum + measure(part.text, part.kind === 'name'), 0);
+  const widthOf = (segments: SummaryPart[]) => summaryWidth(segments, measure, em);
   if (widthOf(parts(natural, allRoots, 0)) <= width) return parts(natural, allRoots, 0);
   for (let count = natural.length; count > 0; count--) {
     const shown = natural.slice(0, count), omitted = natural.length - count;
@@ -61,12 +71,12 @@ export function fitPeekSummary(items: readonly CoveredLabel[], allRoots: boolean
   // compact provenance, then +N; if even that is impossible, show the count.
   if (allRoots) {
     const first = natural[0], omitted = natural.length - 1;
-    const fixed = measure(' · ', false) + (omitted ? measure(` | +${omitted}`, false) : 0);
+    const fixed = widthOf(parts([{ ...first, title: '', rootTitle: '' }], true, omitted).filter(part => part.kind !== 'name' && part.kind !== 'provenance')) + measure(' · ', false);
     const space = width - fixed;
     if (space > measure('…', true) + measure('…', false)) {
       const fitted = parts([{ ...first, title: shorten(first.title, space * .55, s => measure(s, true)), rootTitle: shorten(first.rootTitle || '(untitled root)', space * .45, s => measure(s, false)) }], true, omitted);
       if (widthOf(fitted) <= width) return fitted;
     }
   }
-  return [{ text: `+${items.length}`, kind: 'omitted' }];
+  return [{ text: 'Next:', kind: 'prefix' }, { text: `+${items.length}`, kind: 'omitted' }];
 }

@@ -95,8 +95,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
   font: 700 17.6px/1.25 Helvetica, Arial, sans-serif; pointer-events: none; overflow: clip;
 }
 .peek-summary-line { white-space: nowrap; min-width: 0; }
-.peek-summary-provenance { color: #686868; font-weight: 400; }
-.peek-summary-separator, .peek-summary-omitted { color: #737373; font-weight: 400; }
+.peek-summary-prefix, .peek-summary-provenance { color: #666; font-weight: 400; }
+.peek-summary-separator { color: #999; font-weight: 400; }
+.peek-summary-omitted { color: #767676; font-weight: 400; }
 .is-open .section-reveal { position: relative; top: auto; visibility: visible; pointer-events: auto; transition: none; }
 .is-open .section-content { height: auto; overflow: visible; padding-bottom: 32px; transition: none; }
 /* Room for the first link's outline below the opaque sticky header. Peek's

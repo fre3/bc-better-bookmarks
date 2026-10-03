@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { fitPeekSummary, type CoveredLabel, type SummaryPart } from './peek-summary';
+import { fitPeekSummary, summaryGap, type CoveredLabel, type SummaryPart } from './peek-summary';
 
 /** This duplicate visual explanation is inert/aria-hidden at its parent. Its
  * absolute box never participates in the copied header's coverage measurement. */
@@ -22,7 +22,7 @@ export function PeekSummary({ items, allRoots }: { items: readonly CoveredLabel[
           cache.set(key, context.measureText(text).width);
         }
         return cache.get(key)!;
-      });
+      }, parseFloat(style.fontSize));
       setParts(previous => JSON.stringify(previous) === JSON.stringify(next) ? previous : next);
     };
     const observer = new ResizeObserver(update); observer.observe(element);
@@ -30,7 +30,12 @@ export function PeekSummary({ items, allRoots }: { items: readonly CoveredLabel[
     return () => { observer.disconnect(); document.fonts.removeEventListener('loadingdone', update); };
   }, [items, allRoots]);
   return <div ref={box} className="peek-summary section-inner">
-    <span className="peek-summary-line">{parts.map((part, index) => <span key={index} className={`peek-summary-${part.kind}`}
-      style={part.kind === 'name' ? { color: part.index === 0 ? '#222' : part.index === 1 ? '#555' : '#737373' } : undefined}>{part.text}</span>)}</span>
+    <span className="peek-summary-line">{parts.map((part, index) => {
+      const [start, end] = summaryGap(part.kind);
+      return <span key={index} className={`peek-summary-${part.kind}`} style={{
+        marginInlineStart: `${start}em`, marginInlineEnd: `${end}em`,
+        color: part.kind === 'name' ? part.index === 0 ? '#111' : part.index === 1 ? '#666' : '#767676' : undefined,
+      }}>{part.text}</span>;
+    })}</span>
   </div>;
 }

@@ -69,7 +69,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
         {/* Presentation of the following sheet's lip, not a second interactive
             header. Real headers retain their flow positions and hit targets. */}
         {nextSection && <div className="section-header peek-header-measure"><div className="section-inner section-label"><span className="section-heading-text">{nextSection.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {nextSection.rootTitle}</span>}</span></div></div>}
-        {nextSection && <PeekSummary items={covered} allRoots={allRoots} />}
+        {covered.length > 0 && <PeekSummary items={covered} allRoots={allRoots} />}
       </div>}
       </div>
     </div>
