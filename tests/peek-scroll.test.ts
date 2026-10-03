@@ -8,7 +8,7 @@ function fixture(maximum = 300) {
   const paint = vi.fn((value: number) => { offset = value; });
   const scroll = startPeekScroll({
     measure: () => ({ maximum, lineHeight }), paint,
-    delay: (callback, ms) => { expect(ms).toBe(1500); delays.set(++token, callback); return token; },
+    delay: (callback, ms) => { expect(ms).toBe(1000); delays.set(++token, callback); return token; },
     clearDelay: id => { delays.delete(id); },
     frame: callback => { frames.set(++token, callback); return token; }, cancelFrame: id => { frames.delete(id); },
   });

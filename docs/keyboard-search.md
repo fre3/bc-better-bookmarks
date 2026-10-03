@@ -56,9 +56,11 @@ Earlier 0.1.8 isolated Chromium evidence (fresh launch typing, cold worker, repe
 
 ## Local root shortcuts and preview preference
 
+The user accepts top-number-row Alt+1–9 and Windows Alt+numpad character entry as platform behavior. No numpad symbol filtering/suppression is applied. The accepted delay is now **1000ms**; temporary All bookmarks/Escape restoration and the address-bar/Ctrl+F6 limitation are also accepted.
+
 **Alt+1** selects All bookmarks; **Alt+2** selects the first actual displayed root, continuing through **Alt+9** when available. Hover a root for its shortcut; accessible descriptions expose it too. Search keeps its query, focus and caret/selection. Missing numbers do nothing. Ctrl/Meta/Shift/AltGr/composition, Manage, other editable controls and dialogs are excluded. Plain numbers still search, and browser navigation/text-editing shortcuts remain available.
 
-**Manage → Auto-scroll peek previews** is local to this device, defaults on when unset, and can be disabled independently. Mouse hover shows the normal static preview immediately, then waits **1.5 seconds** before scrolling overflowing content at **one computed line every 2.75 seconds**. It stops at the end. Leaving, switching, opening, search/root changes, disabling, page hiding or reduced motion cancel/reset. Keyboard-only previews remain static. A hidden-page return needs a fresh hover, so background time causes no jump. The sheet edge and real header targets never scroll; existing pointer passthrough and no-reflow behavior remain.
+**Manage → Auto-scroll peek previews** is local to this device, defaults on when unset, and can be disabled independently. Mouse hover shows the normal static preview immediately, then waits **1 second** before scrolling overflowing content at **one computed line every 2.75 seconds**. It stops at the end. Leaving, switching, opening, search/root changes, disabling, page hiding or reduced motion cancel/reset. Keyboard-only previews remain static. A hidden-page return needs a fresh hover, so background time causes no jump. The sheet edge and real header targets never scroll; existing pointer passthrough and no-reflow behavior remain.
 
 ## Native Edge 0.1.9 checklist
 

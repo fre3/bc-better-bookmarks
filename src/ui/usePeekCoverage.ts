@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from 'react';
+import { peekCoverBottom, type CoveredSheet } from './peek-coverage';
 
-/** Finish the copied sheet at an intact stack boundary, not through a real label. */
+/** Cover partial headers without extending the lip across an open sheet. */
 export function usePeekCoverage(active: boolean) {
   const slot = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
@@ -12,22 +13,38 @@ export function usePeekCoverage(active: boolean) {
     const update = () => {
       const top = cover.getBoundingClientRect().top;
       const minimum = label?.getBoundingClientRect().height ?? parseFloat(getComputedStyle(cover).getPropertyValue('--header-height'));
-      const minimumBottom = top + minimum;
-      let bottom = minimumBottom;
+      const sheets: CoveredSheet[] = [];
+      let openFlow: HTMLElement | null = null;
       for (let sibling = section.nextElementSibling; sibling; sibling = sibling.nextElementSibling) {
         if (!(sibling instanceof HTMLElement) || !sibling.matches('.section-slot')) continue;
         const sheet = sibling.querySelector<HTMLElement>('.section-sheet')!;
-        const shadow = getComputedStyle(sheet, '::before');
-        const boundary = sheet.getBoundingClientRect().top;
-        // A real header's final shadow-height strip is overlapped by the next
-        // sheet. The copy needs the same exposed area, not another full header.
-        if (boundary >= minimumBottom) {
-          bottom = boundary + parseFloat(shadow.top);
-          break;
-        }
-        // If there is no later boundary, finish covering the final real header.
+        const bounds = sheet.getBoundingClientRect();
         const header = sheet.querySelector<HTMLElement>('.section-header')!;
-        bottom = Math.max(bottom, header.getBoundingClientRect().bottom);
+        const open = sibling.classList.contains('is-open');
+        sheets.push({
+          top: bounds.top, bottom: bounds.bottom,
+          // Use the header's flow extent, not its displaced sticky position.
+          headerBottom: bounds.top + header.getBoundingClientRect().height,
+          shadowTop: bounds.top + parseFloat(getComputedStyle(sheet, '::before').top),
+          open,
+        });
+        if (open && bounds.top < top + minimum && bounds.bottom > top + minimum) {
+          openFlow = sheet.querySelector<HTMLElement>('.catalogue-flow');
+        }
+        if (bounds.top >= top + minimum || (open && bounds.bottom > top + minimum)) break;
+      }
+      let bottom = peekCoverBottom(top, minimum, sheets);
+      // When the lip ends in open prose, finish only an intersected text line.
+      // Otherwise a few pixels of its descenders can leak below the opaque lip.
+      // Inline fragments are in flow order: stop before the next complete line,
+      // rather than measuring the rest of a potentially enormous open card.
+      if (openFlow) {
+        fragments: for (const text of openFlow.querySelectorAll('.bookmark-text, .folder-title')) {
+          for (const fragment of text.getClientRects()) {
+            if (fragment.top >= bottom) break fragments;
+            if (fragment.bottom > bottom) bottom = fragment.bottom;
+          }
+        }
       }
       cover.style.height = `${bottom - top}px`;
     };

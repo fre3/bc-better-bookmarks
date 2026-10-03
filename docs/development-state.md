@@ -1,26 +1,30 @@
 # Development State
 
 Last updated: 2026-10-03
-Current branch: `feature/ui-ux-redesign`. Browser-review build: **0.1.9**. Search/navigation commit `48be68c`; scrolling/source artifact commit `57836fc`.
+Current branch: `feature/ui-ux-redesign`. Browser-review build: **0.1.10** (overlap correction; footer follows in a separate commit). Search/navigation commit `48be68c`; scrolling/source artifact commit `57836fc`.
 Validated baseline: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated tag `mvp-validated-0.1.1`.
 
 ## Current checkpoint and next action
 
-**Next action: user Edge review of 0.1.9**, using the six-point checklist in [keyboard-search.md](keyboard-search.md). Stop before further refinement or Edit mode. No push was made. Authoritative checkout/tooling remains **WSL `/home/dev/projects/bc-better-bookmarks`**; no Windows clone changed.
+**Current work: add the authorized black footer after the overlap correction passes; then stop for Edge review of 0.1.10**, using the six-point checklist in [keyboard-search.md](keyboard-search.md). Stop before further refinement or Edit mode. No push was made. Authoritative checkout/tooling remains **WSL `/home/dev/projects/bc-better-bookmarks`**; no Windows clone changed.
 
 The user has accepted **0.1.8's main Ctrl+Shift+B workflows and shortcut configurability in Edge**. The already-open dashboard/address-bar limitation is accepted: the command can prepare search while Ctrl+F6 is still needed to transfer real typing focus. This checkpoint does not reinvestigate it. Ordinary Ctrl+T retains address-bar focus; the fallback remains **Ctrl+T → Ctrl+F6 → type**. The Windows suggestion stays Ctrl+Shift+B, with actual assignment/removal controlled by Edge's native shortcut settings.
 
-0.1.9 adds:
+Accepted: **1000ms** preview delay, temporary All bookmarks/Escape restoration, top-row Alt+1–9, Windows Alt+numpad symbol entry as platform behavior, and the address-bar/Ctrl+F6 limitation. No keyboard suppression or command reassignment.
+
+0.1.10 confirms/fixes excessive peek coverage: an 85px copied header grew to 875/960px over open Crypto by scanning to Stack. Coverage now stops within the required copied-header footprint, completing only a partially overlapped header/text line. Collapsed-stack boundary coverage is retained. Inspected the three supplied overlap images, sampled the video, and identified the black footer reference.
+
+0.1.9 foundations retained:
 
 - Commands capture the originating tab before activating/creating a dashboard. Launch from another tab temporarily searches **All bookmarks**. Launch from the dashboard retains its current scope. Query selection remains intact. One pre-search snapshot preserves root, open section, expanded branch, scroll and focus through repeated commands and search-scope changes; Escape restores it. Pending external scope intent survives loading/repeated requests. Manage and save guards still protect drafts.
 - Dashboard-local **Alt+1–9** selects displayed roots by identity (All bookmarks first). Query, focus and selection survive search scope changes. Tooltips and accessible shortcut descriptions expose the mapping. Missing numbers, extra modifiers, AltGr/composition, dialogs, other text controls and Manage are excluded; plain digits and Ctrl+Arrow retain their behavior.
-- **Manage → Auto-scroll peek previews** is independently switchable, local-only (`ui:auto-scroll-peek`), enabled by default if absent. Existing explicit opt-out is read before motion is enabled. Worker-queued preference writes do not touch synchronized metadata. After 1.5 seconds of continuous mouse-header hover, overflowing inert preview content moves one computed line per 2.75 seconds and stops at its end. Geometry, dither, header targets and document scroll remain stationary. Leaving, opening, search/root changes, disabling, reduced motion or hiding cancel/reset. Keyboard-only peeks stay static. Returning from a hidden page requires a new hover; no elapsed-time jump.
+- **Manage → Auto-scroll peek previews** is independently switchable, local-only (`ui:auto-scroll-peek`), enabled by default if absent. Existing explicit opt-out is read before motion is enabled. Worker-queued preference writes do not touch synchronized metadata. After 1 second of continuous mouse-header hover, overflowing inert preview content moves one computed line per 2.75 seconds and stops at its end. Geometry, dither, header targets and document scroll remain stationary. Leaving, opening, search/root changes, disabling, reduced motion or hiding cancel/reset. Keyboard-only peeks stay static. Returning from a hidden page requires a new hover; no elapsed-time jump.
 
 Accepted 0.1.6–0.1.8 typography, 14px leading, fixed nested scale, slash/underscore/hyphen wrapping, first-fragment annotations, focus contours, measured opaque coverage, 140ms/90ms peek and 220ms open reveal remain unchanged. Limited readable annotation/frame overlap is accepted; bookmark-text overlap is not. Current observed English/German hyphenation is accepted without new language assignments/detection. Folder tags, website thumbnails, Edit-mode redesign, drag/drop and sync changes remain deferred.
 
 ## Verification and artifact
 
-`npm run check` passes: typecheck, lint, **170 tests across 10 files**, production build/version verification and unchanged extension ID `nfhbegeoeafnpejpjdljhgagefbpafal`. Package, lockfile and source/generated manifest versions are **0.1.9**. Tracked `dist/` is regenerated. No new dependencies, permissions, public-key changes, SVG or catalogue CSS changes. Core bookmark/search/sync/mutation architecture is retained.
+`npm run check` passes: typecheck, lint, **175 tests across 11 files**, production build/version verification and unchanged extension ID `nfhbegeoeafnpejpjdljhgagefbpafal`. Package, lockfile and source/generated manifest versions are **0.1.10**. Tracked `dist/` is regenerated. No new dependencies, permissions, public-key changes, SVG or catalogue CSS changes. Core bookmark/search/sync/mutation architecture is retained.
 
 Unit tests cover captured origin, retained launch intent through cold readiness, immutable Escape snapshots, dynamic shortcut mapping/exclusions, scroll delay/speed/end/cancellation/resize, and local preference defaults, persistence, errors and subscriptions. Existing functional tests are retained; completed manual sync testing was not reopened.
 

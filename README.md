@@ -16,7 +16,7 @@ At `edge://extensions/shortcuts`, inspect **Open dashboard in search mode** and 
 
 The command reuses a dashboard in the current window or opens one there. From another tab, it temporarily searches All bookmarks; Escape restores the original browse scope and view. Dashboard-origin search keeps its scope. Manage/active saves pause it to preserve edits. Ordinary Ctrl+T still focuses the address bar; the user-confirmed fallback is **Ctrl+T → Ctrl+F6 → type**. The accepted already-open dashboard/address-bar limitation can leave typing in the address bar; use Ctrl+F6. This checkpoint preserves it.
 
-**Alt+1–9** selects roots in displayed order, preserving query/selection during search. **Manage → Auto-scroll peek previews** toggles device-local scrolling (default on): mouse-header hover waits 1.5 seconds, then scrolls slowly to the end. Keyboard-only peek and reduced motion stay static.
+**Alt+1–9** selects roots in displayed order, preserving query/selection during search. **Manage → Auto-scroll peek previews** toggles device-local scrolling (default on): mouse-header hover waits 1 second, then scrolls slowly to the end. Keyboard-only peek and reduced motion stay static.
 
 See [command behavior, added tabs permission, focus limitations and Edge checklist](docs/keyboard-search.md). Slash wrapping is also included in 0.1.8; current observed English/German behavior is accepted without language-model changes.
 

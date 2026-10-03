@@ -30,7 +30,7 @@ export function startPeekScroll(host: PeekScrollHost) {
     schedule();
   }
   resize();
-  const delay = host.delay(() => { if (!cancelled) { started = true; resize(); } }, 1500);
+  const delay = host.delay(() => { if (!cancelled) { started = true; resize(); } }, 1000);
   return {
     resize,
     cancel() {
