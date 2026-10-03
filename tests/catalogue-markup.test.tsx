@@ -57,6 +57,17 @@ describe('catalogue safety and semantics', () => {
     expect(markup).not.toContain('tabindex');
     expect(markup.replace(/<[^>]*>/g, '')).toContain(title);
   });
+  it('offers breaks after path slashes while keeping scheme delimiters and exact title text', () => {
+    for (const title of ['https://example.org/repo/file_name-v2.pdf', 'Azure/azure-blockchain-projects', 'See https://']) {
+      const markup = renderToStaticMarkup(<BookmarkLabel title={title} />);
+      expect(markup.replace(/<[^>]*>/g, '')).toBe(`${title} ;`);
+      expect(markup).not.toContain('<br');
+      expect(markup).not.toMatch(/https:<wbr|https:\/<wbr/);
+    }
+    const markup = renderToStaticMarkup(<BookmarkLabel title="https://example.org/repo/final" />);
+    expect(markup).toContain('<span class="bookmark-scheme">https://</span>');
+    expect(markup).toContain('example.org/<wbr/>repo/<wbr/>');
+  });
   it('keeps URL-status labels on the item annotation path, separate from tags', () => {
     const markup = renderToStaticMarkup(<CatalogueItems items={[{ kind: 'bookmark', favorite: favorite({ url: 'http://example.com/', systemLabels: ['HTTP'] }), tags: [], ambiguous: false }]} expanded={[]} onToggle={() => undefined} query={null} />);
     expect(markup).toContain('<span class="status-annotation">HTTP</span>');

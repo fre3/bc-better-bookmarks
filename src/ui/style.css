@@ -86,7 +86,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 /* Keep the native multiline contour out of the annotation's interline space. */
 .bookmark-title:focus-visible { outline-offset: -1px; }
 .non-navigating { cursor: default; }
-.bookmark-ending { white-space: nowrap; }
+.bookmark-ending, .bookmark-scheme { white-space: nowrap; }
 .favicon-frame { display: inline-block; padding: .1em; background: #eee; line-height: 0; vertical-align: -.01em; margin-right: .12em; }
 .favicon { display: block; width: auto; height: .8em; vertical-align: top; filter: grayscale(1); }
 .favicon-placeholder { width: .8em; background: #d0d0d0; }
