@@ -6,9 +6,9 @@ A Manifest V3 New Tab dashboard over your **real Microsoft Edge Favorites**. Fav
 
 ## UI/UX visual-review checkpoint
 
-Build **0.1.6** on `feature/ui-ux-redesign` refines the typographic browse/search catalogue. All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. **Manage** retains the existing MVP editing and diagnostic controls pending the separate Edit-mode redesign. Browsing roots never changes the saved mutation scope. Folder tags remain deferred.
+Build **0.1.7** on `feature/ui-ux-redesign` refines the typographic browse/search catalogue. All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. **Manage** retains the existing MVP editing and diagnostic controls pending the separate Edit-mode redesign. Browsing roots never changes the saved mutation scope. Folder tags remain deferred.
 
-Read [the design decisions, Edge load instructions and visual checklist](docs/ui-ux-design.md) before reviewing this checkpoint. Automated checks pass. The user reviewed 0.1.2 in Edge and accepted search, navigation, scope and runtime behavior; the focused 0.1.6 catalogue corrections await visual review. The preserved functional baseline remains at tag `mvp-validated-0.1.1`.
+Read [the design decisions, Edge load instructions and visual checklist](docs/ui-ux-design.md) before reviewing this checkpoint. Automated checks pass. The user reviewed 0.1.2 in Edge and accepted search, navigation, scope and runtime behavior; the focused 0.1.7 catalogue corrections await visual review. The preserved functional baseline remains at tag `mvp-validated-0.1.1`.
 
 ## Build
 

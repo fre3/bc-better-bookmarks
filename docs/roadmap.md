@@ -4,14 +4,22 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated functional baseline is preserved at `mvp-validated-0.1.1`. The UI/UX feature branch has reached the browsing/search correction checkpoint (0.1.6), awaiting visual review before Edit mode/inline CRUD. Preserve behavior, identity rules and accepted bookmarklet handling. Folder tags require a separately authorized metadata-model extension and remain deferred; their intended overlay styling is recorded in `ui-ux-design.md`. Drag/drop is also deferred. Start with `development-state.md` for current status.
+The validated functional baseline is preserved at `mvp-validated-0.1.1`. The UI/UX feature branch has reached the browsing/search correction checkpoint (0.1.7), awaiting visual review before Edit mode/inline CRUD. Preserve behavior, identity rules and accepted bookmarklet handling. Folder tags require a separately authorized metadata-model extension and remain deferred; their intended overlay styling is recorded in `ui-ux-design.md`. Drag/drop is also deferred. Start with `development-state.md` for current status.
 
 ## Future catalogue imagery and motion
 
 - Locally cached website thumbnails may later take precedence over favicons.
 - Actual website thumbnails should initially use no light-gray backing or frame padding; favicons/placeholders retain the framed treatment.
-- Website capture, permissions, cache/storage and fallback policy require a separate implementation decision. No thumbnail infrastructure or permissions are part of 0.1.6.
+- Website capture, permissions, cache/storage and fallback policy require a separate implementation decision. No thumbnail infrastructure or permissions are part of 0.1.7.
 - Delayed automatic preview scrolling remains deferred, as do Edit mode and drag/drop.
+
+## Language-aware title hyphenation
+
+Deferred: decide whether users may explicitly assign a local title language per item/folder, with override/inheritance rules and an unknown default. Existing records provide no reliable language; do not infer it from UI locale/domain. If separately authorized, apply reliable `lang` plus browser automatic hyphenation and validate actual Edge dictionaries and filename exclusions. Local storage/identity and UX require a separate decision. No page fetching, synchronized language metadata, new permission or language-detection dependency is authorized by this roadmap item.
+
+## Language-aware title hyphenation
+
+Deferred: decide whether users may explicitly assign a local title language per item/folder, with override/inheritance rules and an unknown default. Existing records provide no reliable language; do not infer it from UI locale/domain. If separately authorized, apply reliable `lang` plus browser automatic hyphenation and validate actual Edge dictionaries and filename exclusions. Local storage/identity and UX require a separate decision. No page fetching, synchronized language metadata, new permission or language-detection dependency is authorized by this roadmap item.
 
 ## System labels
 
