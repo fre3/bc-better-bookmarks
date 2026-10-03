@@ -1,0 +1,73 @@
+{
+  "version": "0.1.14",
+  "environment": "Synthetic Chromium fixtures; browser-delivered mouse/wheel, no native Edge acceptance",
+  "baseline": "0.1.13 SectionCard from f421faa loses peek on header-to-preview traversal; new regression fails there",
+  "configurations": [
+    {
+      "width": 1250,
+      "height": 600,
+      "reduced": false,
+      "cycles": 3,
+      "frames": 1650,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "height": 700,
+      "reduced": false,
+      "cycles": 3,
+      "frames": 1650,
+      "passed": true
+    },
+    {
+      "width": 1490,
+      "height": 950,
+      "reduced": false,
+      "cycles": 3,
+      "frames": 1639,
+      "passed": true
+    },
+    {
+      "width": 1250,
+      "height": 600,
+      "reduced": true,
+      "cycles": 3,
+      "frames": 1642,
+      "passed": true
+    },
+    {
+      "shortPage": true,
+      "whiteSurface": true,
+      "resize": true,
+      "headerActivationOnly": true,
+      "keyboardStatic": true,
+      "passed": true
+    }
+  ],
+  "metrics": [
+    {
+      "configuration": "trace-1250-false",
+      "maximumNonWheelScrollRangePx": 0,
+      "surfaceFrames": 93,
+      "continuousFinalPeek": true
+    },
+    {
+      "configuration": "trace-390-false",
+      "maximumNonWheelScrollRangePx": 0,
+      "surfaceFrames": 90,
+      "continuousFinalPeek": true
+    },
+    {
+      "configuration": "trace-1250-true",
+      "maximumNonWheelScrollRangePx": 0,
+      "surfaceFrames": 90,
+      "continuousFinalPeek": true
+    },
+    {
+      "configuration": "trace-1490-false",
+      "maximumNonWheelScrollRangePx": 0,
+      "surfaceFrames": 92,
+      "continuousFinalPeek": true
+    }
+  ]
+}

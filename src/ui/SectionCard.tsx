@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { CatalogueSection } from './catalogue-model';
 import { CatalogueItems } from './CatalogueItems';
 import { useCatalogueAnnotations } from './useCatalogueAnnotations';
 import { usePeekScroll } from './usePeekScroll';
 import { PeekSummary } from './PeekSummary';
 import { usePeekCoverage } from './usePeekCoverage';
+import { usePeekHoverRetention } from './usePeekHoverRetention';
 
 interface Props {
   section: CatalogueSection;
@@ -38,6 +39,8 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
   }, [peek, retainedPreview]);
   const preview = !open && (peek || retainedPreview);
   const { slot, coveredIds } = usePeekCoverage(preview);
+  const endMousePeek = useCallback(() => { setMouseHover(false); setPointerPeek(-1); }, []);
+  const hover = usePeekHoverRetention(mouseHover && pointerPeek === peekEpoch && !open && query === null, !nextSection, slot, endMousePeek);
   const covered = useMemo(() => {
     const ids = new Set(coveredIds);
     return (sections ?? (nextSection ? [nextSection] : [])).filter(item => ids.has(item.id));
@@ -49,7 +52,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
   return <section ref={slot} id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${showingPeek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
     style={{ zIndex: showingPeek ? stackSize + 1 : preview ? stackSize : stackIndex }}>
     <div className="section-sheet has-top-shadow">
-      <div className="section-header" onPointerEnter={e => { setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={() => { setMouseHover(false); setPointerPeek(-1); }}>
+      <div className="section-header" onPointerEnter={e => { hover.remember(e); setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={e => { if (!hover.retainOnLeave(e)) endMousePeek(); }}>
         <h2 className="section-inner">
         {query !== null ? <span className="section-label"><span className="section-heading-text">{section.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
           <button id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}
