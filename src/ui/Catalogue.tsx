@@ -130,7 +130,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       <div className="search-caption"><span role="status">{visible.count} {visible.count === 1 ? 'result' : 'results'}</span><span id="search-syntax">plain text · #tag · @folder</span><button onClick={exitSearch}>Close search · Esc</button></div>
     </section>}
     <div className="section-stack" aria-label="Bookmark catalogue">
-      {visible.sections.map((section, index) => <SectionCard key={section.id} section={section} nextSection={visible.sections[index + 1]} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended} onToggle={() => {
+      {visible.sections.map((section, index) => <SectionCard key={section.id} section={section} nextSection={visible.sections[index + 1]} sections={visible.sections} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended} onToggle={() => {
         if (state.openSection && state.openSection !== section.id) scrollToSection.current = section.id;
         dispatch({ type: 'section', id: section.id });
       }} onFolder={id => {

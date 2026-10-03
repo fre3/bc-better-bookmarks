@@ -1,0 +1,68 @@
+[
+  {
+    "width": 1250,
+    "height": 600,
+    "room": 0,
+    "peek": {
+      "peeking": false,
+      "height": 0,
+      "transform": ""
+    },
+    "clearance": 53
+  },
+  {
+    "width": 1250,
+    "height": 1100,
+    "room": 837,
+    "peek": {
+      "peeking": true,
+      "height": 140,
+      "transform": "translateY(-5.42825px)"
+    },
+    "clearance": 444
+  },
+  {
+    "width": 1250,
+    "height": 373,
+    "room": 110,
+    "peek": {
+      "peeking": true,
+      "height": 110,
+      "transform": "translateY(-5.43033px)"
+    },
+    "clearance": 53
+  },
+  {
+    "width": 1250,
+    "height": 330,
+    "room": 67,
+    "peek": {
+      "peeking": false,
+      "height": 0,
+      "transform": ""
+    },
+    "clearance": 53
+  },
+  {
+    "width": 320,
+    "height": 700,
+    "room": 0,
+    "peek": {
+      "peeking": false,
+      "height": 0,
+      "transform": ""
+    },
+    "clearance": 53
+  },
+  {
+    "width": 625,
+    "height": 550,
+    "room": 0,
+    "peek": {
+      "peeking": false,
+      "height": 0,
+      "transform": ""
+    },
+    "clearance": 53
+  }
+]

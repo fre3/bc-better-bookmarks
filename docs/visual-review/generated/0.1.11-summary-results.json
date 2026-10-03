@@ -1,0 +1,1640 @@
+[
+  {
+    "width": 1250,
+    "height": 1000,
+    "query": "",
+    "id": "mb30",
+    "expected": [
+      {
+        "id": "folder:baustoffe",
+        "title": "Baustoffe",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:fre3",
+        "title": "FRE3",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "Baustoffe | FRE3 | Career · Favorites bar",
+    "names": [
+      {
+        "text": "Baustoffe",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "FRE3",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Career",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 418,
+      "width": 1250,
+      "height": 85,
+      "top": 418,
+      "right": 1250,
+      "bottom": 503,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 418,
+      "width": 1250,
+      "height": 95,
+      "top": 418,
+      "right": 1250,
+      "bottom": 513,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 1250,
+    "height": 1000,
+    "query": "",
+    "id": "baustoffe",
+    "expected": [
+      {
+        "id": "folder:fre3",
+        "title": "FRE3",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:crypto",
+        "title": "Crypto",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "FRE3 | Career | Crypto · Favorites bar",
+    "names": [
+      {
+        "text": "FRE3",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Career",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Crypto",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 503,
+      "width": 1250,
+      "height": 85,
+      "top": 503,
+      "right": 1250,
+      "bottom": 588,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 503,
+      "width": 1250,
+      "height": 95,
+      "top": 503,
+      "right": 1250,
+      "bottom": 598,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 1250,
+    "height": 1000,
+    "query": "",
+    "id": "career",
+    "expected": [
+      {
+        "id": "folder:crypto",
+        "title": "Crypto",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:stack",
+        "title": "Stack",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      }
+    ],
+    "text": "Crypto · Favorites bar | Stack | Jobs · Other favorites",
+    "names": [
+      {
+        "text": "Crypto",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Stack",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Jobs",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar",
+      " · Other favorites"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 673,
+      "width": 1250,
+      "height": 85,
+      "top": 673,
+      "right": 1250,
+      "bottom": 758,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 673,
+      "width": 1250,
+      "height": 95,
+      "top": 673,
+      "right": 1250,
+      "bottom": 768,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 1250,
+    "height": 1000,
+    "query": "",
+    "id": "crypto",
+    "expected": [
+      {
+        "id": "folder:stack",
+        "title": "Stack",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:last",
+        "title": "Final collection",
+        "rootId": "r3",
+        "rootTitle": "Workspaces"
+      }
+    ],
+    "text": "Stack | Jobs · Other favorites | Final collection · Workspaces",
+    "names": [
+      {
+        "text": "Stack",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Jobs",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Final collection",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Other favorites",
+      " · Workspaces"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 758,
+      "width": 1250,
+      "height": 85,
+      "top": 758,
+      "right": 1250,
+      "bottom": 843,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 758,
+      "width": 1250,
+      "height": 115,
+      "top": 758,
+      "right": 1250,
+      "bottom": 873,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 1920,
+    "height": 1080,
+    "query": "",
+    "id": "mb30",
+    "expected": [
+      {
+        "id": "folder:baustoffe",
+        "title": "Baustoffe",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:fre3",
+        "title": "FRE3",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:crypto",
+        "title": "Crypto",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "Baustoffe | FRE3 | Career | Crypto · Favorites bar",
+    "names": [
+      {
+        "text": "Baustoffe",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "FRE3",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Career",
+        "color": "rgb(115, 115, 115)"
+      },
+      {
+        "text": "Crypto",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 471.390625,
+      "width": 1920,
+      "height": 85,
+      "top": 471.390625,
+      "right": 1920,
+      "bottom": 556.390625,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 471.390625,
+      "width": 1920,
+      "height": 126.609375,
+      "top": 471.390625,
+      "right": 1920,
+      "bottom": 598,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 1920,
+    "height": 1080,
+    "query": "",
+    "id": "baustoffe",
+    "expected": [
+      {
+        "id": "folder:fre3",
+        "title": "FRE3",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:crypto",
+        "title": "Crypto",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:stack",
+        "title": "Stack",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      }
+    ],
+    "text": "FRE3 | Career | Crypto · Favorites bar | Stack · Other favorites",
+    "names": [
+      {
+        "text": "FRE3",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Career",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Crypto",
+        "color": "rgb(115, 115, 115)"
+      },
+      {
+        "text": "Stack",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar",
+      " · Other favorites"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 556.390625,
+      "width": 1920,
+      "height": 85,
+      "top": 556.390625,
+      "right": 1920,
+      "bottom": 641.390625,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 556.390625,
+      "width": 1920,
+      "height": 126.609375,
+      "top": 556.390625,
+      "right": 1920,
+      "bottom": 683,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 1920,
+    "height": 1080,
+    "query": "",
+    "id": "career",
+    "expected": [
+      {
+        "id": "folder:crypto",
+        "title": "Crypto",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:stack",
+        "title": "Stack",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:last",
+        "title": "Final collection",
+        "rootId": "r3",
+        "rootTitle": "Workspaces"
+      }
+    ],
+    "text": "Crypto · Favorites bar | Stack | Jobs · Other favorites | Final collection · Workspaces",
+    "names": [
+      {
+        "text": "Crypto",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Stack",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Jobs",
+        "color": "rgb(115, 115, 115)"
+      },
+      {
+        "text": "Final collection",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar",
+      " · Other favorites",
+      " · Workspaces"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 726.390625,
+      "width": 1920,
+      "height": 85,
+      "top": 726.390625,
+      "right": 1920,
+      "bottom": 811.390625,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 726.390625,
+      "width": 1920,
+      "height": 146.609375,
+      "top": 726.390625,
+      "right": 1920,
+      "bottom": 873,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 1920,
+    "height": 1080,
+    "query": "",
+    "id": "crypto",
+    "expected": [
+      {
+        "id": "folder:stack",
+        "title": "Stack",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:last",
+        "title": "Final collection",
+        "rootId": "r3",
+        "rootTitle": "Workspaces"
+      }
+    ],
+    "text": "Stack | Jobs · Other favorites | Final collection · Workspaces",
+    "names": [
+      {
+        "text": "Stack",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Jobs",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Final collection",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Other favorites",
+      " · Workspaces"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 811.390625,
+      "width": 1920,
+      "height": 85,
+      "top": 811.390625,
+      "right": 1920,
+      "bottom": 896.390625,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 811.390625,
+      "width": 1920,
+      "height": 85,
+      "top": 811.390625,
+      "right": 1920,
+      "bottom": 896.390625,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "query": "",
+    "id": "mb30",
+    "expected": [
+      {
+        "id": "folder:baustoffe",
+        "title": "Baustoffe",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:fre3",
+        "title": "FRE3",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "Baustoffe | FRE3 | Career · Favorites bar",
+    "names": [
+      {
+        "text": "Baustoffe",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "FRE3",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Career",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 457.171875,
+      "width": 390,
+      "height": 85,
+      "top": 457.171875,
+      "right": 390,
+      "bottom": 542.171875,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 457.171875,
+      "width": 390,
+      "height": 95,
+      "top": 457.171875,
+      "right": 390,
+      "bottom": 552.171875,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "query": "",
+    "id": "baustoffe",
+    "expected": [
+      {
+        "id": "folder:fre3",
+        "title": "FRE3",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:crypto",
+        "title": "Crypto",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "FRE3 | Career | Crypto · Favorites bar",
+    "names": [
+      {
+        "text": "FRE3",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Career",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Crypto",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 542.171875,
+      "width": 390,
+      "height": 85,
+      "top": 542.171875,
+      "right": 390,
+      "bottom": 627.171875,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 542.171875,
+      "width": 390,
+      "height": 95,
+      "top": 542.171875,
+      "right": 390,
+      "bottom": 637.171875,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "query": "",
+    "id": "career",
+    "expected": [
+      {
+        "id": "folder:crypto",
+        "title": "Crypto",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:stack",
+        "title": "Stack",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      }
+    ],
+    "text": "Crypto · Favorites bar | +2",
+    "names": [
+      {
+        "text": "Crypto",
+        "color": "rgb(34, 34, 34)"
+      }
+    ],
+    "omitted": "+2",
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 712.171875,
+      "width": 390,
+      "height": 85,
+      "top": 712.171875,
+      "right": 390,
+      "bottom": 797.171875,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 712.171875,
+      "width": 390,
+      "height": 95,
+      "top": 712.171875,
+      "right": 390,
+      "bottom": 807.171875,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "query": "",
+    "id": "crypto",
+    "expected": [
+      {
+        "id": "folder:stack",
+        "title": "Stack",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:last",
+        "title": "Final collection",
+        "rootId": "r3",
+        "rootTitle": "Workspaces"
+      }
+    ],
+    "text": "Stack | Jobs · Other favorites | +1",
+    "names": [
+      {
+        "text": "Stack",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Jobs",
+        "color": "rgb(85, 85, 85)"
+      }
+    ],
+    "omitted": "+1",
+    "provenance": [
+      " · Other favorites"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 797.171875,
+      "width": 390,
+      "height": 85,
+      "top": 797.171875,
+      "right": 390,
+      "bottom": 882.171875,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 797.171875,
+      "width": 390,
+      "height": 115,
+      "top": 797.171875,
+      "right": 390,
+      "bottom": 912.171875,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 320,
+    "height": 800,
+    "query": "?long",
+    "id": "mb30",
+    "expected": [
+      {
+        "id": "folder:baustoffe",
+        "title": "Baustoffe — Collection with a deliberately lengthy multilingual catalogue label",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:fre3",
+        "title": "FRE3 — Collection with a deliberately lengthy multilingual catalogue label",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career — Collection with a deliberately lengthy multilingual catalogue label",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "Baustoffe — … · Favorites bar | +2",
+    "names": [
+      {
+        "text": "Baustoffe — …",
+        "color": "rgb(34, 34, 34)"
+      }
+    ],
+    "omitted": "+2",
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 525.953125,
+      "width": 320,
+      "height": 125.953125,
+      "top": 525.953125,
+      "right": 320,
+      "bottom": 651.90625,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 525.953125,
+      "width": 320,
+      "height": 217.859375,
+      "top": 525.953125,
+      "right": 320,
+      "bottom": 743.8125,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 320,
+    "height": 800,
+    "query": "?long",
+    "id": "baustoffe",
+    "expected": [
+      {
+        "id": "folder:fre3",
+        "title": "FRE3 — Collection with a deliberately lengthy multilingual catalogue label",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career — Collection with a deliberately lengthy multilingual catalogue label",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:crypto",
+        "title": "Crypto — Collection with a deliberately lengthy multilingual catalogue label",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "FRE3 — Coll… · Favorites bar | +2",
+    "names": [
+      {
+        "text": "FRE3 — Coll…",
+        "color": "rgb(34, 34, 34)"
+      }
+    ],
+    "omitted": "+2",
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 651.90625,
+      "width": 320,
+      "height": 125.953125,
+      "top": 651.90625,
+      "right": 320,
+      "bottom": 777.859375,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 651.90625,
+      "width": 320,
+      "height": 217.859375,
+      "top": 651.90625,
+      "right": 320,
+      "bottom": 869.765625,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 320,
+    "height": 800,
+    "query": "?long",
+    "id": "career",
+    "expected": [
+      {
+        "id": "folder:crypto",
+        "title": "Crypto — Collection with a deliberately lengthy multilingual catalogue label",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:stack",
+        "title": "Stack — Collection with a deliberately lengthy multilingual catalogue label",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      }
+    ],
+    "text": "Crypto — Co… · Favorites bar | +2",
+    "names": [
+      {
+        "text": "Crypto — Co…",
+        "color": "rgb(34, 34, 34)"
+      }
+    ],
+    "omitted": "+2",
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 903.8125,
+      "width": 320,
+      "height": 125.953125,
+      "top": 903.8125,
+      "right": 320,
+      "bottom": 1029.765625,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 903.8125,
+      "width": 320,
+      "height": 176.90625,
+      "top": 903.8125,
+      "right": 320,
+      "bottom": 1080.71875,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 320,
+    "height": 800,
+    "query": "?long",
+    "id": "crypto",
+    "expected": [
+      {
+        "id": "folder:stack",
+        "title": "Stack — Collection with a deliberately lengthy multilingual catalogue label",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:last",
+        "title": "Final collection",
+        "rootId": "r3",
+        "rootTitle": "Workspaces"
+      }
+    ],
+    "text": "Stac… | Jobs · Other favorites | +1",
+    "names": [
+      {
+        "text": "Stac…",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Jobs",
+        "color": "rgb(85, 85, 85)"
+      }
+    ],
+    "omitted": "+1",
+    "provenance": [
+      " · Other favorites"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 939.765625,
+      "width": 320,
+      "height": 125.953125,
+      "top": 939.765625,
+      "right": 320,
+      "bottom": 1065.71875,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 939.765625,
+      "width": 320,
+      "height": 155.953125,
+      "top": 939.765625,
+      "right": 320,
+      "bottom": 1095.71875,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 1000,
+    "height": 800,
+    "query": "?same-root-name",
+    "id": "mb30",
+    "expected": [
+      {
+        "id": "folder:baustoffe",
+        "title": "Baustoffe",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:fre3",
+        "title": "FRE3",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "Baustoffe | FRE3 | Career · Favorites bar",
+    "names": [
+      {
+        "text": "Baustoffe",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "FRE3",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Career",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 418,
+      "width": 1000,
+      "height": 85,
+      "top": 418,
+      "right": 1000,
+      "bottom": 503,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 418,
+      "width": 1000,
+      "height": 95,
+      "top": 418,
+      "right": 1000,
+      "bottom": 513,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 1000,
+    "height": 800,
+    "query": "?same-root-name",
+    "id": "baustoffe",
+    "expected": [
+      {
+        "id": "folder:fre3",
+        "title": "FRE3",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:crypto",
+        "title": "Crypto",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "FRE3 | Career | Crypto · Favorites bar",
+    "names": [
+      {
+        "text": "FRE3",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Career",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Crypto",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 503,
+      "width": 1000,
+      "height": 85,
+      "top": 503,
+      "right": 1000,
+      "bottom": 588,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 503,
+      "width": 1000,
+      "height": 95,
+      "top": 503,
+      "right": 1000,
+      "bottom": 598,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 1000,
+    "height": 800,
+    "query": "?same-root-name",
+    "id": "career",
+    "expected": [
+      {
+        "id": "folder:crypto",
+        "title": "Crypto",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:stack",
+        "title": "Stack",
+        "rootId": "r2",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "Crypto · Favorites bar | Stack | Jobs · Favorites bar",
+    "names": [
+      {
+        "text": "Crypto",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Stack",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Jobs",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar",
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 673,
+      "width": 1000,
+      "height": 85,
+      "top": 673,
+      "right": 1000,
+      "bottom": 758,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 673,
+      "width": 1000,
+      "height": 95,
+      "top": 673,
+      "right": 1000,
+      "bottom": 768,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 1000,
+    "height": 800,
+    "query": "?same-root-name",
+    "id": "crypto",
+    "expected": [
+      {
+        "id": "folder:stack",
+        "title": "Stack",
+        "rootId": "r2",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:last",
+        "title": "Final collection",
+        "rootId": "r3",
+        "rootTitle": "Workspaces"
+      }
+    ],
+    "text": "Stack | Jobs · Favorites bar | Final collection · Workspaces",
+    "names": [
+      {
+        "text": "Stack",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Jobs",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Final collection",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar",
+      " · Workspaces"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 758,
+      "width": 1000,
+      "height": 85,
+      "top": 758,
+      "right": 1000,
+      "bottom": 843,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 758,
+      "width": 1000,
+      "height": 115,
+      "top": 758,
+      "right": 1000,
+      "bottom": 873,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 625,
+    "height": 550,
+    "query": "",
+    "id": "mb30",
+    "expected": [
+      {
+        "id": "folder:baustoffe",
+        "title": "Baustoffe",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:fre3",
+        "title": "FRE3",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "Baustoffe | FRE3 | Career · Favorites bar",
+    "names": [
+      {
+        "text": "Baustoffe",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "FRE3",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Career",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 457.171875,
+      "width": 625,
+      "height": 85,
+      "top": 457.171875,
+      "right": 625,
+      "bottom": 542.171875,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 457.171875,
+      "width": 625,
+      "height": 95,
+      "top": 457.171875,
+      "right": 625,
+      "bottom": 552.171875,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 625,
+    "height": 550,
+    "query": "",
+    "id": "baustoffe",
+    "expected": [
+      {
+        "id": "folder:fre3",
+        "title": "FRE3",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:career",
+        "title": "Career",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:crypto",
+        "title": "Crypto",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      }
+    ],
+    "text": "FRE3 | Career | Crypto · Favorites bar",
+    "names": [
+      {
+        "text": "FRE3",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Career",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Crypto",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 542.171875,
+      "width": 625,
+      "height": 85,
+      "top": 542.171875,
+      "right": 625,
+      "bottom": 627.171875,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 542.171875,
+      "width": 625,
+      "height": 95,
+      "top": 542.171875,
+      "right": 625,
+      "bottom": 637.171875,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 625,
+    "height": 550,
+    "query": "",
+    "id": "career",
+    "expected": [
+      {
+        "id": "folder:crypto",
+        "title": "Crypto",
+        "rootId": "r",
+        "rootTitle": "Favorites bar"
+      },
+      {
+        "id": "folder:stack",
+        "title": "Stack",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      }
+    ],
+    "text": "Crypto · Favorites bar | Stack | Jobs · Other favorites",
+    "names": [
+      {
+        "text": "Crypto",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Stack",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Jobs",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Favorites bar",
+      " · Other favorites"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 690.171875,
+      "width": 625,
+      "height": 85,
+      "top": 690.171875,
+      "right": 625,
+      "bottom": 775.171875,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 690.171875,
+      "width": 625,
+      "height": 95,
+      "top": 690.171875,
+      "right": 625,
+      "bottom": 785.171875,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  },
+  {
+    "width": 625,
+    "height": 550,
+    "query": "",
+    "id": "crypto",
+    "expected": [
+      {
+        "id": "folder:stack",
+        "title": "Stack",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:jobs",
+        "title": "Jobs",
+        "rootId": "r2",
+        "rootTitle": "Other favorites"
+      },
+      {
+        "id": "folder:last",
+        "title": "Final collection",
+        "rootId": "r3",
+        "rootTitle": "Workspaces"
+      }
+    ],
+    "text": "Stack | Jobs · Other favorites | Final collection · Workspaces",
+    "names": [
+      {
+        "text": "Stack",
+        "color": "rgb(34, 34, 34)"
+      },
+      {
+        "text": "Jobs",
+        "color": "rgb(85, 85, 85)"
+      },
+      {
+        "text": "Final collection",
+        "color": "rgb(115, 115, 115)"
+      }
+    ],
+    "provenance": [
+      " · Other favorites",
+      " · Workspaces"
+    ],
+    "rect": {
+      "x": 0,
+      "y": 457.171875,
+      "width": 625,
+      "height": 85,
+      "top": 457.171875,
+      "right": 625,
+      "bottom": 542.171875,
+      "left": 0
+    },
+    "cover": {
+      "x": 0,
+      "y": 457.171875,
+      "width": 625,
+      "height": 115,
+      "top": 457.171875,
+      "right": 625,
+      "bottom": 572.171875,
+      "left": 0
+    },
+    "overflow": false,
+    "inert": true,
+    "hidden": "true",
+    "focusable": 0
+  }
+]

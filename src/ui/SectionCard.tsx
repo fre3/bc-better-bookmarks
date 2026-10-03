@@ -1,14 +1,16 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { CatalogueSection } from './catalogue-model';
 import { CatalogueItems } from './CatalogueItems';
 import { useCatalogueAnnotations } from './useCatalogueAnnotations';
 import { usePeekScroll } from './usePeekScroll';
+import { PeekSummary } from './PeekSummary';
 import { usePeekRoom } from './usePeekRoom';
 import { usePeekCoverage } from './usePeekCoverage';
 
 interface Props {
   section: CatalogueSection;
   nextSection?: CatalogueSection;
+  sections?: readonly CatalogueSection[];
   stackIndex: number;
   stackSize: number;
   allRoots: boolean;
@@ -21,7 +23,7 @@ interface Props {
   onFolder: (id: string) => void;
 }
 
-export function SectionCard({ section, nextSection, stackIndex, stackSize, allRoots, open, query, expanded, peekEpoch, autoScrollPeek = true, onToggle, onFolder }: Props) {
+export function SectionCard({ section, nextSection, sections, stackIndex, stackSize, allRoots, open, query, expanded, peekEpoch, autoScrollPeek = true, onToggle, onFolder }: Props) {
   const [mouseHover, setMouseHover] = useState(false);
   const [pointerPeek, setPointerPeek] = useState(-1);
   const [focusPeek, setFocusPeek] = useState(-1);
@@ -36,7 +38,11 @@ export function SectionCard({ section, nextSection, stackIndex, stackSize, allRo
     return () => window.clearTimeout(timeout);
   }, [peek, retainedPreview]);
   const preview = !open && (peek || retainedPreview);
-  const slot = usePeekCoverage(preview);
+  const { slot, coveredIds } = usePeekCoverage(preview);
+  const covered = useMemo(() => {
+    const ids = new Set(coveredIds);
+    return (sections ?? (nextSection ? [nextSection] : [])).filter(item => ids.has(item.id));
+  }, [sections, nextSection, coveredIds]);
   const flow = useCatalogueAnnotations();
   const peekHeight = usePeekRoom(slot, preview, !nextSection);
   const showingPeek = peek && peekHeight !== 0;
@@ -64,7 +70,8 @@ export function SectionCard({ section, nextSection, stackIndex, stackSize, allRo
       {preview && <div className={`peek-successor${nextSection ? ' has-top-shadow' : ''}`} data-sheet-owner={nextSection?.id} aria-hidden="true" inert>
         {/* Presentation of the following sheet's lip, not a second interactive
             header. Real headers retain their flow positions and hit targets. */}
-        {nextSection && <div className="section-header"><div className="section-inner section-label"><span className="section-heading-text">{nextSection.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {nextSection.rootTitle}</span>}</span></div></div>}
+        {nextSection && <div className="section-header peek-header-measure"><div className="section-inner section-label"><span className="section-heading-text">{nextSection.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {nextSection.rootTitle}</span>}</span></div></div>}
+        {nextSection && <PeekSummary items={covered} allRoots={allRoots} />}
       </div>}
       </div>
     </div>

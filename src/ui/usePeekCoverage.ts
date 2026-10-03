@@ -1,9 +1,11 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { labelIsCovered } from './peek-summary';
 import { peekCoverBottom, type CoveredSheet } from './peek-coverage';
 
 /** Cover partial headers without extending the lip across an open sheet. */
 export function usePeekCoverage(active: boolean) {
   const slot = useRef<HTMLElement>(null);
+  const [coveredIds, setCoveredIds] = useState<string[]>([]);
   useLayoutEffect(() => {
     const section = slot.current;
     if (!active || !section) return;
@@ -53,6 +55,18 @@ export function usePeekCoverage(active: boolean) {
         if (footer) bottom = Math.min(bottom, Math.max(top, footer.getBoundingClientRect().top));
       }
       cover.style.height = `${bottom - top}px`;
+      cover.style.setProperty('--peek-label-height', `${minimum}px`);
+      const overlayTop = content.getBoundingClientRect().top;
+      const covered: string[] = [];
+      for (let sibling = section.nextElementSibling; sibling; sibling = sibling.nextElementSibling) {
+        if (!(sibling instanceof HTMLElement) || !sibling.matches('.section-slot')) continue;
+        const heading = sibling.querySelector('.section-sheet > .section-header .section-heading-text');
+        if (!heading) continue;
+        const bounds = heading.getBoundingClientRect();
+        if (bounds.top >= bottom) break;
+        if (labelIsCovered(bounds.top, bounds.bottom, overlayTop, bottom) && sibling.dataset.sectionId) covered.push(sibling.dataset.sectionId);
+      }
+      setCoveredIds(previous => previous.length === covered.length && previous.every((id, i) => id === covered[i]) ? previous : covered);
     };
     // The animated body's ResizeObserver runs before paint on entry and exit.
     // Measure the copy's label, never its extended height, to avoid feedback.
@@ -60,8 +74,10 @@ export function usePeekCoverage(active: boolean) {
     observer.observe(content);
     if (label) observer.observe(label);
     if (section.parentElement) observer.observe(section.parentElement);
+    document.fonts.addEventListener('loadingdone', update);
+    window.addEventListener('scroll', update, { passive: true });
     update();
-    return () => observer.disconnect();
+    return () => { observer.disconnect(); document.fonts.removeEventListener('loadingdone', update); window.removeEventListener('scroll', update); };
   }, [active]);
-  return slot;
+  return { slot, coveredIds };
 }

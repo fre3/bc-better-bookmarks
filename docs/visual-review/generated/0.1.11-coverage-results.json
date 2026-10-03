@@ -1,0 +1,1241 @@
+{
+  "cases": [
+    {
+      "viewportWidth": 1406,
+      "emulatedBrowserZoom": 1,
+      "settled": {
+        "line": 60.398,
+        "height": 150.984375,
+        "coverHeight": 84.015625,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "frames": [
+        {
+          "body": 0.125,
+          "coverTop": 278.125,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 54.71875,
+          "coverTop": 332.71875,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 78.359375,
+          "coverTop": 356.359375,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 99.53125,
+          "coverTop": 377.53125,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 117.9375,
+          "coverTop": 395.9375,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 133.109375,
+          "coverTop": 411.109375,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 144.3125,
+          "coverTop": 422.3125,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 150.390625,
+          "coverTop": 428.390625,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 150.984375,
+          "coverTop": 428.984375,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 150.984375,
+          "coverTop": 428.984375,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 107.78125,
+          "coverTop": 385.78125,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 70.296875,
+          "coverTop": 348.296875,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 38.96875,
+          "coverTop": 316.96875,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 15.015625,
+          "coverTop": 293.015625,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 1.421875,
+          "coverTop": 279.421875,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        }
+      ]
+    },
+    {
+      "viewportWidth": 390,
+      "emulatedBrowserZoom": 1,
+      "settled": {
+        "line": 56,
+        "height": 140,
+        "coverHeight": 135.953125,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "frames": [
+        {
+          "body": 26.34375,
+          "coverTop": 343.515625,
+          "coverBottom": 508.125,
+          "expected": 508.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 50.5,
+          "coverTop": 367.671875,
+          "coverBottom": 508.125,
+          "expected": 508.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 72.484375,
+          "coverTop": 389.65625,
+          "coverBottom": 508.125,
+          "expected": 508.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 92.140625,
+          "coverTop": 409.3125,
+          "coverBottom": 508.125,
+          "expected": 508.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 109.21875,
+          "coverTop": 426.390625,
+          "coverBottom": 508.125,
+          "expected": 508.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 123.3125,
+          "coverTop": 440.484375,
+          "coverBottom": 508.125,
+          "expected": 508.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 133.734375,
+          "coverTop": 450.90625,
+          "coverBottom": 593.125,
+          "expected": 593.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 139.40625,
+          "coverTop": 456.578125,
+          "coverBottom": 593.125,
+          "expected": 593.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 140,
+          "coverTop": 457.171875,
+          "coverBottom": 593.125,
+          "expected": 593.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 140,
+          "coverTop": 457.171875,
+          "coverBottom": 593.125,
+          "expected": 593.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 99.859375,
+          "coverTop": 417.03125,
+          "coverBottom": 508.125,
+          "expected": 508.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 36.140625,
+          "coverTop": 353.3125,
+          "coverBottom": 508.125,
+          "expected": 508.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 14,
+          "coverTop": 331.171875,
+          "coverBottom": 508.125,
+          "expected": 508.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 1.328125,
+          "coverTop": 318.5,
+          "coverBottom": 508.125,
+          "expected": 508.125,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        }
+      ]
+    },
+    {
+      "viewportWidth": 320,
+      "emulatedBrowserZoom": 1,
+      "settled": {
+        "line": 56,
+        "height": 140,
+        "coverHeight": 135.953125,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "frames": [
+        {
+          "body": 26.546875,
+          "coverTop": 378.109375,
+          "coverBottom": 542.515625,
+          "expected": 542.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 50.640625,
+          "coverTop": 402.203125,
+          "coverBottom": 542.515625,
+          "expected": 542.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 72.578125,
+          "coverTop": 424.140625,
+          "coverBottom": 542.515625,
+          "expected": 542.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 92.21875,
+          "coverTop": 443.78125,
+          "coverBottom": 542.515625,
+          "expected": 542.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 109.328125,
+          "coverTop": 460.890625,
+          "coverBottom": 542.515625,
+          "expected": 542.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 123.390625,
+          "coverTop": 474.953125,
+          "coverBottom": 542.515625,
+          "expected": 542.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 133.78125,
+          "coverTop": 485.34375,
+          "coverBottom": 627.515625,
+          "expected": 627.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 139.421875,
+          "coverTop": 490.984375,
+          "coverBottom": 627.515625,
+          "expected": 627.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 140,
+          "coverTop": 491.5625,
+          "coverBottom": 627.515625,
+          "expected": 627.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 140,
+          "coverTop": 491.5625,
+          "coverBottom": 627.515625,
+          "expected": 627.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 99.90625,
+          "coverTop": 451.46875,
+          "coverBottom": 542.515625,
+          "expected": 542.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 36.171875,
+          "coverTop": 387.734375,
+          "coverBottom": 542.515625,
+          "expected": 542.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 14.015625,
+          "coverTop": 365.578125,
+          "coverBottom": 542.515625,
+          "expected": 542.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 1.359375,
+          "coverTop": 352.921875,
+          "coverBottom": 542.515625,
+          "expected": 542.515625,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        }
+      ]
+    },
+    {
+      "viewportWidth": 1758,
+      "emulatedBrowserZoom": 0.8,
+      "settled": {
+        "line": 72.014,
+        "height": 180.03125,
+        "coverHeight": 139.96875,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "frames": [
+        {
+          "body": 34.0625,
+          "coverTop": 312.0625,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 65.125,
+          "coverTop": 343.125,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 93.375,
+          "coverTop": 371.375,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 118.625,
+          "coverTop": 396.625,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 140.578125,
+          "coverTop": 418.578125,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 158.671875,
+          "coverTop": 436.671875,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 172.03125,
+          "coverTop": 450.03125,
+          "coverBottom": 598,
+          "expected": 598,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 179.296875,
+          "coverTop": 457.296875,
+          "coverBottom": 598,
+          "expected": 598,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 180.03125,
+          "coverTop": 458.03125,
+          "coverBottom": 598,
+          "expected": 598,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 180.03125,
+          "coverTop": 458.03125,
+          "coverBottom": 598,
+          "expected": 598,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 128.515625,
+          "coverTop": 406.515625,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 83.90625,
+          "coverTop": 361.90625,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 46.53125,
+          "coverTop": 324.53125,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 18.046875,
+          "coverTop": 296.046875,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 1.734375,
+          "coverTop": 279.734375,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        }
+      ]
+    },
+    {
+      "viewportWidth": 1125,
+      "emulatedBrowserZoom": 1.25,
+      "settled": {
+        "line": 56,
+        "height": 140,
+        "coverHeight": 95,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "frames": [
+        {
+          "body": 26.546875,
+          "coverTop": 304.546875,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 50.6875,
+          "coverTop": 328.6875,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 72.609375,
+          "coverTop": 350.609375,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 92.25,
+          "coverTop": 370.25,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 109.3125,
+          "coverTop": 387.3125,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 123.390625,
+          "coverTop": 401.390625,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 133.78125,
+          "coverTop": 411.78125,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 139.421875,
+          "coverTop": 417.421875,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 140,
+          "coverTop": 418,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 140,
+          "coverTop": 418,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 99.96875,
+          "coverTop": 377.96875,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 65.203125,
+          "coverTop": 343.203125,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 1.359375,
+          "coverTop": 279.359375,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        }
+      ]
+    },
+    {
+      "viewportWidth": 937,
+      "emulatedBrowserZoom": 1.5,
+      "settled": {
+        "line": 56,
+        "height": 140,
+        "coverHeight": 95,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "frames": [
+        {
+          "body": 0.109375,
+          "coverTop": 278.109375,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 26.640625,
+          "coverTop": 304.640625,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 50.734375,
+          "coverTop": 328.734375,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 72.65625,
+          "coverTop": 350.65625,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 92.28125,
+          "coverTop": 370.28125,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 109.359375,
+          "coverTop": 387.359375,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 123.421875,
+          "coverTop": 401.421875,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 133.796875,
+          "coverTop": 411.796875,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 139.4375,
+          "coverTop": 417.4375,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 140,
+          "coverTop": 418,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 140,
+          "coverTop": 418,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 99.71875,
+          "coverTop": 377.71875,
+          "coverBottom": 513,
+          "expected": 513,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 64.984375,
+          "coverTop": 342.984375,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 35.984375,
+          "coverTop": 313.984375,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 13.890625,
+          "coverTop": 291.890625,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 1.3125,
+          "coverTop": 279.3125,
+          "coverBottom": 428,
+          "expected": 428,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        }
+      ]
+    },
+    {
+      "viewportWidth": 703,
+      "emulatedBrowserZoom": 2,
+      "settled": {
+        "line": 56,
+        "height": 140,
+        "coverHeight": 113.96875,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "frames": [
+        {
+          "body": 0,
+          "coverTop": 278,
+          "coverBottom": 343,
+          "expected": 343,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 26.4375,
+          "coverTop": 304.4375,
+          "coverBottom": 446.96875,
+          "expected": 446.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 50.59375,
+          "coverTop": 328.59375,
+          "coverBottom": 446.96875,
+          "expected": 446.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 72.53125,
+          "coverTop": 350.53125,
+          "coverBottom": 446.96875,
+          "expected": 446.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 92.171875,
+          "coverTop": 370.171875,
+          "coverBottom": 446.96875,
+          "expected": 446.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 109.265625,
+          "coverTop": 387.265625,
+          "coverBottom": 531.96875,
+          "expected": 531.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 123.34375,
+          "coverTop": 401.34375,
+          "coverBottom": 531.96875,
+          "expected": 531.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 133.75,
+          "coverTop": 411.75,
+          "coverBottom": 531.96875,
+          "expected": 531.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 139.421875,
+          "coverTop": 417.421875,
+          "coverBottom": 531.96875,
+          "expected": 531.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 140,
+          "coverTop": 418,
+          "coverBottom": 531.96875,
+          "expected": 531.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 140,
+          "coverTop": 418,
+          "coverBottom": 531.96875,
+          "expected": 531.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-peeking"
+        },
+        {
+          "body": 99.84375,
+          "coverTop": 377.84375,
+          "coverBottom": 446.96875,
+          "expected": 446.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 65.15625,
+          "coverTop": 343.15625,
+          "coverBottom": 446.96875,
+          "expected": 446.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 36.125,
+          "coverTop": 314.125,
+          "coverBottom": 446.96875,
+          "expected": 446.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 13.984375,
+          "coverTop": 291.984375,
+          "coverBottom": 446.96875,
+          "expected": 446.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        },
+        {
+          "body": 1.34375,
+          "coverTop": 279.34375,
+          "coverBottom": 446.96875,
+          "expected": 446.96875,
+          "gap": 0,
+          "seamGap": 0,
+          "partialLabels": 0,
+          "opaque": true,
+          "phase": "section-slot is-leaving"
+        }
+      ]
+    }
+  ],
+  "annotations": {
+    "height": 10,
+    "font": "10px",
+    "acceptedFrameOverlaps": 0,
+    "aboveFrames": true
+  }
+}
