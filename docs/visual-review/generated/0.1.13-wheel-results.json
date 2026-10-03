@@ -1,0 +1,366 @@
+[
+  {
+    "width": 1250,
+    "height": 600,
+    "reduced": false,
+    "cycles": 3,
+    "frames": 1348,
+    "passed": true,
+    "phases": [
+      {
+        "phase": "traverse-0",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 2,
+        "settledMeasurementCallbacks": 166
+      },
+      {
+        "phase": "stationary-0",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 1,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-0",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 60,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "traverse-1",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 2,
+        "settledMeasurementCallbacks": 166
+      },
+      {
+        "phase": "stationary-1",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 1,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-1",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 60,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "traverse-2",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 2,
+        "settledMeasurementCallbacks": 167
+      },
+      {
+        "phase": "stationary-2",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 1,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-2",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 60,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "height": 700,
+    "reduced": false,
+    "cycles": 3,
+    "frames": 1352,
+    "passed": true,
+    "phases": [
+      {
+        "phase": "traverse-0",
+        "scrollMin": 1073,
+        "scrollMax": 1073,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 2,
+        "settledMeasurementCallbacks": 166
+      },
+      {
+        "phase": "stationary-0",
+        "scrollMin": 1073,
+        "scrollMax": 1073,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 1,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-0",
+        "scrollMin": 1073,
+        "scrollMax": 1073,
+        "finalSpace": 61,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "traverse-1",
+        "scrollMin": 1073,
+        "scrollMax": 1073,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 2,
+        "settledMeasurementCallbacks": 166
+      },
+      {
+        "phase": "stationary-1",
+        "scrollMin": 1073,
+        "scrollMax": 1073,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 1,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-1",
+        "scrollMin": 1073,
+        "scrollMax": 1073,
+        "finalSpace": 61,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "traverse-2",
+        "scrollMin": 1073,
+        "scrollMax": 1073,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 2,
+        "settledMeasurementCallbacks": 166
+      },
+      {
+        "phase": "stationary-2",
+        "scrollMin": 1073,
+        "scrollMax": 1073,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 1,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-2",
+        "scrollMin": 1073,
+        "scrollMax": 1073,
+        "finalSpace": 61,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      }
+    ]
+  },
+  {
+    "width": 1490,
+    "height": 950,
+    "reduced": false,
+    "cycles": 3,
+    "frames": 1352,
+    "passed": true,
+    "phases": [
+      {
+        "phase": "traverse-0",
+        "scrollMin": 818,
+        "scrollMax": 818,
+        "finalSpace": 157.921875,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 2,
+        "settledMeasurementCallbacks": 166
+      },
+      {
+        "phase": "stationary-0",
+        "scrollMin": 818,
+        "scrollMax": 818,
+        "finalSpace": 157.921875,
+        "settledPendingAnimationFrames": 1,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-0",
+        "scrollMin": 818,
+        "scrollMax": 818,
+        "finalSpace": 60,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "traverse-1",
+        "scrollMin": 818,
+        "scrollMax": 818,
+        "finalSpace": 157.921875,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 2,
+        "settledMeasurementCallbacks": 166
+      },
+      {
+        "phase": "stationary-1",
+        "scrollMin": 818,
+        "scrollMax": 818,
+        "finalSpace": 157.921875,
+        "settledPendingAnimationFrames": 1,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-1",
+        "scrollMin": 818,
+        "scrollMax": 818,
+        "finalSpace": 60,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "traverse-2",
+        "scrollMin": 818,
+        "scrollMax": 818,
+        "finalSpace": 157.921875,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 2,
+        "settledMeasurementCallbacks": 166
+      },
+      {
+        "phase": "stationary-2",
+        "scrollMin": 818,
+        "scrollMax": 818,
+        "finalSpace": 157.921875,
+        "settledPendingAnimationFrames": 1,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-2",
+        "scrollMin": 818,
+        "scrollMax": 818,
+        "finalSpace": 60,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      }
+    ]
+  },
+  {
+    "width": 1250,
+    "height": 600,
+    "reduced": true,
+    "cycles": 3,
+    "frames": 1354,
+    "passed": true,
+    "phases": [
+      {
+        "phase": "traverse-0",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 34
+      },
+      {
+        "phase": "stationary-0",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-0",
+        "scrollMin": 1168,
+        "scrollMax": 1168,
+        "finalSpace": 60,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "traverse-1",
+        "scrollMin": 1248,
+        "scrollMax": 1248,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 34
+      },
+      {
+        "phase": "stationary-1",
+        "scrollMin": 1248,
+        "scrollMax": 1248,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-1",
+        "scrollMin": 1248,
+        "scrollMax": 1248,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "traverse-2",
+        "scrollMin": 1248,
+        "scrollMax": 1248,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 1,
+        "settledMeasurementCallbacks": 34
+      },
+      {
+        "phase": "stationary-2",
+        "scrollMin": 1248,
+        "scrollMax": 1248,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      },
+      {
+        "phase": "outside-2",
+        "scrollMin": 1248,
+        "scrollMax": 1248,
+        "finalSpace": 140,
+        "settledPendingAnimationFrames": 0,
+        "settledPendingTimers": 0,
+        "settledMeasurementCallbacks": 0
+      }
+    ]
+  }
+]

@@ -1,59 +1,65 @@
 # Development State
 
 Last updated: 2026-10-03
-Current branch: `feature/ui-ux-redesign`. Browser-review build: **0.1.12**.
+Current branch: `feature/ui-ux-redesign`. Browser-review build: **0.1.13**.
 Validated baseline: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated tag `mvp-validated-0.1.1`.
 
 ## Current checkpoint and next action
 
-**Next action: user Edge review of 0.1.12's complete footer-adjacent peeks and clarified Next summaries. Stop here.** No push was made. Authoritative development/tooling remains **WSL `/home/dev/projects/bc-better-bookmarks`**; no Windows clone changed. Reload the tracked `dist/` at `edge://extensions`, verify **0.1.12**, and open a fresh New Tab. Exact load path/instructions: [ui-ux-design.md](ui-ux-design.md#build-and-load-in-edge).
+**Next action: native Edge review of the 0.1.13 peek/scroll jitter correction. Stop here.** No push was made. Development/tooling remains WSL `/home/dev/projects/bc-better-bookmarks`; supplied media and the Windows clone are untouched. Reload tracked `dist/` at `edge://extensions`, verify **0.1.13**, and open a fresh New Tab. [Load instructions](ui-ux-design.md#build-and-load-in-edge).
 
-The visual phase is **not accepted** yet. Only after user acceptance, close visual work and start `feature/bookmark-editing` from the accepted commit. That branch has not been created. Semantic search, editing, drag/drop, website thumbnails, folder-tag persistence and sync changes remain deferred/outside this checkpoint.
+Visual work is not accepted. Do not create `feature/bookmark-editing` until user acceptance; it should then start from the accepted commit. Semantic search, editing, drag/drop, thumbnails, folder tags and sync changes remain deferred.
 
-Accepted behavior remains: **1000ms** preview-scroll delay, one line/2750ms speed, local preference/cancellation/end stopping, static keyboard-only peek and reduced motion; 140ms/90ms peek and 220ms open reveal; temporary All bookmarks search with the original Escape snapshot; **top-number-row Alt+1–9**; accepted Windows Alt+numpad character entry without suppression. Dashboard command remains **Ctrl+Shift+B**, with native reassignment respected. The accepted address-bar focus limitation and Ctrl+F6 fallback remain; ordinary Ctrl+T is unchanged.
+## Recording, reproduction and confirmed cause
 
-## Inspected references and implemented decisions
+Found the exact supplied `release 0.1.12 - last-section-before-footer-scroll.mp4` (22.7 seconds). Decoded and visually inspected representative frames at approximately 2, 6, 9, 14, 18 and 22 seconds. Supplied media remains untracked and unchanged; no extracted private-bookmark frames are committed.
 
-Visually inspected all three supplied files: `release 0.1.11 - Peek summaries.png`, `release 0.1.11 - Peek Footer 1.png`, `release 0.1.11 - Peek Footer 2.png`. None were missing. The cramped bars and footer-clipped copied header are visible in those references. Supplied media remains untouched/untracked.
+Reproduced the full sequence with Playwright's browser-delivered **wheel and pointer input**, including repeated cycles without reloading. No direct scroll assignments or dispatched mouseenter events were used in the reproduction/regression. Traced scroll/document height, extension, actual header positions, peek state, pointer/wheel/scroll events, pending animation frames/timers and ResizeObserver callbacks.
 
-**Footer movement explicitly supersedes the 0.1.11 suppression rule.** Resting layout still has no permanent preview reservation; the final collapsed header remains 85px. During peek, a temporary flow spacer after the section stack reserves only the furthest active/exiting overlay extent beyond the stable stack bottom. Existing natural short-page flex space is consumed first. The moving footer is never the measurement baseline, preventing feedback or accumulation. Actual section/header positions stay unchanged. Full normal 2.5-line previews are no longer shortened or suppressed near the footer. The footer/links stay below the complete preview and bounded summary where present.
+**Cause:** immediate spacer contraction shortened the document below the wheel-selected viewport. The browser clamped scroll; subsequent preview growth restored the earlier wheel offset and shifted the header targets again. The 0.1.12 pointer-entry suppression flag could not prevent that recurring clamp/restore behavior during later pointer traversal. In the compact reproduction, later traversal repeatedly moved between **343px and roughly 423px**, without another wheel event. Four cycles reproduced the behavior. This was not an acceptable one-time clamp. No endlessly queued animation/timer was needed to explain it.
 
-The final section has **no empty copied successor row or shadow**. Its preview meets the real footer's dither when extra room is required, producing one lower boundary. Exit geometry contracts the temporary space with the existing animation; switching uses the maximum of entering/exiting footprints, not a sum. Opening, root/search changes and unmounting clear it. Auto-scroll moves only prose, not the summary or reserved geometry. No automatic scroll-to-preview/footer was added. Resting and fully opened footer spacing, exact labels/URLs/new-tab attributes and keyboard styles are unchanged.
+The pre-fix Chromium harness settled when the pointer stopped; the user's stronger persistent native Edge behavior is recorded rather than contradicted. The confirmed recurring viewport oscillation is reproduced and fixed locally. Native Edge must still validate the reported full failure sequence.
 
-**Scroll behavior:** catalogue scroll anchoring is disabled so footer movement does not shift the hovered header. If the user manually scrolls into temporary space, contraction can unavoidably clamp scroll to the new document bottom. Geometry-only pointer entries following that clamp cannot restart a preview until physical pointer movement. Ordinary downward traversal remains available; no hover delay or keyboard suppression is added. Native Edge scroll anchoring/clamping still requires user review.
+## Fix and temporary-space lifecycle
 
-**Summary:** every nonempty row begins with regular **Next:** in #666 and a .4em gap. Names remain bold 17.6px, explicitly colored **#111**, **#666**, then **#767676** globally across roots. Provenance is regular #666. Within a stable root-ID group, #999 bars have .5em spacing on each side; between groups there is a 1.25em gap without a bar. Each group retains its own provenance exactly once, even when root display names match. The requested gutter, vertical placement and bounded header area are unchanged.
+The spacer still covers complete entering/exiting previews and bounded summaries. Its measurement uses the stable section stack and footer height, never the moving footer position. **Before shrinking, retain only the existing space still needed to support the current viewport.** This avoids triggering a browser clamp in the first place. It is capped by the previous reservation and combined with current preview need using a maximum, never a sum.
 
-Actual covered-label geometry still controls membership: ordered, including partially concealed labels, excluding fully readable ones below the cover. Measured fitting includes prefix and gap widths; it truncates names and uses an accurate +N for an omitted trailing suffix. The first name remains identifiable in tested 320px layouts. Long provenance may compact with its own group. No tooltip dependency, controls, tab stops or pointer interception. Duplicate presentation is inert/aria-hidden; real header names remain intact. Empty summaries are omitted. Summaries stay stationary during prose scrolling.
+- Normal exit without scrolling into added space removes it with the existing animation.
+- After scrolling into added space, pointer exit closes the preview and stops all preview work; only the minimum viewport-supporting space remains. A representative case retains 60px, not the entire 140px preview.
+- Normal upward wheel scrolling releases that retained minimum progressively, reaching zero as soon as the natural document can support the viewport. No scroll position is continuously forced or restored by this hook; it calls no scroll API.
+- Opening/collapsing a section, Escape/root/search navigation or Manage suspension starts a new geometry lifecycle and clears the old reservation. Old retiring previews cannot restore a cancelled lifecycle. Observers and listeners are disconnected on replacement/unmount.
+- There is no timeout that later collapses space underneath an idle user, no permanent resting reservation, no accumulated gap and no disabled subsequent peeks. The old global `peekClamped` flag and pointer-motion bypass are removed.
 
-All catalogue typography, annotations/accepted favicon-frame overlap, wrapping, underlines/focus, open-sheet coverage bounds and exposed-strip correction remain. No command, core search, sync, metadata, browser permissions or Manage/mutation logic changed.
+**Intentional remaining behavior:** if the user stays at a viewport position that depends on the extension, a small blank area can remain after the preview closes. It is transient UI state, not persisted; upward scrolling or an explicit navigation/open/search action releases it. Explicit transitions to a shorter document may naturally clamp, and Escape cannot restore a scroll offset beyond the resulting normal document. The follow-up peek remains stable in the rendered search regression. Native Edge wheel/trackpad behavior still needs acceptance.
+
+Preserved: compact 85px resting final header, complete 2.5-line final previews and sole footer edge, approved Next typography/grouping, real header targets, bounded open-sheet coverage, 1000ms auto-scroll delay and one-line/2750ms speed, cancellation/end stopping/preference, static keyboard-only peek, reduced motion, 140/90ms peek and 220ms open reveal, annotations/wrapping/focus, original search snapshot, Ctrl+Shift+B, Alt+top-row roots, accepted Alt+numpad and address-bar/Ctrl+F6 behavior. Manage drafts, mutation and sync logic are unchanged. No dependencies, permissions, manifest key or SVG changes.
 
 ## Verification and artifact
 
-`npm run check` passes: typecheck, lint, **183 tests across 13 files**, production build/version verification and unchanged extension ID `nfhbegeoeafnpejpjdljhgagefbpafal`. Package/lockfile/source/generated manifest versions are **0.1.12**. Tracked `dist/` is regenerated. No new dependencies, permissions, key or SVG changes.
+`npm run check` passes: typecheck, lint, **185 tests / 13 files**, production build/version and unchanged extension ID `nfhbegeoeafnpejpjdljhgagefbpafal`. Package/lockfile/source/generated manifest are **0.1.13**; tracked `dist/` is regenerated.
 
-Focused rendered Chromium checks passed:
+New pure regressions cover viewport-supported retention, shrinking requirements, repeated peaks without accumulation, fractional pixels, upward release and natural-document growth. The committed **`scripts/check-peek-scroll.mjs`** builds a synthetic fixture and drives the complete wheel/pointer sequence. It runs 3 cycles per configuration at 1250×600, 390×700, 1490×950 and reduced motion: **12 cycles without per-cycle reloads**. It checks scrolling during the initial delay and active auto-scroll, complete preview depth, stationary waits, earlier/final traversal, pointer exit, upward wheel release, opening, and search/Escape both from retained space and an open section.
 
-- Final and two preceding peeks at four viewport sizes (320–1920px), preserving full depth, stable header/scroll coordinates, stationary auto-scroll geometry, bounded temporary space and complete cleanup. At 1250px the final preview adds exactly 140px; no empty copied row or duplicate edge.
-- Rapid bottom-header switching, click/open cleanup, and manual scrolling into added space with a stationary pointer: no reopening/reset loop. Scroll clamp is distinguished from unsolicited scrolling.
-- Six additional footer transition/natural-space/reduced-motion cases pass with pre-paint observer measurements: the footer stays below the changing preview on entry/exit, short-page flex room is consumed first, resizing clears correctly, fully open bookmark clearance remains at least 53px, and exact link attributes/focus styles are retained.
-- 24 summary cases across six viewport/name/root combinations: Next prefix, colors, actual gap widths, membership, three/four labels, identical root names with distinct IDs, long-name truncation and accurate +N; no horizontal overflow or new focusable nodes.
-- Previous bounded open-sheet overlap checks (15 adjacent/distant/short/tall/narrow cases), keyboard-only peek and state/scroll preservation. The exposed-strip/annotation suite passes at 320/390px and 80/125/150/200% zoom-equivalent layouts.
-- Keyboard/reduced-motion previews, mid-transition clicking, live resize, root/search summary and spacer cleanup, empty-result footer, long-card switch header positioning, temporary global scope, original Escape snapshot, query/selection and modifier exclusions pass.
+Frame/event assertions verify no viewport oscillation during pointer-only traversal or stationary periods. After pointer exit, preview animation frames/timers drain to zero and measurement callbacks settle. The exact new regression was also run with the original 0.1.12 components read from `aeeb47a`; it **fails on viewport oscillation**, while current components pass. Same-sequence before/after traces show the later traversal range reduced from about 80px to **0px**. The existing search snapshot/selection/modifier checks, bounded open-sheet overlap, keyboard peek and exposed-strip/annotation/zoom-equivalent suites pass.
 
-Review captures/measurements are under `docs/visual-review/generated/0.1.12-*`. Representative final/preceding previews, desktop/cross-root/narrow summaries were visually inspected. **Chromium synthetic evidence is not native Edge visual acceptance or native zoom/keyboard verification.** No completed functional/cross-device manual session was reopened.
+Rerun in WSL (Chromium must already be installed):
+
+```sh
+cd /home/dev/projects/bc-better-bookmarks
+npm run check
+PLAYWRIGHT_BROWSERS_PATH=/tmp/bb-catalogue-browsers node scripts/check-peek-scroll.mjs
+```
+
+Omit the environment override when using Playwright's normal browser installation. The script prints a temporary directory with full frame/event traces and fixture; durable summarized evidence and synthetic captures are in `docs/visual-review/generated/0.1.13-*`. Captures were inspected. **Chromium evidence does not establish native Edge acceptance, wheel/trackpad equivalence or Microsoft sync validation.** Completed functional/cross-device testing was not reopened.
 
 ## Files and Edge review
 
-Footer geometry commit: `52730bc` (`Make temporary room for complete footer-adjacent peeks`). The separate summary commit contains presentation/fitting tests, regenerated artifact and final handoff.
+Changed: `src/ui/usePeekFooter.ts`, `peek-footer.ts`, `SectionCard.tsx`, `Catalogue.tsx`; `tests/peek-footer.test.ts`; new `scripts/check-peek-scroll.mjs`; version/manifest files and tracked `dist/`; handoff/design/keyboard/roadmap/README and synthetic evidence. The commit contains the fix and reproducible regression together.
 
-Changed UI: `Catalogue.tsx`, `SectionCard.tsx`, `style.css`, `usePeekCoverage.ts`, `PeekSummary.tsx`, `peek-summary.ts`; new `usePeekFooter.ts` / `peek-footer.ts` replace `usePeekRoom.ts`. Tests replace the obsolete suppression regression with spacer geometry checks and extend summary fitting/grouping coverage. Also package/lockfile/manifests, tracked `dist/`, README/design/keyboard/roadmap/handoff docs and synthetic captures/reports. Supplied media is not staged.
-
-1. Check the compact resting footer and unchanged fully open spacing. Hover the final and preceding sections: complete previews, footer below them, no cramped row or duplicate final edge.
-2. At document bottom, enter/leave/switch headers rapidly. Real targets should stay put; temporary space should disappear. Manually scroll into added space and verify predictable clamping without a hover loop.
-3. Inspect Next prefix, spaced bars, color progression, cross-root gaps/provenance and narrow/zoomed truncation/+N. Confirm membership against the concealed labels.
-4. Open Crypto with a nested folder and peek earlier sections: bounded cover, no exposed strips, preserved state/scroll. Wait for auto-scroll: summary stays fixed.
-5. Briefly check static keyboard/reduced-motion peek, footer links/focus, Ctrl+Shift+B, Alt+top-row roots and Escape restoration. Accepted numpad/address-bar behavior remains unchanged.
+1. Repeat the recording sequence several times without refreshing: final peek → wheel down to footer → traverse earlier/final headers. Try both before and after auto-scroll starts.
+2. Hold the pointer still, then move away. No repeated opening/closing or viewport oscillation; browsing must remain responsive.
+3. Scroll upward: retained space should disappear. Open a section and enter/exit search; peeks should continue working afterward.
+4. Briefly check keyboard/reduced-motion peek, Next summaries, footer links and peeks above an open section. Do not treat temporary viewport-supporting retention as a permanent reserved gap.
 
 ## Completed validation
 

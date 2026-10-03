@@ -1,0 +1,1003 @@
+{
+  "before": {
+    "phases": [
+      {
+        "phase": "load",
+        "scrollMin": 0,
+        "scrollMax": 343,
+        "lastSpace": 55,
+        "frames": 22,
+        "resizeObserverCalls": 60
+      },
+      {
+        "phase": "hover0",
+        "scrollMin": 343,
+        "scrollMax": 343,
+        "lastSpace": 140,
+        "frames": 18,
+        "resizeObserverCalls": 27
+      },
+      {
+        "phase": "wheel0",
+        "scrollMin": 343,
+        "scrollMax": 423,
+        "lastSpace": 0,
+        "frames": 92,
+        "resizeObserverCalls": 8
+      },
+      {
+        "phase": "traverse0",
+        "scrollMin": 343,
+        "scrollMax": 423,
+        "lastSpace": 0,
+        "frames": 141,
+        "resizeObserverCalls": 298
+      },
+      {
+        "phase": "hold0",
+        "scrollMin": 343,
+        "scrollMax": 343,
+        "lastSpace": 0,
+        "frames": 97,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "hover1",
+        "scrollMin": 343,
+        "scrollMax": 416,
+        "lastSpace": 0,
+        "frames": 79,
+        "resizeObserverCalls": 15
+      },
+      {
+        "phase": "wheel1",
+        "scrollMin": 343,
+        "scrollMax": 343,
+        "lastSpace": 0,
+        "frames": 92,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "traverse1",
+        "scrollMin": 343,
+        "scrollMax": 423,
+        "lastSpace": 0,
+        "frames": 138,
+        "resizeObserverCalls": 296
+      },
+      {
+        "phase": "hold1",
+        "scrollMin": 343,
+        "scrollMax": 343,
+        "lastSpace": 0,
+        "frames": 96,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "hover2",
+        "scrollMin": 343,
+        "scrollMax": 416,
+        "lastSpace": 0,
+        "frames": 16,
+        "resizeObserverCalls": 15
+      },
+      {
+        "phase": "wheel2",
+        "scrollMin": 343,
+        "scrollMax": 343,
+        "lastSpace": 0,
+        "frames": 92,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "traverse2",
+        "scrollMin": 343,
+        "scrollMax": 423,
+        "lastSpace": 0,
+        "frames": 143,
+        "resizeObserverCalls": 296
+      },
+      {
+        "phase": "hold2",
+        "scrollMin": 343,
+        "scrollMax": 343,
+        "lastSpace": 0,
+        "frames": 96,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "hover3",
+        "scrollMin": 343,
+        "scrollMax": 415,
+        "lastSpace": 0,
+        "frames": 80,
+        "resizeObserverCalls": 15
+      },
+      {
+        "phase": "wheel3",
+        "scrollMin": 343,
+        "scrollMax": 343,
+        "lastSpace": 0,
+        "frames": 92,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "traverse3",
+        "scrollMin": 343,
+        "scrollMax": 423,
+        "lastSpace": 0,
+        "frames": 143,
+        "resizeObserverCalls": 296
+      },
+      {
+        "phase": "hold3",
+        "scrollMin": 343,
+        "scrollMax": 343,
+        "lastSpace": 0,
+        "frames": 97,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "away",
+        "scrollMin": 343,
+        "scrollMax": 343,
+        "lastSpace": 0,
+        "frames": 73,
+        "resizeObserverCalls": 0
+      }
+    ],
+    "firstTraversalScrollEvents": [
+      {
+        "t": 2327,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 369,
+        "h": 969,
+        "space": 26.4375,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [],
+        "ro": 100
+      },
+      {
+        "t": 2343,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 394,
+        "h": 994,
+        "space": 50.59375,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [],
+        "ro": 102
+      },
+      {
+        "t": 2360,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 416,
+        "h": 1016,
+        "space": 72.5625,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [],
+        "ro": 104
+      },
+      {
+        "t": 2377,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 423,
+        "h": 1035,
+        "space": 92.25,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [],
+        "ro": 106
+      },
+      {
+        "t": 2710,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 408,
+        "h": 1008,
+        "space": 64.984375,
+        "peek": [
+          "folder:jobs"
+        ],
+        "leave": [
+          "folder:last"
+        ],
+        "clamped": "true",
+        "ro": 128
+      },
+      {
+        "t": 2727,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 416,
+        "h": 1016,
+        "space": 72.5625,
+        "peek": [
+          "folder:jobs"
+        ],
+        "leave": [
+          "folder:last"
+        ],
+        "clamped": "true",
+        "ro": 131
+      },
+      {
+        "t": 2743,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 423,
+        "h": 1035,
+        "space": 92.25,
+        "peek": [
+          "folder:jobs"
+        ],
+        "leave": [
+          "folder:last"
+        ],
+        "clamped": "true",
+        "ro": 134
+      },
+      {
+        "t": 3143,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 408,
+        "h": 1008,
+        "space": 65.375,
+        "peek": [
+          "folder:stack"
+        ],
+        "leave": [
+          "folder:jobs"
+        ],
+        "ro": 166
+      },
+      {
+        "t": 3161,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 379,
+        "h": 979,
+        "space": 36.234375,
+        "peek": [
+          "folder:stack"
+        ],
+        "leave": [
+          "folder:jobs"
+        ],
+        "ro": 170
+      },
+      {
+        "t": 3187,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 357,
+        "h": 957,
+        "space": 13.921875,
+        "peek": [
+          "folder:crypto"
+        ],
+        "leave": [
+          "folder:stack",
+          "folder:jobs"
+        ],
+        "ro": 174
+      },
+      {
+        "t": 3193,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 350,
+        "h": 950,
+        "space": 7.25,
+        "peek": [
+          "folder:crypto"
+        ],
+        "leave": [
+          "folder:stack"
+        ],
+        "ro": 181
+      },
+      {
+        "t": 3210,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 343,
+        "h": 943,
+        "space": 0,
+        "peek": [
+          "folder:crypto"
+        ],
+        "leave": [
+          "folder:stack"
+        ],
+        "clamped": "true",
+        "ro": 185
+      },
+      {
+        "t": 3277,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 343,
+        "h": 943,
+        "space": 0,
+        "peek": [
+          "folder:crypto"
+        ],
+        "leave": [
+          "folder:stack"
+        ],
+        "clamped": "true",
+        "ro": 207
+      },
+      {
+        "t": 3310,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 343,
+        "h": 943,
+        "space": 0,
+        "peek": [
+          "folder:crypto"
+        ],
+        "leave": [],
+        "clamped": "true",
+        "ro": 214
+      },
+      {
+        "t": 3344,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 344,
+        "h": 944,
+        "space": 0.578125,
+        "peek": [
+          "folder:crypto"
+        ],
+        "leave": [],
+        "ro": 220
+      },
+      {
+        "t": 3360,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 343,
+        "h": 943,
+        "space": 0,
+        "peek": [
+          "folder:crypto"
+        ],
+        "leave": [],
+        "ro": 221
+      },
+      {
+        "t": 3493,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 343,
+        "h": 943,
+        "space": 0,
+        "peek": [
+          "folder:stack"
+        ],
+        "leave": [
+          "folder:crypto"
+        ],
+        "clamped": "true",
+        "ro": 238
+      },
+      {
+        "t": 3527,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 363,
+        "h": 963,
+        "space": 19.796875,
+        "peek": [
+          "folder:stack"
+        ],
+        "leave": [
+          "folder:crypto"
+        ],
+        "clamped": "true",
+        "ro": 248
+      },
+      {
+        "t": 3544,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 367,
+        "h": 967,
+        "space": 24.25,
+        "peek": [
+          "folder:stack"
+        ],
+        "leave": [],
+        "clamped": "true",
+        "ro": 252
+      },
+      {
+        "t": 3560,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 381,
+        "h": 981,
+        "space": 38.4375,
+        "peek": [
+          "folder:stack"
+        ],
+        "leave": [],
+        "clamped": "true",
+        "ro": 255
+      },
+      {
+        "t": 3577,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 392,
+        "h": 992,
+        "space": 48.78125,
+        "peek": [
+          "folder:stack"
+        ],
+        "leave": [],
+        "clamped": "true",
+        "ro": 258
+      },
+      {
+        "t": 3593,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 397,
+        "h": 997,
+        "space": 54.421875,
+        "peek": [
+          "folder:stack"
+        ],
+        "leave": [],
+        "clamped": "true",
+        "ro": 261
+      },
+      {
+        "t": 3610,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 398,
+        "h": 998,
+        "space": 55,
+        "peek": [
+          "folder:stack"
+        ],
+        "leave": [],
+        "ro": 264
+      },
+      {
+        "t": 3660,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 370,
+        "h": 970,
+        "space": 26.59375,
+        "peek": [
+          "folder:jobs"
+        ],
+        "leave": [
+          "folder:stack"
+        ],
+        "ro": 274
+      },
+      {
+        "t": 3677,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 394,
+        "h": 994,
+        "space": 50.59375,
+        "peek": [
+          "folder:jobs"
+        ],
+        "leave": [
+          "folder:stack"
+        ],
+        "ro": 278
+      },
+      {
+        "t": 3694,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 416,
+        "h": 1016,
+        "space": 72.5625,
+        "peek": [
+          "folder:jobs"
+        ],
+        "leave": [
+          "folder:stack"
+        ],
+        "ro": 282
+      },
+      {
+        "t": 3711,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 423,
+        "h": 1035,
+        "space": 92.140625,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [
+          "folder:stack",
+          "folder:jobs"
+        ],
+        "ro": 286
+      },
+      {
+        "t": 3744,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 396,
+        "h": 996,
+        "space": 53.3125,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [
+          "folder:jobs"
+        ],
+        "clamped": "true",
+        "ro": 294
+      },
+      {
+        "t": 3760,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 394,
+        "h": 994,
+        "space": 50.59375,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [
+          "folder:jobs"
+        ],
+        "clamped": "true",
+        "ro": 297
+      },
+      {
+        "t": 3777,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 416,
+        "h": 1016,
+        "space": 72.5625,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [
+          "folder:jobs"
+        ],
+        "clamped": "true",
+        "ro": 300
+      },
+      {
+        "t": 3794,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 423,
+        "h": 1035,
+        "space": 92.140625,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [
+          "folder:jobs"
+        ],
+        "clamped": "true",
+        "ro": 303
+      },
+      {
+        "t": 3993,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 408,
+        "h": 1008,
+        "space": 65.375,
+        "peek": [],
+        "leave": [
+          "folder:last"
+        ],
+        "clamped": "true",
+        "ro": 316
+      },
+      {
+        "t": 4010,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 379,
+        "h": 979,
+        "space": 36.234375,
+        "peek": [],
+        "leave": [
+          "folder:last"
+        ],
+        "clamped": "true",
+        "ro": 317
+      },
+      {
+        "t": 4027,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 357,
+        "h": 957,
+        "space": 14.03125,
+        "peek": [],
+        "leave": [
+          "folder:last"
+        ],
+        "clamped": "true",
+        "ro": 318
+      },
+      {
+        "t": 4044,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 343,
+        "h": 943,
+        "space": 0,
+        "peek": [],
+        "leave": [],
+        "clamped": "true",
+        "ro": 320
+      },
+      {
+        "t": 4161,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 370,
+        "h": 970,
+        "space": 26.59375,
+        "peek": [
+          "folder:jobs"
+        ],
+        "leave": [
+          "folder:last"
+        ],
+        "ro": 326
+      },
+      {
+        "t": 4227,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 369,
+        "h": 969,
+        "space": 26.4375,
+        "peek": [
+          "folder:jobs"
+        ],
+        "leave": [
+          "folder:last"
+        ],
+        "ro": 341
+      },
+      {
+        "t": 4244,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 394,
+        "h": 994,
+        "space": 50.59375,
+        "peek": [
+          "folder:jobs"
+        ],
+        "leave": [
+          "folder:last"
+        ],
+        "ro": 344
+      },
+      {
+        "t": 4260,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 415,
+        "h": 1015,
+        "space": 72.4375,
+        "peek": [
+          "folder:jobs"
+        ],
+        "leave": [
+          "folder:last"
+        ],
+        "ro": 347
+      },
+      {
+        "t": 4277,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 423,
+        "h": 1035,
+        "space": 92.140625,
+        "peek": [
+          "folder:jobs"
+        ],
+        "leave": [
+          "folder:last"
+        ],
+        "ro": 350
+      },
+      {
+        "t": 4444,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 408,
+        "h": 1008,
+        "space": 65.171875,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [
+          "folder:jobs"
+        ],
+        "ro": 375
+      },
+      {
+        "t": 4460,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 416,
+        "h": 1016,
+        "space": 72.5625,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [
+          "folder:jobs"
+        ],
+        "ro": 378
+      },
+      {
+        "t": 4477,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 423,
+        "h": 1035,
+        "space": 92.140625,
+        "peek": [
+          "folder:last"
+        ],
+        "leave": [
+          "folder:jobs"
+        ],
+        "ro": 381
+      },
+      {
+        "t": 4527,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 413,
+        "h": 1013,
+        "space": 70,
+        "peek": [],
+        "leave": [
+          "folder:last"
+        ],
+        "clamped": "true",
+        "ro": 387
+      },
+      {
+        "t": 4544,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 380,
+        "h": 980,
+        "space": 37.359375,
+        "peek": [],
+        "leave": [
+          "folder:last"
+        ],
+        "clamped": "true",
+        "ro": 388
+      },
+      {
+        "t": 4560,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 356,
+        "h": 956,
+        "space": 13.171875,
+        "peek": [],
+        "leave": [
+          "folder:last"
+        ],
+        "clamped": "true",
+        "ro": 389
+      },
+      {
+        "t": 4576,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 344,
+        "h": 944,
+        "space": 0.515625,
+        "peek": [],
+        "leave": [
+          "folder:last"
+        ],
+        "clamped": "true",
+        "ro": 391
+      },
+      {
+        "t": 4594,
+        "phase": "traverse0",
+        "type": "scroll",
+        "y": 343,
+        "h": 943,
+        "space": 0,
+        "peek": [],
+        "leave": [],
+        "clamped": "true",
+        "ro": 392
+      }
+    ]
+  },
+  "after": {
+    "phases": [
+      {
+        "phase": "load",
+        "scrollMin": 0,
+        "scrollMax": 343,
+        "lastSpace": 55,
+        "frames": 21,
+        "resizeObserverCalls": 60
+      },
+      {
+        "phase": "hover0",
+        "scrollMin": 343,
+        "scrollMax": 343,
+        "lastSpace": 140,
+        "frames": 18,
+        "resizeObserverCalls": 27
+      },
+      {
+        "phase": "wheel0",
+        "scrollMin": 343,
+        "scrollMax": 423,
+        "lastSpace": 80,
+        "frames": 92,
+        "resizeObserverCalls": 7
+      },
+      {
+        "phase": "traverse0",
+        "scrollMin": 423,
+        "scrollMax": 423,
+        "lastSpace": 80,
+        "frames": 141,
+        "resizeObserverCalls": 229
+      },
+      {
+        "phase": "hold0",
+        "scrollMin": 423,
+        "scrollMax": 423,
+        "lastSpace": 80,
+        "frames": 96,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "hover1",
+        "scrollMin": 423,
+        "scrollMax": 423,
+        "lastSpace": 140,
+        "frames": 80,
+        "resizeObserverCalls": 21
+      },
+      {
+        "phase": "wheel1",
+        "scrollMin": 423,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 94,
+        "resizeObserverCalls": 7
+      },
+      {
+        "phase": "traverse1",
+        "scrollMin": 483,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 141,
+        "resizeObserverCalls": 186
+      },
+      {
+        "phase": "hold1",
+        "scrollMin": 483,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 97,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "hover2",
+        "scrollMin": 483,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 16,
+        "resizeObserverCalls": 21
+      },
+      {
+        "phase": "wheel2",
+        "scrollMin": 483,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 92,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "traverse2",
+        "scrollMin": 483,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 142,
+        "resizeObserverCalls": 196
+      },
+      {
+        "phase": "hold2",
+        "scrollMin": 483,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 96,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "hover3",
+        "scrollMin": 483,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 80,
+        "resizeObserverCalls": 21
+      },
+      {
+        "phase": "wheel3",
+        "scrollMin": 483,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 92,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "traverse3",
+        "scrollMin": 483,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 140,
+        "resizeObserverCalls": 193
+      },
+      {
+        "phase": "hold3",
+        "scrollMin": 483,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 97,
+        "resizeObserverCalls": 0
+      },
+      {
+        "phase": "away",
+        "scrollMin": 483,
+        "scrollMax": 483,
+        "lastSpace": 140,
+        "frames": 73,
+        "resizeObserverCalls": 0
+      }
+    ],
+    "firstTraversalScrollEvents": []
+  },
+  "baselineRegression": "Original aeeb47a components fail: viewport oscillation: traverse-0, 1250. Current components pass."
+}

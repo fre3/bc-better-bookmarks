@@ -49,7 +49,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
   return <section ref={slot} id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${showingPeek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
     style={{ zIndex: showingPeek ? stackSize + 1 : preview ? stackSize : stackIndex }}>
     <div className="section-sheet has-top-shadow">
-      <div className="section-header" onPointerEnter={e => { setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch' && !e.currentTarget.closest<HTMLElement>('.catalogue')?.dataset.peekClamped) setPointerPeek(peekEpoch); }} onPointerMove={e => { if (!e.movementX && !e.movementY) return; const catalogue = e.currentTarget.closest<HTMLElement>('.catalogue'); if (catalogue?.dataset.peekClamped) { delete catalogue.dataset.peekClamped; if (e.pointerType === 'mouse') { setMouseHover(true); setPointerPeek(peekEpoch); } } }} onPointerLeave={() => { setMouseHover(false); setPointerPeek(-1); }}>
+      <div className="section-header" onPointerEnter={e => { setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={() => { setMouseHover(false); setPointerPeek(-1); }}>
         <h2 className="section-inner">
         {query !== null ? <span className="section-label"><span className="section-heading-text">{section.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
           <button id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}

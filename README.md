@@ -6,9 +6,9 @@ A Manifest V3 New Tab dashboard over your **real Microsoft Edge Favorites**. Fav
 
 ## UI/UX visual-review checkpoint
 
-Build **0.1.12** on `feature/ui-ux-redesign` refines the typographic browse/search catalogue. All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. **Manage** retains the existing MVP editing and diagnostic controls pending the separate Edit-mode redesign. Browsing roots never changes the saved mutation scope. Folder tags remain deferred.
+Build **0.1.13** on `feature/ui-ux-redesign` refines the typographic browse/search catalogue. All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. **Manage** retains the existing MVP editing and diagnostic controls pending the separate Edit-mode redesign. Browsing roots never changes the saved mutation scope. Folder tags remain deferred.
 
-Read [the design decisions, Edge load instructions and visual checklist](docs/ui-ux-design.md) before reviewing this checkpoint. Automated checks pass. The user reviewed 0.1.2 in Edge and accepted search, navigation, scope and runtime behavior; the main 0.1.8 command workflows/configurability are accepted; the user accepted temporary search scope/Escape restoration, top-row Alt+1–9 and the 1000ms scrolling delay. The 0.1.12 complete footer-adjacent previews and clarified Next summaries await Edge review. The preserved functional baseline remains at tag `mvp-validated-0.1.1`.
+Read [the design decisions, Edge load instructions and visual checklist](docs/ui-ux-design.md) before reviewing this checkpoint. Automated checks pass. The user reviewed 0.1.2 in Edge and accepted search, navigation, scope and runtime behavior; the main 0.1.8 command workflows/configurability are accepted; the user accepted temporary search scope/Escape restoration, top-row Alt+1–9 and the 1000ms scrolling delay. The 0.1.13 wheel/peek stability correction awaits Edge review; complete footer-adjacent previews and Next styling are preserved. The preserved functional baseline remains at tag `mvp-validated-0.1.1`.
 
 ## Keyboard search command
 
