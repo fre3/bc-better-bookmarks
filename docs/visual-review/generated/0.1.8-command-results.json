@@ -1,0 +1,18 @@
+{
+  "nativeNewTabTyping": "azure",
+  "queryReplacement": "rep",
+  "escapeRestoresRootAndBranch": true,
+  "manageDraftPreserved": true,
+  "websiteAndReusePreserved": true,
+  "rapidTabCount": 2,
+  "pendingAfterColdWorker": {},
+  "assignmentInTemporaryLinuxProfile": [
+    {
+      "description": "Open dashboard in search mode",
+      "name": "open-dashboard-search",
+      "shortcut": "Ctrl+Shift+Y"
+    }
+  ],
+  "errors": [],
+  "note": "Isolated WSL Chromium, temporary Linux Ctrl+Shift+Y assignment; not native Edge acceptance. Address-bar repeat on explicit route remains limited in the separate probe."
+}

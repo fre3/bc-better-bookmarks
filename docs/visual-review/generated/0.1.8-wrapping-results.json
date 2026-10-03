@@ -1,0 +1,1087 @@
+[
+  {
+    "width": 320,
+    "selection": "https://www.kalk-laden.de/WebRoot/Store6/Shops/61629937/47E0/290D/5250/Kalkfarbe_Anleitung.pdf",
+    "href": "http://example.com/slash",
+    "scheme": "https://",
+    "schemeLines": 1,
+    "breaks": [
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 191.875,
+          "y": 512.171875,
+          "width": 11.265625,
+          "height": 46,
+          "top": 512.171875,
+          "right": 203.140625,
+          "bottom": 558.171875,
+          "left": 191.875
+        },
+        "following": {
+          "x": 20,
+          "y": 568.171875,
+          "width": 35.859375,
+          "height": 46,
+          "top": 568.171875,
+          "right": 55.859375,
+          "bottom": 614.171875,
+          "left": 20
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 174.65625,
+          "y": 568.171875,
+          "width": 11.265625,
+          "height": 46,
+          "top": 568.171875,
+          "right": 185.921875,
+          "bottom": 614.171875,
+          "left": 174.65625
+        },
+        "following": {
+          "x": 20,
+          "y": 624.171875,
+          "width": 22.953125,
+          "height": 46,
+          "top": 624.171875,
+          "right": 42.953125,
+          "bottom": 670.171875,
+          "left": 20
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 127.125,
+          "y": 624.171875,
+          "width": 11.265625,
+          "height": 46,
+          "top": 624.171875,
+          "right": 138.390625,
+          "bottom": 670.171875,
+          "left": 127.125
+        },
+        "following": {
+          "x": 138.390625,
+          "y": 624.171875,
+          "width": 22.953125,
+          "height": 46,
+          "top": 624.171875,
+          "right": 161.34375,
+          "bottom": 670.171875,
+          "left": 138.390625
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 238.984375,
+          "y": 624.171875,
+          "width": 11.265625,
+          "height": 46,
+          "top": 624.171875,
+          "right": 250.25,
+          "bottom": 670.171875,
+          "left": 238.984375
+        },
+        "following": {
+          "x": 20,
+          "y": 680.171875,
+          "width": 20.59375,
+          "height": 46,
+          "top": 680.171875,
+          "right": 40.59375,
+          "bottom": 726.171875,
+          "left": 20
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 184.625,
+          "y": 680.171875,
+          "width": 11.265625,
+          "height": 46,
+          "top": 680.171875,
+          "right": 195.890625,
+          "bottom": 726.171875,
+          "left": 184.625
+        },
+        "following": {
+          "x": 195.890625,
+          "y": 680.171875,
+          "width": 20.59375,
+          "height": 46,
+          "top": 680.171875,
+          "right": 216.484375,
+          "bottom": 726.171875,
+          "left": 195.890625
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 282.859375,
+          "y": 680.171875,
+          "width": 11.265625,
+          "height": 46,
+          "top": 680.171875,
+          "right": 294.125,
+          "bottom": 726.171875,
+          "left": 282.859375
+        },
+        "following": {
+          "x": 20,
+          "y": 736.171875,
+          "width": 20.59375,
+          "height": 46,
+          "top": 736.171875,
+          "right": 40.59375,
+          "bottom": 782.171875,
+          "left": 20
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 111.640625,
+          "y": 736.171875,
+          "width": 11.265625,
+          "height": 46,
+          "top": 736.171875,
+          "right": 122.90625,
+          "bottom": 782.171875,
+          "left": 111.640625
+        },
+        "following": {
+          "x": 122.90625,
+          "y": 736.171875,
+          "width": 20.59375,
+          "height": 46,
+          "top": 736.171875,
+          "right": 143.5,
+          "bottom": 782.171875,
+          "left": 122.90625
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 205.21875,
+          "y": 736.171875,
+          "width": 11.265625,
+          "height": 46,
+          "top": 736.171875,
+          "right": 216.484375,
+          "bottom": 782.171875,
+          "left": 205.21875
+        },
+        "following": {
+          "x": 20,
+          "y": 792.171875,
+          "width": 29.921875,
+          "height": 46,
+          "top": 792.171875,
+          "right": 49.921875,
+          "bottom": 838.171875,
+          "left": 20
+        }
+      },
+      {
+        "separator": "_",
+        "preceding": {
+          "x": 184.109375,
+          "y": 792.171875,
+          "width": 20.59375,
+          "height": 46,
+          "top": 792.171875,
+          "right": 204.703125,
+          "bottom": 838.171875,
+          "left": 184.109375
+        },
+        "following": {
+          "x": 20,
+          "y": 848.171875,
+          "width": 29.921875,
+          "height": 46,
+          "top": 848.171875,
+          "right": 49.921875,
+          "bottom": 894.171875,
+          "left": 20
+        }
+      }
+    ],
+    "underlines": true
+  },
+  {
+    "width": 390,
+    "selection": "https://www.kalk-laden.de/WebRoot/Store6/Shops/61629937/47E0/290D/5250/Kalkfarbe_Anleitung.pdf",
+    "href": "http://example.com/slash",
+    "scheme": "https://",
+    "schemeLines": 1,
+    "breaks": [
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 157.71875,
+          "y": 399.78125,
+          "width": 11.265625,
+          "height": 46,
+          "top": 399.78125,
+          "right": 168.984375,
+          "bottom": 445.78125,
+          "left": 157.71875
+        },
+        "following": {
+          "x": 168.984375,
+          "y": 399.78125,
+          "width": 35.859375,
+          "height": 46,
+          "top": 399.78125,
+          "right": 204.84375,
+          "bottom": 445.78125,
+          "left": 168.984375
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 323.640625,
+          "y": 399.78125,
+          "width": 11.265625,
+          "height": 46,
+          "top": 399.78125,
+          "right": 334.90625,
+          "bottom": 445.78125,
+          "left": 323.640625
+        },
+        "following": {
+          "x": 20,
+          "y": 455.78125,
+          "width": 22.953125,
+          "height": 46,
+          "top": 455.78125,
+          "right": 42.953125,
+          "bottom": 501.78125,
+          "left": 20
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 127.125,
+          "y": 455.78125,
+          "width": 11.265625,
+          "height": 46,
+          "top": 455.78125,
+          "right": 138.390625,
+          "bottom": 501.78125,
+          "left": 127.125
+        },
+        "following": {
+          "x": 138.390625,
+          "y": 455.78125,
+          "width": 22.953125,
+          "height": 46,
+          "top": 455.78125,
+          "right": 161.34375,
+          "bottom": 501.78125,
+          "left": 138.390625
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 238.984375,
+          "y": 455.78125,
+          "width": 11.265625,
+          "height": 46,
+          "top": 455.78125,
+          "right": 250.25,
+          "bottom": 501.78125,
+          "left": 238.984375
+        },
+        "following": {
+          "x": 20,
+          "y": 511.78125,
+          "width": 20.59375,
+          "height": 46,
+          "top": 511.78125,
+          "right": 40.59375,
+          "bottom": 557.78125,
+          "left": 20
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 184.625,
+          "y": 511.78125,
+          "width": 11.265625,
+          "height": 46,
+          "top": 511.78125,
+          "right": 195.890625,
+          "bottom": 557.78125,
+          "left": 184.625
+        },
+        "following": {
+          "x": 195.890625,
+          "y": 511.78125,
+          "width": 20.59375,
+          "height": 46,
+          "top": 511.78125,
+          "right": 216.484375,
+          "bottom": 557.78125,
+          "left": 195.890625
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 282.859375,
+          "y": 511.78125,
+          "width": 11.265625,
+          "height": 46,
+          "top": 511.78125,
+          "right": 294.125,
+          "bottom": 557.78125,
+          "left": 282.859375
+        },
+        "following": {
+          "x": 20,
+          "y": 567.78125,
+          "width": 20.59375,
+          "height": 46,
+          "top": 567.78125,
+          "right": 40.59375,
+          "bottom": 613.78125,
+          "left": 20
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 111.640625,
+          "y": 567.78125,
+          "width": 11.265625,
+          "height": 46,
+          "top": 567.78125,
+          "right": 122.90625,
+          "bottom": 613.78125,
+          "left": 111.640625
+        },
+        "following": {
+          "x": 122.90625,
+          "y": 567.78125,
+          "width": 20.59375,
+          "height": 46,
+          "top": 567.78125,
+          "right": 143.5,
+          "bottom": 613.78125,
+          "left": 122.90625
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 205.21875,
+          "y": 567.78125,
+          "width": 11.265625,
+          "height": 46,
+          "top": 567.78125,
+          "right": 216.484375,
+          "bottom": 613.78125,
+          "left": 205.21875
+        },
+        "following": {
+          "x": 20,
+          "y": 623.78125,
+          "width": 29.921875,
+          "height": 46,
+          "top": 623.78125,
+          "right": 49.921875,
+          "bottom": 669.78125,
+          "left": 20
+        }
+      },
+      {
+        "separator": "_",
+        "preceding": {
+          "x": 184.109375,
+          "y": 623.78125,
+          "width": 20.59375,
+          "height": 46,
+          "top": 623.78125,
+          "right": 204.703125,
+          "bottom": 669.78125,
+          "left": 184.109375
+        },
+        "following": {
+          "x": 20,
+          "y": 679.78125,
+          "width": 29.921875,
+          "height": 46,
+          "top": 679.78125,
+          "right": 49.921875,
+          "bottom": 725.78125,
+          "left": 20
+        }
+      }
+    ],
+    "underlines": true
+  },
+  {
+    "width": 700,
+    "selection": "https://www.kalk-laden.de/WebRoot/Store6/Shops/61629937/47E0/290D/5250/Kalkfarbe_Anleitung.pdf",
+    "href": "http://example.com/slash",
+    "scheme": "https://",
+    "schemeLines": 1,
+    "breaks": [
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 162.21875,
+          "y": 115,
+          "width": 11.265625,
+          "height": 46,
+          "top": 115,
+          "right": 173.484375,
+          "bottom": 161,
+          "left": 162.21875
+        },
+        "following": {
+          "x": 173.484375,
+          "y": 115,
+          "width": 35.859375,
+          "height": 46,
+          "top": 115,
+          "right": 209.34375,
+          "bottom": 161,
+          "left": 173.484375
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 328.140625,
+          "y": 115,
+          "width": 11.265625,
+          "height": 46,
+          "top": 115,
+          "right": 339.40625,
+          "bottom": 161,
+          "left": 328.140625
+        },
+        "following": {
+          "x": 339.40625,
+          "y": 115,
+          "width": 22.953125,
+          "height": 46,
+          "top": 115,
+          "right": 362.359375,
+          "bottom": 161,
+          "left": 339.40625
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 446.53125,
+          "y": 115,
+          "width": 11.265625,
+          "height": 46,
+          "top": 115,
+          "right": 457.796875,
+          "bottom": 161,
+          "left": 446.53125
+        },
+        "following": {
+          "x": 457.796875,
+          "y": 115,
+          "width": 22.953125,
+          "height": 46,
+          "top": 115,
+          "right": 480.75,
+          "bottom": 161,
+          "left": 457.796875
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 558.390625,
+          "y": 115,
+          "width": 11.265625,
+          "height": 46,
+          "top": 115,
+          "right": 569.65625,
+          "bottom": 161,
+          "left": 558.390625
+        },
+        "following": {
+          "x": 24.5,
+          "y": 171,
+          "width": 20.59375,
+          "height": 46,
+          "top": 171,
+          "right": 45.09375,
+          "bottom": 217,
+          "left": 24.5
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 189.125,
+          "y": 171,
+          "width": 11.265625,
+          "height": 46,
+          "top": 171,
+          "right": 200.390625,
+          "bottom": 217,
+          "left": 189.125
+        },
+        "following": {
+          "x": 200.390625,
+          "y": 171,
+          "width": 20.59375,
+          "height": 46,
+          "top": 171,
+          "right": 220.984375,
+          "bottom": 217,
+          "left": 200.390625
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 287.359375,
+          "y": 171,
+          "width": 11.265625,
+          "height": 46,
+          "top": 171,
+          "right": 298.625,
+          "bottom": 217,
+          "left": 287.359375
+        },
+        "following": {
+          "x": 298.625,
+          "y": 171,
+          "width": 20.59375,
+          "height": 46,
+          "top": 171,
+          "right": 319.21875,
+          "bottom": 217,
+          "left": 298.625
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 390.265625,
+          "y": 171,
+          "width": 11.265625,
+          "height": 46,
+          "top": 171,
+          "right": 401.53125,
+          "bottom": 217,
+          "left": 390.265625
+        },
+        "following": {
+          "x": 401.53125,
+          "y": 171,
+          "width": 20.59375,
+          "height": 46,
+          "top": 171,
+          "right": 422.125,
+          "bottom": 217,
+          "left": 401.53125
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 483.84375,
+          "y": 171,
+          "width": 11.265625,
+          "height": 46,
+          "top": 171,
+          "right": 495.109375,
+          "bottom": 217,
+          "left": 483.84375
+        },
+        "following": {
+          "x": 24.5,
+          "y": 227,
+          "width": 29.921875,
+          "height": 46,
+          "top": 227,
+          "right": 54.421875,
+          "bottom": 273,
+          "left": 24.5
+        }
+      },
+      {
+        "separator": "_",
+        "preceding": {
+          "x": 188.609375,
+          "y": 227,
+          "width": 20.59375,
+          "height": 46,
+          "top": 227,
+          "right": 209.203125,
+          "bottom": 273,
+          "left": 188.609375
+        },
+        "following": {
+          "x": 209.203125,
+          "y": 227,
+          "width": 29.921875,
+          "height": 46,
+          "top": 227,
+          "right": 239.125,
+          "bottom": 273,
+          "left": 209.203125
+        }
+      }
+    ],
+    "underlines": true
+  },
+  {
+    "width": 1100,
+    "selection": "https://www.kalk-laden.de/WebRoot/Store6/Shops/61629937/47E0/290D/5250/Kalkfarbe_Anleitung.pdf",
+    "href": "http://example.com/slash",
+    "scheme": "https://",
+    "schemeLines": 1,
+    "breaks": [
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 894.296875,
+          "y": -53,
+          "width": 11.25,
+          "height": 46,
+          "top": -53,
+          "right": 905.546875,
+          "bottom": -7,
+          "left": 894.296875
+        },
+        "following": {
+          "x": 38.5,
+          "y": 3,
+          "width": 35.859375,
+          "height": 46,
+          "top": 3,
+          "right": 74.359375,
+          "bottom": 49,
+          "left": 38.5
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 193.15625,
+          "y": 3,
+          "width": 11.265625,
+          "height": 46,
+          "top": 3,
+          "right": 204.421875,
+          "bottom": 49,
+          "left": 193.15625
+        },
+        "following": {
+          "x": 204.421875,
+          "y": 3,
+          "width": 22.953125,
+          "height": 46,
+          "top": 3,
+          "right": 227.375,
+          "bottom": 49,
+          "left": 204.421875
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 311.546875,
+          "y": 3,
+          "width": 11.265625,
+          "height": 46,
+          "top": 3,
+          "right": 322.8125,
+          "bottom": 49,
+          "left": 311.546875
+        },
+        "following": {
+          "x": 322.8125,
+          "y": 3,
+          "width": 22.953125,
+          "height": 46,
+          "top": 3,
+          "right": 345.765625,
+          "bottom": 49,
+          "left": 322.8125
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 423.40625,
+          "y": 3,
+          "width": 11.265625,
+          "height": 46,
+          "top": 3,
+          "right": 434.671875,
+          "bottom": 49,
+          "left": 423.40625
+        },
+        "following": {
+          "x": 434.671875,
+          "y": 3,
+          "width": 20.59375,
+          "height": 46,
+          "top": 3,
+          "right": 455.265625,
+          "bottom": 49,
+          "left": 434.671875
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 599.296875,
+          "y": 3,
+          "width": 11.265625,
+          "height": 46,
+          "top": 3,
+          "right": 610.5625,
+          "bottom": 49,
+          "left": 599.296875
+        },
+        "following": {
+          "x": 610.5625,
+          "y": 3,
+          "width": 20.59375,
+          "height": 46,
+          "top": 3,
+          "right": 631.15625,
+          "bottom": 49,
+          "left": 610.5625
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 697.53125,
+          "y": 3,
+          "width": 11.265625,
+          "height": 46,
+          "top": 3,
+          "right": 708.796875,
+          "bottom": 49,
+          "left": 697.53125
+        },
+        "following": {
+          "x": 708.796875,
+          "y": 3,
+          "width": 20.59375,
+          "height": 46,
+          "top": 3,
+          "right": 729.390625,
+          "bottom": 49,
+          "left": 708.796875
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 800.4375,
+          "y": 3,
+          "width": 11.265625,
+          "height": 46,
+          "top": 3,
+          "right": 811.703125,
+          "bottom": 49,
+          "left": 800.4375
+        },
+        "following": {
+          "x": 811.703125,
+          "y": 3,
+          "width": 20.59375,
+          "height": 46,
+          "top": 3,
+          "right": 832.296875,
+          "bottom": 49,
+          "left": 811.703125
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 894.015625,
+          "y": 3,
+          "width": 11.265625,
+          "height": 46,
+          "top": 3,
+          "right": 905.28125,
+          "bottom": 49,
+          "left": 894.015625
+        },
+        "following": {
+          "x": 38.5,
+          "y": 59,
+          "width": 29.921875,
+          "height": 46,
+          "top": 59,
+          "right": 68.421875,
+          "bottom": 105,
+          "left": 38.5
+        }
+      },
+      {
+        "separator": "_",
+        "preceding": {
+          "x": 202.609375,
+          "y": 59,
+          "width": 20.59375,
+          "height": 46,
+          "top": 59,
+          "right": 223.203125,
+          "bottom": 105,
+          "left": 202.609375
+        },
+        "following": {
+          "x": 223.203125,
+          "y": 59,
+          "width": 29.921875,
+          "height": 46,
+          "top": 59,
+          "right": 253.125,
+          "bottom": 105,
+          "left": 223.203125
+        }
+      }
+    ],
+    "underlines": true
+  },
+  {
+    "width": 1500,
+    "selection": "https://www.kalk-laden.de/WebRoot/Store6/Shops/61629937/47E0/290D/5250/Kalkfarbe_Anleitung.pdf",
+    "href": "http://example.com/slash",
+    "scheme": "https://",
+    "schemeLines": 1,
+    "breaks": [
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 870.375,
+          "y": -36.046875,
+          "width": 13.28125,
+          "height": 55,
+          "top": -36.046875,
+          "right": 883.65625,
+          "bottom": 18.953125,
+          "left": 870.375
+        },
+        "following": {
+          "x": 883.65625,
+          "y": -36.046875,
+          "width": 42.265625,
+          "height": 55,
+          "top": -36.046875,
+          "right": 925.921875,
+          "bottom": 18.953125,
+          "left": 883.65625
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 1065.921875,
+          "y": -36.046875,
+          "width": 13.28125,
+          "height": 55,
+          "top": -36.046875,
+          "right": 1079.203125,
+          "bottom": 18.953125,
+          "left": 1065.921875
+        },
+        "following": {
+          "x": 1079.203125,
+          "y": -36.046875,
+          "width": 27.046875,
+          "height": 55,
+          "top": -36.046875,
+          "right": 1106.25,
+          "bottom": 18.953125,
+          "left": 1079.203125
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 1205.46875,
+          "y": -36.046875,
+          "width": 13.265625,
+          "height": 55,
+          "top": -36.046875,
+          "right": 1218.734375,
+          "bottom": 18.953125,
+          "left": 1205.46875
+        },
+        "following": {
+          "x": 1218.734375,
+          "y": -36.046875,
+          "width": 27.046875,
+          "height": 55,
+          "top": -36.046875,
+          "right": 1245.78125,
+          "bottom": 18.953125,
+          "left": 1218.734375
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 1337.296875,
+          "y": -36.046875,
+          "width": 13.265625,
+          "height": 55,
+          "top": -36.046875,
+          "right": 1350.5625,
+          "bottom": 18.953125,
+          "left": 1337.296875
+        },
+        "following": {
+          "x": 52.5,
+          "y": 28.4375,
+          "width": 24.265625,
+          "height": 55,
+          "top": 28.4375,
+          "right": 76.765625,
+          "bottom": 83.4375,
+          "left": 52.5
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 246.53125,
+          "y": 28.4375,
+          "width": 13.28125,
+          "height": 55,
+          "top": 28.4375,
+          "right": 259.8125,
+          "bottom": 83.4375,
+          "left": 246.53125
+        },
+        "following": {
+          "x": 259.8125,
+          "y": 28.4375,
+          "width": 24.265625,
+          "height": 55,
+          "top": 28.4375,
+          "right": 284.078125,
+          "bottom": 83.4375,
+          "left": 259.8125
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 362.3125,
+          "y": 28.4375,
+          "width": 13.265625,
+          "height": 55,
+          "top": 28.4375,
+          "right": 375.578125,
+          "bottom": 83.4375,
+          "left": 362.3125
+        },
+        "following": {
+          "x": 375.578125,
+          "y": 28.4375,
+          "width": 24.265625,
+          "height": 55,
+          "top": 28.4375,
+          "right": 399.84375,
+          "bottom": 83.4375,
+          "left": 375.578125
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 483.59375,
+          "y": 28.4375,
+          "width": 13.265625,
+          "height": 55,
+          "top": 28.4375,
+          "right": 496.859375,
+          "bottom": 83.4375,
+          "left": 483.59375
+        },
+        "following": {
+          "x": 496.859375,
+          "y": 28.4375,
+          "width": 24.265625,
+          "height": 55,
+          "top": 28.4375,
+          "right": 521.125,
+          "bottom": 83.4375,
+          "left": 496.859375
+        }
+      },
+      {
+        "separator": "/",
+        "preceding": {
+          "x": 593.875,
+          "y": 28.4375,
+          "width": 13.265625,
+          "height": 55,
+          "top": 28.4375,
+          "right": 607.140625,
+          "bottom": 83.4375,
+          "left": 593.875
+        },
+        "following": {
+          "x": 607.140625,
+          "y": 28.4375,
+          "width": 35.265625,
+          "height": 55,
+          "top": 28.4375,
+          "right": 642.40625,
+          "bottom": 83.4375,
+          "left": 607.140625
+        }
+      },
+      {
+        "separator": "_",
+        "preceding": {
+          "x": 800.5625,
+          "y": 28.4375,
+          "width": 24.265625,
+          "height": 55,
+          "top": 28.4375,
+          "right": 824.828125,
+          "bottom": 83.4375,
+          "left": 800.5625
+        },
+        "following": {
+          "x": 824.828125,
+          "y": 28.4375,
+          "width": 35.265625,
+          "height": 55,
+          "top": 28.4375,
+          "right": 860.09375,
+          "bottom": 83.4375,
+          "left": 824.828125
+        }
+      }
+    ],
+    "underlines": true
+  }
+]

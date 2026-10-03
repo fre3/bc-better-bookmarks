@@ -1,11 +1,11 @@
 # Typographic catalogue — browsing/search checkpoint
 
-Status: **0.1.7 inline-layout and focus correction**, awaiting Edge visual review. The user accepted 0.1.6's 14px additional leading, measured peek coverage and 220ms full-open reveal; these are preserved. The user manually reviewed 0.1.2 using real bookmarks, screenshots, keyboard testing and a recording; search, roots, scope handling, runtime stability and most keyboard behavior were reported working well. No new Edit mode, inline CRUD redesign, drag/drop, or folder-tag persistence. The validated 0.1.1 baseline remains at `1217369dd10638942d80107d5f33d7f61491d075` on `master`, `archive/mvp-validated-0.1.1`, and annotated tag `mvp-validated-0.1.1`.
+Status: **0.1.8 command/slash-wrapping checkpoint**, awaiting Edge review. See [keyboard-search.md](keyboard-search.md) for the command and native-focus limitations; prior 0.1.7 visual evidence remains below. The user accepted 0.1.6's 14px additional leading, measured peek coverage and 220ms full-open reveal; these are preserved. The user manually reviewed 0.1.2 using real bookmarks, screenshots, keyboard testing and a recording; search, roots, scope handling, runtime stability and most keyboard behavior were reported working well. No new Edit mode, inline CRUD redesign, drag/drop, or folder-tag persistence. The validated 0.1.1 baseline remains at `1217369dd10638942d80107d5f33d7f61491d075` on `master`, `archive/mvp-validated-0.1.1`, and annotated tag `mvp-validated-0.1.1`.
 
 ## Implemented presentation
 
 - White typographic catalogue; Georgia / Times fallback, `clamp(42px, 3.3vw, 69px)`, tracking `-.01em`, line height `calc(1em + 14px)` at both main and nested sizes. Navigation uses regular 16px Helvetica / Arial, uppercase presentation and `.15em` tracking; the active root remains underlined. Section names use bold 17.6px Helvetica / Arial, with regular-weight gray provenance. No downloaded fonts or runtime dependencies added.
-- Ordinary bookmarks remain inline prose: `Bookmark title [framed favicon];` followed by normal whitespace. Images are `.8em` high with automatic width/aspect ratio; `.1em` frame padding makes the outer height approximately `1em`. Frames use `#eee`, `vertical-align: -.01em` and `.12em` right margin before the semicolon. Failed/absent icons use a dimensionally equivalent `.8em` placeholder. Native links underline and icons become color on own hover/focus. The whole-final-word inline block is removed: all title text remains inline, with explicit underlines on each text span. Only the final grapheme (including combined emoji) stays with the icon/semicolon. Ordinary words wrap at natural boundaries; oversized tokens use emergency wrapping. Invisible `<wbr>` opportunities after underscores allow filenames to break at their separators without adding characters or visible hyphens. Stored titles, accessible names and copied title text are unchanged; each bookmark still has one link and one keyboard stop. This is purely presentation; native URLs and bookmarklet non-navigation/safety behavior remain unchanged.
+- Ordinary bookmarks remain inline prose: `Bookmark title [framed favicon];` followed by normal whitespace. Images are `.8em` high with automatic width/aspect ratio; `.1em` frame padding makes the outer height approximately `1em`. Frames use `#eee`, `vertical-align: -.01em` and `.12em` right margin before the semicolon. Failed/absent icons use a dimensionally equivalent `.8em` placeholder. Native links underline and icons become color on own hover/focus. The whole-final-word inline block is removed: all title text remains inline, with explicit underlines on each text span. Only the final grapheme (including combined emoji) stays with the icon/semicolon. Ordinary words wrap at natural boundaries; oversized tokens use emergency wrapping. Invisible `<wbr>` opportunities after underscores and forward slashes allow filenames/paths to break at their separators without adding characters or visible hyphens. Stored titles, accessible names and copied title text are unchanged; each bookmark still has one link and one keyboard stop. This is purely presentation; native URLs and bookmarklet non-navigation/safety behavior remain unchanged.
 - Textual folders use bold italic titles ending in `/`, a normal 16px direct-child item count, and `.2em` count spacing. Counts include direct subfolders and bookmarks, not a recursive total.
 - Browse expansion is a single ordered ancestor path: opening a sibling replaces the old sibling and all its descendants; collapsing an open folder truncates the path there. Required ancestors remain open. Search continues to show all matching ancestry as context without changing the stored browse path. Expanded children begin inline wherever they fit and stay at exactly 85% of the main catalogue size at every depth. Inline margins provide `.6em` separation; cloned inline padding gives continuation fragments a subtle hanging inset. Its visual quality needs Edge review.
 - `EXPANSION_END` in `src/ui/Catalogue.tsx` selects `'inline'` (current) or `'break'`. The latter adds a break after expanded folders directly inside a section. Nested expansions remain inline. For a temporary visual comparison, change the catalogue element's `data-expansion-end` attribute in DevTools without modifying source.
@@ -34,13 +34,13 @@ Status: **0.1.7 inline-layout and focus correction**, awaiting Edge visual revie
 
 The temporary **Manage** action opens the existing MVP management interface, clearly separate from the catalogue. It retains the saved edit-scope selector, bookmark CRUD/movement, folder creation/rename, bookmarklet save confirmation, metadata diagnostics, reconcile/reload and export. No new Edit-mode item semantics or inline editors are implemented. Failed saves now retain the legacy editor instead of closing it, so its error and entered values remain reviewable.
 
-Core service, matching, search, metadata, persistence, bookmark repositories and worker source are unchanged. Browse actions send no mutation or set-root commands. Nonempty-folder deletion, folder deletion generally, and folder movement remain unavailable as in the MVP. No completed real Edge sync tests were reopened.
+Core service, matching, search, metadata, persistence, bookmark repositories and the worker mutation pipeline are unchanged. 0.1.8 adds command/readiness event wiring alongside that pipeline. Browse actions send no mutation or set-root commands. Nonempty-folder deletion, folder deletion generally, and folder movement remain unavailable as in the MVP. No completed real Edge sync tests were reopened.
 
 ## Favicon integration evidence and limit
 
 Chromium documents the extension-local `/_favicon/?pageUrl=...&size=32` endpoint and the `favicon` permission in [Fetching favicons](https://developer.chrome.com/docs/extensions/how-to/ui/favicons). Microsoft documents compatible Chromium extension APIs/manifest keys in [Port a Chrome extension to Microsoft Edge](https://learn.microsoft.com/en-us/microsoft-edge/extensions/developer-guide/port-chrome-extension); its [API list](https://learn.microsoft.com/en-us/microsoft-edge/extensions/developer-guide/api-support) does not separately enumerate this resource endpoint. Using it in Edge is based on that compatibility guidance; the installed Edge version still needs the manual check below.
 
-The only added permission is `favicon`. URL construction stays in `src/browser/favicon.ts` and accepts only existing safe, credential-free HTTP(S) targets. No host, tabs, history, scripting, or web-accessible-resource permissions were added, and no external icon service is used. The manifest key is unchanged. Edge may show a permission prompt on reload; review it before enabling the updated extension.
+The favicon integration originally added only `favicon`; 0.1.8 additionally uses `tabs` for the [search command](keyboard-search.md). URL construction stays in `src/browser/favicon.ts` and accepts only existing safe, credential-free HTTP(S) targets. No host, history, scripting, or web-accessible-resource permissions were added, and no external icon service is used. The manifest key is unchanged. Edge may show a permission prompt on reload; review it before enabling the updated extension.
 
 ## Build and load in Edge
 
@@ -58,7 +58,7 @@ On this machine the Windows-visible path is `\\wsl.localhost\Ubuntu-24.04\home\d
 
 The committed `dist/` is already built; rebuilding is unnecessary merely to review this checkpoint. `wslpath -w` prints the exact Windows-visible folder to select in Edge. Do not build or install dependencies in a Windows clone. This feature branch has not been pushed, so pulling the remote Windows clone will not obtain this checkpoint yet.
 
-In the intended Windows Edge profile, open `edge://extensions`. For an existing extension whose loaded path is this WSL `dist/`, click **Reload**, then open a fresh New Tab. If the existing extension points to a Windows clone, use **Load unpacked** with the Windows path printed above; verify that the extension's Details now show that path and version **0.1.7** before testing. Do not remove/uninstall the existing extension merely to change paths; uninstalling can discard profile-local metadata. If Edge does not permit switching the loaded path, stop and report that loading issue rather than resetting the profile. Expected ID: `nfhbegeoeafnpejpjdljhgagefbpafal`.
+In the intended Windows Edge profile, open `edge://extensions`. For an existing extension whose loaded path is this WSL `dist/`, click **Reload**, then open a fresh New Tab. If the existing extension points to a Windows clone, use **Load unpacked** with the Windows path printed above; verify that the extension's Details now show that path and version **0.1.8** before testing. Do not remove/uninstall the existing extension merely to change paths; uninstalling can discard profile-local metadata. If Edge does not permit switching the loaded path, stop and report that loading issue rather than resetting the profile. Expected ID: `nfhbegeoeafnpejpjdljhgagefbpafal`.
 
 Privileged New Tab/extension pages are for user-controlled Edge review. No automated Edge visual or Microsoft sync validation is claimed.
 
@@ -71,7 +71,7 @@ Privileged New Tab/extension pages are for user-controlled Edge review. No autom
 
 Natural-language automatic hyphenation is not enabled for unknown-language titles. No auto-scrolling, thumbnails, Edit mode, drag/drop, sync work or new permissions. Stop for user review before another refinement.
 
-## Reference inspection and rendered evidence
+## Reference inspection and rendered evidence (0.1.7)
 
 These exact images were opened and visually inspected before source changes:
 
@@ -117,6 +117,14 @@ PLAYWRIGHT_BROWSERS_PATH=/tmp/bb-catalogue-browsers node /tmp/bb-catalogue-brows
 
 Chromium runs outside the agent process sandbox. No project dependency or production font was added. Fixtures do not exercise the installed Edge favicon API or Microsoft sync.
 
+## 0.1.8 slash-wrapping follow-up
+
+Visually inspected both supplied `release 0.1.7 - symbol hypenation 1.png` and `release 0.1.7 - symbol hypenation 2.png`. Bookmark-title slash separators now receive an invisible optional break after the slash. The preceding line retains `/`; no forced break or character is added. Scheme delimiters such as `https://` have an inline nowrap span, including scheme-only endings. Destination URLs and exact stored/copied text are unchanged. The final-grapheme protection does not enclose the preceding path segments. Decorative folder slashes are unaffected.
+
+Focused Chromium checks exercised actual wrapping at five widths (320–1500px), protected scheme geometry, title selection, unchanged href, full underlines and overflow. [Capture](visual-review/generated/0.1.8-slash-wrapping.png) and [measurements](visual-review/generated/0.1.8-wrapping-results.json) are synthetic evidence, not Edge acceptance. Brief Edge check: inspect the reported URL/repository titles at wide/narrow widths, verify optional breaks with visible trailing slashes, copy titles, and hover/Tab to check annotations/underlines/focus.
+
+The user accepts current observed English/German hyphenation behavior. No language detection, language assignments or additional hyphenation work is implemented or scheduled in this checkpoint.
+
 ## Language-aware hyphenation finding
 
 `index.html` declares English for the UI. `FavoriteNode`, `Favorite` and existing metadata provide no reliable per-bookmark title language. A bookmark's browser/UI locale or URL domain is not evidence of its title language. Title links therefore use `lang=""` (unknown), preserving mixed-language content rather than inheriting English.
@@ -129,10 +137,12 @@ Concrete follow-up: separately decide whether users should explicitly assign a *
 
 Locally cached website thumbnails may later take precedence over favicons. Actual website thumbnails should initially have **no light-gray backing or frame padding**; favicons/placeholders retain the framed treatment. Capture, permissions, caching/storage and fallback policy require a separate implementation decision. This checkpoint adds no thumbnail infrastructure or permissions. Delayed automatic preview scrolling, Edit mode and drag/drop also remain deferred.
 
-## Files changed in this checkpoint
+## Files changed in the 0.1.7 layout checkpoint
 
 - UI: `BookmarkLabel.tsx`, `CatalogueItems.tsx`, `SectionCard.tsx`, `style.css`, new `useCatalogueAnnotations.ts`.
 - Tests: `tests/catalogue-markup.test.tsx` preserves text/selection semantics, one link, unknown language and separator breaks; rendered checks cover actual geometry rather than CSS constants.
 - Version/artifact: package/lockfile, source/generated manifest, `dist/index.html`, `dist/index.js` and replacement hashed CSS.
 - Documentation: this design/checklist, current handoff, README, roadmap and synthetic captures/measurements.
 - No dependency, permission, manifest-key, SVG, worker, browser-adapter, core/search, metadata or persistence changes.
+
+0.1.8 additionally changes command/browser routing, the App/Catalogue handoff, build entry points/manifests, wrapping and related tests; see [the keyboard handoff](keyboard-search.md) and current `development-state.md`.

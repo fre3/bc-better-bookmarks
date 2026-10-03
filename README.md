@@ -6,9 +6,17 @@ A Manifest V3 New Tab dashboard over your **real Microsoft Edge Favorites**. Fav
 
 ## UI/UX visual-review checkpoint
 
-Build **0.1.7** on `feature/ui-ux-redesign` refines the typographic browse/search catalogue. All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. **Manage** retains the existing MVP editing and diagnostic controls pending the separate Edit-mode redesign. Browsing roots never changes the saved mutation scope. Folder tags remain deferred.
+Build **0.1.8** on `feature/ui-ux-redesign` refines the typographic browse/search catalogue. All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. **Manage** retains the existing MVP editing and diagnostic controls pending the separate Edit-mode redesign. Browsing roots never changes the saved mutation scope. Folder tags remain deferred.
 
-Read [the design decisions, Edge load instructions and visual checklist](docs/ui-ux-design.md) before reviewing this checkpoint. Automated checks pass. The user reviewed 0.1.2 in Edge and accepted search, navigation, scope and runtime behavior; the focused 0.1.7 catalogue corrections await visual review. The preserved functional baseline remains at tag `mvp-validated-0.1.1`.
+Read [the design decisions, Edge load instructions and visual checklist](docs/ui-ux-design.md) before reviewing this checkpoint. Automated checks pass. The user reviewed 0.1.2 in Edge and accepted search, navigation, scope and runtime behavior; the focused 0.1.8 catalogue corrections await visual review. The preserved functional baseline remains at tag `mvp-validated-0.1.1`.
+
+## Keyboard search command
+
+At `edge://extensions/shortcuts`, inspect **Open dashboard in search mode** and assign/reassign it if needed. **Ctrl+Shift+B** is the Windows suggestion, not a guaranteed assignment. Manage displays the actual assignment read from the browser. Removing it is respected.
+
+The command reuses a dashboard in the current window or opens one there. Manage/active saves pause it to preserve edits. Ordinary Ctrl+T still focuses the address bar; the user-confirmed fallback is **Ctrl+T → Ctrl+F6 → type**. A known local Chromium limitation can leave typing in the address bar on repeated invocation from an explicit dashboard; use Ctrl+F6. Native Edge focus checks are pending.
+
+See [command behavior, added tabs permission, focus limitations and Edge checklist](docs/keyboard-search.md). Slash wrapping is also included in 0.1.8; current observed English/German behavior is accepted without language-model changes.
 
 ## Build
 
