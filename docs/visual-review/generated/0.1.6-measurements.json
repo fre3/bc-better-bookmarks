@@ -1,0 +1,563 @@
+{
+  "headings": [
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    },
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    },
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    },
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    },
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    },
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    },
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    },
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    },
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    },
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    },
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    },
+    {
+      "height": 85,
+      "labelTop": 27.5,
+      "labelBottom": 49.484375,
+      "shadowClearance": 15.515625,
+      "font": "17.6px",
+      "weight": "700",
+      "provenanceWeight": "400"
+    }
+  ],
+  "navigation": {
+    "transform": "uppercase",
+    "spacing": "2.4px",
+    "active": "page"
+  },
+  "firstShadow": {
+    "content": "\"\"",
+    "image": "supplied SVG tile",
+    "background": "rgba(0, 0, 0, 0)",
+    "top": "-20px",
+    "width": 1406
+  },
+  "peekEarly": 28.625,
+  "peek": {
+    "bodyHeight": 150.984375,
+    "lineHeight": 60.398,
+    "edgeTop": 428.984375,
+    "bodyBottom": 428.984375,
+    "bg": "rgb(255, 255, 255)",
+    "inert": true,
+    "focusable": 0
+  },
+  "openReveal": {
+    "height": 3624.203125,
+    "revealPosition": "relative",
+    "duration": 220,
+    "keyframes": [
+      {
+        "opacity": "0",
+        "transform": "translateY(3px)"
+      },
+      {
+        "opacity": "1",
+        "transform": "none"
+      }
+    ]
+  },
+  "rest": [],
+  "icon": {
+    "font": 46.398,
+    "outerHeight": 46.359375,
+    "imageHeight": 37.109375,
+    "imageWidth": 37.109375,
+    "naturalWidth": 48,
+    "naturalHeight": 48,
+    "filter": "grayscale(1)",
+    "lineHeight": "60.398px"
+  },
+  "wide": 2,
+  "hover": [
+    "annotation-one"
+  ],
+  "main": {
+    "font": "46.398px",
+    "line": "60.398px",
+    "frameHeight": 46.359375,
+    "rects": [
+      {
+        "top": 282.90625,
+        "bottom": 333.90625
+      },
+      {
+        "top": 278,
+        "bottom": 339.296875
+      },
+      {
+        "top": 282.90625,
+        "bottom": 333.90625
+      },
+      {
+        "top": 282.90625,
+        "bottom": 333.90625
+      },
+      {
+        "top": 282.90625,
+        "bottom": 333.90625
+      },
+      {
+        "top": 282.90625,
+        "bottom": 333.90625
+      }
+    ],
+    "annotation": {
+      "top": 335.90625,
+      "bottom": 345.90625
+    }
+  },
+  "nested": {
+    "font": "39.4383px",
+    "line": "53.4383px",
+    "frameHeight": 39.421875,
+    "rects": [
+      {
+        "top": 288.90625,
+        "bottom": 332.90625
+      },
+      {
+        "top": 284.875,
+        "bottom": 338.34375
+      },
+      {
+        "top": 288.90625,
+        "bottom": 332.90625
+      },
+      {
+        "top": 288.90625,
+        "bottom": 332.90625
+      },
+      {
+        "top": 288.90625,
+        "bottom": 332.90625
+      },
+      {
+        "top": 288.90625,
+        "bottom": 332.90625
+      }
+    ],
+    "annotation": {
+      "top": 334.90625,
+      "bottom": 344.90625
+    }
+  },
+  "widths": [
+    {
+      "width": 320,
+      "headingHeight": 125.953125,
+      "groupWidth": 132.421875,
+      "annotation": {
+        "font": "42px",
+        "line": "56px",
+        "frameHeight": 41.96875,
+        "rects": [
+          {
+            "top": 322.171875,
+            "bottom": 368.171875
+          },
+          {
+            "top": 317.171875,
+            "bottom": 373.171875
+          },
+          {
+            "top": 322.171875,
+            "bottom": 368.171875
+          },
+          {
+            "top": 322.171875,
+            "bottom": 368.171875
+          },
+          {
+            "top": 322.171875,
+            "bottom": 368.171875
+          },
+          {
+            "top": 322.171875,
+            "bottom": 368.171875
+          }
+        ],
+        "annotation": {
+          "top": 370.171875,
+          "bottom": 380.171875
+        }
+      }
+    },
+    {
+      "width": 390,
+      "headingHeight": 125.953125,
+      "groupWidth": 132.421875,
+      "annotation": {
+        "font": "42px",
+        "line": "56px",
+        "frameHeight": 41.96875,
+        "rects": [
+          {
+            "top": 287.78125,
+            "bottom": 333.78125
+          },
+          {
+            "top": 282.78125,
+            "bottom": 338.78125
+          },
+          {
+            "top": 287.78125,
+            "bottom": 333.78125
+          },
+          {
+            "top": 287.78125,
+            "bottom": 333.78125
+          },
+          {
+            "top": 287.78125,
+            "bottom": 333.78125
+          },
+          {
+            "top": 287.78125,
+            "bottom": 333.78125
+          }
+        ],
+        "annotation": {
+          "top": 335.78125,
+          "bottom": 345.78125
+        }
+      }
+    },
+    {
+      "width": 1280,
+      "headingHeight": 85,
+      "groupWidth": 133.15625,
+      "annotation": {
+        "font": "42.24px",
+        "line": "56.24px",
+        "frameHeight": 42.21875,
+        "rects": [
+          {
+            "top": 282,
+            "bottom": 329
+          },
+          {
+            "top": 278,
+            "bottom": 334.234375
+          },
+          {
+            "top": 282,
+            "bottom": 329
+          },
+          {
+            "top": 282,
+            "bottom": 329
+          },
+          {
+            "top": 282,
+            "bottom": 329
+          },
+          {
+            "top": 282,
+            "bottom": 329
+          }
+        ],
+        "annotation": {
+          "top": 331,
+          "bottom": 341
+        }
+      }
+    },
+    {
+      "width": 1920,
+      "headingHeight": 85,
+      "groupWidth": 199.78125,
+      "annotation": {
+        "font": "63.36px",
+        "line": "77.36px",
+        "frameHeight": 63.34375,
+        "rects": [
+          {
+            "top": 284.71875,
+            "bottom": 354.71875
+          },
+          {
+            "top": 278,
+            "bottom": 359.078125
+          },
+          {
+            "top": 284.71875,
+            "bottom": 354.71875
+          },
+          {
+            "top": 284.71875,
+            "bottom": 354.71875
+          },
+          {
+            "top": 284.71875,
+            "bottom": 354.71875
+          },
+          {
+            "top": 284.71875,
+            "bottom": 354.71875
+          }
+        ],
+        "annotation": {
+          "top": 356.71875,
+          "bottom": 366.71875
+        }
+      }
+    }
+  ],
+  "sticky": 0,
+  "switched": {
+    "x": 20,
+    "y": 11.78125,
+    "width": 350,
+    "height": 125.953125
+  },
+  "searchAnnotations": [
+    "annotation-one",
+    "annotation-deep",
+    "annotation-unbroken"
+  ],
+  "reduced": {
+    "transition": "0s",
+    "height": 140
+  },
+  "geometry": [
+    {
+      "id": "bookmark-one",
+      "declaredLineHeight": "60.398px",
+      "tailBoxHeight": 61.296875,
+      "annotationFrameOverlaps": 0,
+      "annotationTextInkOverlaps": 0
+    },
+    {
+      "id": "bookmark-deep",
+      "declaredLineHeight": "53.4383px",
+      "tailBoxHeight": 53.46875,
+      "annotationFrameOverlaps": 1,
+      "annotationTextInkOverlaps": 0
+    },
+    {
+      "id": "bookmark-long",
+      "declaredLineHeight": "60.398px",
+      "tailBoxHeight": 61.296875,
+      "annotationFrameOverlaps": 0,
+      "annotationTextInkOverlaps": 0
+    },
+    {
+      "id": "bookmark-unbroken",
+      "declaredLineHeight": "60.398px",
+      "tailBoxHeight": 242.46875,
+      "annotationFrameOverlaps": 0,
+      "annotationTextInkOverlaps": 0
+    }
+  ],
+  "errors": [],
+  "coverage": [
+    {
+      "viewportWidth": 1406,
+      "emulatedBrowserZoom": 1,
+      "settled": {
+        "line": 60.398,
+        "height": 150.984375,
+        "coverHeight": 84.015625,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "sampledFrames": 16,
+      "maximumBoundaryGap": 0,
+      "partialLabels": 0,
+      "allOpaque": true
+    },
+    {
+      "viewportWidth": 390,
+      "emulatedBrowserZoom": 1,
+      "settled": {
+        "line": 56,
+        "height": 140,
+        "coverHeight": 135.953125,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "sampledFrames": 16,
+      "maximumBoundaryGap": 0,
+      "partialLabels": 0,
+      "allOpaque": true
+    },
+    {
+      "viewportWidth": 320,
+      "emulatedBrowserZoom": 1,
+      "settled": {
+        "line": 56,
+        "height": 140,
+        "coverHeight": 135.953125,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "sampledFrames": 16,
+      "maximumBoundaryGap": 0,
+      "partialLabels": 0,
+      "allOpaque": true
+    },
+    {
+      "viewportWidth": 1758,
+      "emulatedBrowserZoom": 0.8,
+      "settled": {
+        "line": 72.014,
+        "height": 180.03125,
+        "coverHeight": 139.96875,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "sampledFrames": 16,
+      "maximumBoundaryGap": 0,
+      "partialLabels": 0,
+      "allOpaque": true
+    },
+    {
+      "viewportWidth": 1125,
+      "emulatedBrowserZoom": 1.25,
+      "settled": {
+        "line": 56,
+        "height": 140,
+        "coverHeight": 95,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "sampledFrames": 16,
+      "maximumBoundaryGap": 0,
+      "partialLabels": 0,
+      "allOpaque": true
+    },
+    {
+      "viewportWidth": 937,
+      "emulatedBrowserZoom": 1.5,
+      "settled": {
+        "line": 56,
+        "height": 140,
+        "coverHeight": 95,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "sampledFrames": 15,
+      "maximumBoundaryGap": 0,
+      "partialLabels": 0,
+      "allOpaque": true
+    },
+    {
+      "viewportWidth": 703,
+      "emulatedBrowserZoom": 2,
+      "settled": {
+        "line": 56,
+        "height": 140,
+        "coverHeight": 113.96875,
+        "transition": "0.14s",
+        "inert": true,
+        "focusable": 0
+      },
+      "sampledFrames": 16,
+      "maximumBoundaryGap": 0,
+      "partialLabels": 0,
+      "allOpaque": true
+    }
+  ],
+  "annotationStacking": {
+    "height": 10,
+    "font": "10px",
+    "acceptedFrameOverlaps": 1,
+    "aboveFrames": true
+  }
+}

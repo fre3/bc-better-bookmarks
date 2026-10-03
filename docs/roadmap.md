@@ -4,13 +4,13 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated functional baseline is preserved at `mvp-validated-0.1.1`. The UI/UX feature branch has reached the browsing/search correction checkpoint (0.1.5), awaiting visual review before Edit mode/inline CRUD. Preserve behavior, identity rules and accepted bookmarklet handling. Folder tags require a separately authorized metadata-model extension and remain deferred; their intended overlay styling is recorded in `ui-ux-design.md`. Drag/drop is also deferred. Start with `development-state.md` for current status.
+The validated functional baseline is preserved at `mvp-validated-0.1.1`. The UI/UX feature branch has reached the browsing/search correction checkpoint (0.1.6), awaiting visual review before Edit mode/inline CRUD. Preserve behavior, identity rules and accepted bookmarklet handling. Folder tags require a separately authorized metadata-model extension and remain deferred; their intended overlay styling is recorded in `ui-ux-design.md`. Drag/drop is also deferred. Start with `development-state.md` for current status.
 
 ## Future catalogue imagery and motion
 
 - Locally cached website thumbnails may later take precedence over favicons.
 - Actual website thumbnails should initially use no light-gray backing or frame padding; favicons/placeholders retain the framed treatment.
-- Website capture, permissions, cache/storage and fallback policy require a separate implementation decision. No thumbnail infrastructure or permissions are part of 0.1.5.
+- Website capture, permissions, cache/storage and fallback policy require a separate implementation decision. No thumbnail infrastructure or permissions are part of 0.1.6.
 - Delayed automatic preview scrolling remains deferred, as do Edit mode and drag/drop.
 
 ## System labels
