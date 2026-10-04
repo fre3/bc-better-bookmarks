@@ -11,9 +11,11 @@ interface Props {
   onToggle: (id: string) => void;
   query: string | null;
   depth?: number;
+  onEdit?: (id: string) => void;
+  selectedId?: string;
 }
 
-export function CatalogueItems({ items, expanded, onToggle, query, depth = 0 }: Props) {
+export function CatalogueItems({ items, expanded, onToggle, query, depth = 0, onEdit, selectedId }: Props) {
   return <>{items.map(item => {
     if (item.kind === 'folder') {
       const { folder, children } = item;
@@ -24,7 +26,7 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0 }: 
           {query !== null ? <span>{title}</span> : <button id={`folder-${folder.id}`} className="folder-trigger" aria-expanded={open} aria-controls={`children-${folder.id}`} onClick={() => onToggle(folder.id)}>{title}</button>}
         </span>
         {open && <span id={`children-${folder.id}`} className={`folder-children${depth === 0 ? ' first-expansion' : ''}`}>
-          {children.length ? <CatalogueItems items={children} expanded={expanded} onToggle={onToggle} query={query} depth={depth + 1} /> : <span className="empty-folder">Empty folder</span>}
+          {children.length ? <CatalogueItems onEdit={onEdit} selectedId={selectedId} items={children} expanded={expanded} onToggle={onToggle} query={query} depth={depth + 1} /> : <span className="empty-folder">Empty folder</span>}
         </span>}
         {open && depth === 0 && <br className="expansion-break" />}{' '}
       </Fragment>;
@@ -39,8 +41,12 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0 }: 
     const statusText = [...favorite.systemLabels, explanation, ambiguous ? 'Ambiguous metadata — inspect diagnostics in Manage' : ''].filter(Boolean).join(' · ');
     const annotations = tags.length > 0 || Boolean(statusText);
     const label = <BookmarkLabel title={favorite.title} icon={icon} />;
-    return <Fragment key={favorite.id}><span className={`catalogue-item bookmark-item${revealed.length ? ' tag-match' : ''}${ambiguous ? ' ambiguous' : ''}`} data-item-id={favorite.id}>
-      {href ? <a id={`bookmark-${favorite.id}`} className="bookmark-title" lang="" href={href} aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}>{label}</a> : <span id={`bookmark-${favorite.id}`} className="bookmark-title non-navigating" lang="" tabIndex={0} aria-describedby={`annotation-${favorite.id}`}>{label}</span>}
+    return <Fragment key={favorite.id}><span className={`catalogue-item bookmark-item${revealed.length ? ' tag-match' : ''}${ambiguous ? ' ambiguous' : ''}${selectedId === favorite.id ? ' is-selected' : ''}`} data-item-id={favorite.id}>
+      {onEdit ? <a id={`bookmark-${favorite.id}`} className="bookmark-title" lang="" role="button" tabIndex={0} aria-label={`Edit ${favorite.title || '(untitled)'}`} aria-haspopup="dialog" aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}
+        onClick={event => { event.preventDefault(); onEdit(favorite.id); }}
+        onAuxClick={event => { event.preventDefault(); if (event.button === 1) onEdit(favorite.id); }}
+        onMouseDown={event => { if (event.button === 1) event.preventDefault(); }}
+        onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onEdit(favorite.id); } }}>{label}</a> : href ? <a id={`bookmark-${favorite.id}`} className="bookmark-title" lang="" href={href} aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}>{label}</a> : <span id={`bookmark-${favorite.id}`} className="bookmark-title non-navigating" lang="" tabIndex={0} aria-describedby={`annotation-${favorite.id}`}>{label}</span>}
       {annotations && <span id={`annotation-${favorite.id}`} className="item-annotation">
         {tags.length > 0 && <span className="bookmark-tags all-annotations">{tags.map(tag => `#${tag}`).join(' · ')}</span>}
         {revealed.length > 0 && <span className="bookmark-tags matched-annotations" aria-hidden="true">{revealed.map(tag => `#${tag}`).join(' · ')}</span>}

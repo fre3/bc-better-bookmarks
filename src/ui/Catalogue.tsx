@@ -13,9 +13,10 @@ import { catalogueHandoff } from './catalogue-handoff';
 // Nested expansions always remain inline.
 const EXPANSION_END: 'inline' | 'break' = 'inline';
 
-export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek = true, onManage }: { snapshot: Snapshot; suspended: boolean; searchRequest?: SearchIntent; autoScrollPeek?: boolean; onManage: () => void }) {
+export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek = true, modalOpen = false, selectedId, onEdit, onManage }: { snapshot: Snapshot; suspended: boolean; searchRequest?: SearchIntent; autoScrollPeek?: boolean; onManage: () => void; modalOpen?: boolean; selectedId?: string; onEdit?: (id: string) => void }) {
   const [handoff] = useState(() => typeof location === 'undefined' ? undefined : catalogueHandoff(takeSearchHandoff()));
   const [state, dispatch] = useReducer(catalogueReducer, handoff?.state ?? initialCatalogueState);
+  const [editing, setEditing] = useState(false);
   const [launchError, setLaunchError] = useState('');
   const peekFooter = usePeekFooter(state.peekEpoch, suspended);
   const input = useRef<HTMLInputElement>(null);
@@ -50,9 +51,9 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       window.scrollTo({ top: browsePosition.current.scroll, behavior: 'instant' });
     });
   }
-  useEffect(() => { if (searching && !suspended) input.current?.focus(); }, [searching, suspended]);
+  useEffect(() => { if (searching && !suspended && !modalOpen) input.current?.focus(); }, [searching, suspended]);
   useLayoutEffect(() => {
-    if (suspended) return;
+    if (suspended || modalOpen) return;
     if (searchRequest && consumedSearchRequest.current !== searchRequest.id) {
       consumedSearchRequest.current = searchRequest.id;
       selectRequested.current = true;
@@ -85,12 +86,13 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     scrollToSection.current = null;
   }, [state.openSection]);
   useEffect(() => {
-    if (suspended) return;
+    if (suspended || modalOpen) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.isComposing) return;
       const target = event.target instanceof Element ? event.target : null;
       const editingText = Boolean(target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]'));
       const excluded = Boolean(target?.closest('dialog, [role="dialog"]')) || (editingText && target !== input.current);
+      if (target?.closest('dialog, [role="dialog"]')) return;
       const root = rootShortcut(event, roots, excluded);
       if (root !== undefined) { event.preventDefault(); switchScope(root); return; }
       if (event.key === 'Escape') {
@@ -112,7 +114,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     return () => window.removeEventListener('keydown', onKey);
   });
 
-  return <div className="catalogue" data-expansion-end={EXPANSION_END} hidden={suspended}>
+  return <div className={`catalogue${editing ? ' is-editing' : ''}`} data-expansion-end={EXPANSION_END} hidden={suspended}>
     <header className="catalogue-navigation">
       <nav aria-label="Bookmark roots">
         {roots.map((root, index) => <button key={root.id} aria-current={scope === root.id ? 'page' : undefined}
@@ -123,6 +125,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       </nav>
       <div className="navigation-actions">
         <button ref={searchButton} onClick={() => searching ? input.current?.focus() : startSearch()}>Search /</button>
+        {onEdit && <button id="catalogue-edit" aria-pressed={editing} onClick={() => setEditing(!editing)}>{editing ? 'Editing · Done' : 'Edit'}</button>}
         <button onClick={onManage}>Manage</button>
       </div>
     </header>
@@ -132,7 +135,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       <div className="search-caption"><span role="status">{visible.count} {visible.count === 1 ? 'result' : 'results'}</span><span id="search-syntax">plain text · #tag · @folder</span><button onClick={exitSearch}>Close search · Esc</button></div>
     </section>}
     <div className="section-stack" aria-label="Bookmark catalogue">
-      {visible.sections.map((section, index) => <SectionCard key={section.id} section={section} nextSection={visible.sections[index + 1]} sections={visible.sections} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended} onToggle={() => {
+      {visible.sections.map((section, index) => <SectionCard key={section.id} blocked={modalOpen} selectedId={selectedId} onEdit={editing ? onEdit : undefined} section={section} nextSection={visible.sections[index + 1]} sections={visible.sections} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended} onToggle={() => {
         if (state.openSection && state.openSection !== section.id) scrollToSection.current = section.id;
         dispatch({ type: 'section', id: section.id });
       }} onFolder={id => {

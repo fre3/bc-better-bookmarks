@@ -1,8 +1,9 @@
 import type { BookmarksRepository } from '../browser/bookmarks';
 import { QUOTAS, type MetadataRepository } from '../browser/metadata';
-import { editToken, flattenTree, normalizeTags, validateUrl } from './logic';
+import { editToken, flattenTree } from './logic';
 import type { Command, Favorite, LinkInput, LocalState, LogEntry, Snapshot } from './model';
 import { reconcile } from './reconcile';
+import { validateLinkInput } from './link-input';
 import { metadataHealth } from './metadata-diagnostics';
 
 export class DashboardService {
@@ -78,10 +79,7 @@ export class DashboardService {
     return snapshot.metadata.records.find(r => r.stableId === mapping?.stableId)?.tags ?? [];
   }
   private validate(input: LinkInput): LinkInput {
-    if (!input.title.trim()) throw new Error('A title is required.');
-    const tags = normalizeTags(input.tags);
-    if (tags.length > 30 || tags.some(t => t.length > 80)) throw new Error('Use at most 30 tags of 80 characters each.');
-    return { ...input, title: input.title.trim(), url: validateUrl(input.url, input.bookmarkletConfirmed === true), tags };
+    return validateLinkInput(input);
   }
   private preflightTags(state: Snapshot, favorite: Favorite, tags: string[]) {
     if (state.metadata.invalid.length) throw new Error('Unsupported synchronized data is present. Tag writes are blocked until reviewed in diagnostics.');

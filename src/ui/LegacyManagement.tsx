@@ -1,12 +1,10 @@
+import { favoriteTags as tagsFor } from './favorite-editor';
 import { useState } from 'react';
 import { diagnosticExport } from '../core/export';
 import { confirmLinkInput, editToken, isBookmarklet, safeHref, searchFavorites } from '../core/logic';
 import type { Command, Favorite, LinkInput, Snapshot } from '../core/model';
 
 type Editor = { id?: string; expected?: string; input: LinkInput };
-function tagsFor(s: Snapshot, id: string) {
-  return s.metadata.records.find(r => r.stableId === s.reconciliation.mappings[id]?.stableId)?.tags ?? [];
-}
 interface Props {
   s: Snapshot;
   busy: boolean;

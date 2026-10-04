@@ -19,15 +19,18 @@ interface Props {
   expanded: string[];
   peekEpoch: number;
   autoScrollPeek?: boolean;
+  blocked?: boolean;
+  selectedId?: string;
+  onEdit?: (id: string) => void;
   onToggle: () => void;
   onFolder: (id: string) => void;
 }
 
-export function SectionCard({ section, nextSection, sections, stackIndex, stackSize, allRoots, open, query, expanded, peekEpoch, autoScrollPeek = true, onToggle, onFolder }: Props) {
+export function SectionCard({ section, nextSection, sections, stackIndex, stackSize, allRoots, open, query, expanded, peekEpoch, autoScrollPeek = true, blocked = false, selectedId, onEdit, onToggle, onFolder }: Props) {
   const [mouseHover, setMouseHover] = useState(false);
   const [pointerPeek, setPointerPeek] = useState(-1);
   const [focusPeek, setFocusPeek] = useState(-1);
-  const peek = !open && (pointerPeek === peekEpoch || focusPeek === peekEpoch);
+  const peek = !blocked && !open && (pointerPeek === peekEpoch || focusPeek === peekEpoch);
   // Retain the inert preview only long enough for CSS to finish the short exit.
   // Cleanup cancels the pending removal when a header is re-entered.
   const [retainedPreview, setRetainedPreview] = useState(false);
@@ -37,10 +40,13 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
     const timeout = window.setTimeout(() => setRetainedPreview(false), 100);
     return () => window.clearTimeout(timeout);
   }, [peek, retainedPreview]);
+  useEffect(() => {
+    if (blocked) { setMouseHover(false); setPointerPeek(-1); setFocusPeek(-1); }
+  }, [blocked]);
   const preview = !open && (peek || retainedPreview);
   const { slot, coveredIds } = usePeekCoverage(preview);
   const endMousePeek = useCallback(() => { setMouseHover(false); setPointerPeek(-1); }, []);
-  const hover = usePeekHoverRetention(mouseHover && pointerPeek === peekEpoch && !open && query === null, !nextSection, slot, endMousePeek);
+  const hover = usePeekHoverRetention(!blocked && mouseHover && pointerPeek === peekEpoch && !open && query === null, !nextSection, slot, endMousePeek);
   const covered = useMemo(() => {
     const ids = new Set(coveredIds);
     return (sections ?? (nextSection ? [nextSection] : [])).filter(item => ids.has(item.id));
@@ -52,7 +58,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
   return <section ref={slot} id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${showingPeek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
     style={{ zIndex: showingPeek ? stackSize + 1 : preview ? stackSize : stackIndex }}>
     <div className="section-sheet has-top-shadow">
-      <div className="section-header" onPointerEnter={e => { hover.remember(e); setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={e => { if (!hover.retainOnLeave(e)) endMousePeek(); }}>
+      <div className="section-header" onPointerEnter={e => { if (blocked) return; hover.remember(e); setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={e => { if (!hover.retainOnLeave(e)) endMousePeek(); }}>
         <h2 className="section-inner">
         {query !== null ? <span className="section-label"><span className="section-heading-text">{section.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
           <button id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}
@@ -65,7 +71,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
       <div className="section-reveal">
       <div id={contentId} className="section-content" inert={!open} aria-hidden={!open}>
         {(open || preview) && <div ref={flow} className="section-inner catalogue-flow">
-          {section.children.length ? <CatalogueItems items={section.children} expanded={expanded} onToggle={onFolder} query={query} /> : <span className="empty-folder">Empty folder</span>}
+          {section.children.length ? <CatalogueItems items={section.children} onEdit={open ? onEdit : undefined} selectedId={selectedId} expanded={expanded} onToggle={onFolder} query={query} /> : <span className="empty-folder">Empty folder</span>}
         </div>}
       </div>
       {preview && nextSection && <div className={`peek-successor${nextSection ? ' has-top-shadow' : ''}`} data-sheet-owner={nextSection?.id} aria-hidden="true" inert>
