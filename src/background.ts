@@ -1,3 +1,4 @@
+import { saveAppearance } from './browser/appearance';
 import { savePeekPreference } from './browser/ui-preferences';
 import { BrowserBookmarksRepository } from './browser/bookmarks';
 import { BrowserMetadataRepository } from './browser/metadata';
@@ -44,6 +45,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (sender.id === chrome.runtime.id && message?.event === 'set-peek-preference' && typeof message.enabled === 'boolean') {
     void enqueue(() => savePeekPreference(message.enabled)).then(
+      () => sendResponse({ ok: true }), error => sendResponse({ ok: false, error: String(error) }),
+    );
+    return true;
+  }
+  if (sender.id === chrome.runtime.id && message?.event === 'set-appearance' && ['system', 'light', 'dark'].includes(message.appearance)) {
+    void enqueue(() => saveAppearance(message.appearance)).then(
       () => sendResponse({ ok: true }), error => sendResponse({ ok: false, error: String(error) }),
     );
     return true;

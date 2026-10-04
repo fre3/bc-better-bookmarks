@@ -7,6 +7,7 @@ import { onDashboardSearch, dashboardShortcut, openShortcutSettings } from '../b
 import type { SearchIntent } from '../core/dashboard-launch';
 import { usePeekPreference } from './usePeekPreference';
 import './legacy.css';
+import { AppearanceSetting } from './AppearanceSetting';
 
 export function App() {
   const peekPreference = usePeekPreference();
@@ -61,6 +62,7 @@ export function App() {
     <Catalogue snapshot={snapshot} suspended={managing} autoScrollPeek={peekPreference.enabled} searchRequest={searchRequest} onManage={() => { setManaging(true); setNotice(''); }} />
     {managing && <>
       <div className="management-heading"><span>Existing management controls · editing redesign follows visual review</span><button onClick={() => { setManaging(false); setNotice(''); }}>Back to catalogue</button></div>
+      <AppearanceSetting />
       <p>Dashboard search shortcut: {shortcut === undefined ? 'assignment unavailable' : shortcut || 'unassigned'}. <button onClick={openShortcutSettings}>Keyboard shortcut settings</button>. New Tab fallback: Ctrl+F6, then type.</p>
       <p><label><input type="checkbox" checked={peekPreference.enabled} disabled={!peekPreference.ready || peekPreference.saving} onChange={e => void peekPreference.update(e.target.checked)} /> Auto-scroll peek previews</label> <small>On this device · starts after 1 second · disabled by reduced motion</small></p>
       {peekPreference.error && <p role="alert">{peekPreference.error}</p>}

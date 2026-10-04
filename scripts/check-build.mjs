@@ -16,6 +16,11 @@ assert.deepEqual(manifest.commands['open-dashboard-search'], {
   description: 'Open dashboard in search mode', suggested_key: { windows: 'Ctrl+Shift+B' }, global: false,
 });
 assert.ok(existsSync('dist/search.html'));
+assert.ok(existsSync('dist/theme-init.js'));
+for (const page of ['index', 'search']) {
+  const html = readFileSync(`dist/${page}.html`, 'utf8');
+  assert(html.indexOf('theme-init.js') < html.indexOf('type="module"'), 'Appearance cache must apply before the application.');
+}
 assert.ok(existsSync(`dist/${manifest.chrome_url_overrides.newtab}`));
 assert.ok(existsSync(`dist/${manifest.background.service_worker}`));
 assert.ok(!readFileSync('dist/index.html', 'utf8').includes('/src/'));

@@ -1,8 +1,9 @@
+@import './theme.css';
 :root {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 16px;
-  color: #191919;
-  background: #fff;
+  color: var(--text);
+  background: var(--surface);
   --catalogue-font: Georgia, "Times New Roman", Times, serif;
   --catalogue-size: clamp(42px, 3.3vw, 69px);
   --nested-size: calc(var(--catalogue-size) * .85);
@@ -29,8 +30,8 @@ button { cursor: pointer; border: 0; border-radius: 0; padding: 0; background: n
 button:hover { text-decoration: underline; }
 button:disabled { cursor: default; opacity: .5; }
 a { color: inherit; }
-button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
-input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; }
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px solid var(--focus); outline-offset: 4px; }
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px solid var(--focus); outline-offset: 3px; }
 [hidden] { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .catalogue-navigation { min-height: 108px; display: flex; align-items: center; gap: 24px; padding-block: 24px; }
@@ -45,22 +46,23 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
   margin-inline: calc(-1 * var(--page-gutter)); min-height: 70px;
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
   gap: 14px 32px; padding: 22px var(--page-gutter);
-  background: #000; color: #fff; font: 400 16px/1.4 Helvetica, Arial, sans-serif;
+  background: var(--footer-surface); color: var(--footer-text); font: 400 16px/1.4 Helvetica, Arial, sans-serif;
 }
 .catalogue-footer a { text-decoration: none; overflow-wrap: anywhere; }
 .catalogue-footer a:last-child { margin-left: auto; }
 .catalogue-footer a:hover, .catalogue-footer a:focus-visible { text-decoration: underline; }
 .section-slot { position: relative; scroll-margin-top: 12px; }
-.section-sheet { position: relative; background: white; }
+.section-sheet { position: relative; background: var(--surface); }
 .has-top-shadow::before {
   /* This foreground sheet casts a transparent shadow upward onto its predecessor.
      The tile's denser bottom edge already faces the sheet; no artwork flip. */
   content: ''; position: absolute; top: -20px; left: 0; right: 0; height: 20px;
-  background: url('./assets/shadow.svg') repeat-x left top / 7px 20px;
+  background-color: var(--dither);
+  mask: url('./assets/shadow.svg') repeat-x left top / 7px 20px;
   pointer-events: none;
 }
 .section-inner { padding-inline: var(--page-gutter); }
-.section-header { min-height: var(--header-height); background: white; }
+.section-header { min-height: var(--header-height); background: var(--surface); }
 .section-header h2 { margin: 0; font: inherit; }
 .section-header button, .section-label {
   display: flex; align-items: center; text-align: left; width: 100%; min-height: var(--header-height);
@@ -68,10 +70,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 }
 .section-header button:hover { text-decoration: none; }
 .section-header button:focus-visible { outline: none; }
-.section-header button:focus-visible .section-heading-text { outline: 1px solid currentColor; outline-offset: 4px; }
-.root-provenance { color: #686868; font-weight: 400; }
+.section-header button:focus-visible .section-heading-text { outline: 1px solid var(--focus); outline-offset: 4px; }
+.root-provenance { color: var(--secondary); font-weight: 400; }
 .section-reveal {
-  position: absolute; top: 100%; inset-inline: 0; background: white; pointer-events: none;
+  position: absolute; top: 100%; inset-inline: 0; background: var(--surface); pointer-events: none;
   visibility: hidden; transition: visibility 0s 90ms;
 }
 .section-content { height: 0; overflow: clip; transition: height 90ms ease-out; }
@@ -82,7 +84,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .peek-successor {
   /* The following sheet's opaque lip and transparent shadow travel together
      as the absolute preview body changes height; the document never reflows. */
-  position: relative; background: white; height: var(--header-height); pointer-events: none;
+  position: relative; background: var(--surface); height: var(--header-height); pointer-events: none;
   /* Preserve this sheet's upward shadow while clipping its bottom to the next
      real shadow boundary, including any overlapped label padding. */
   clip-path: inset(-20px 0 0);
@@ -95,9 +97,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
   font: 700 17.6px/1.25 Helvetica, Arial, sans-serif; pointer-events: none; overflow: clip;
 }
 .peek-summary-line { white-space: nowrap; min-width: 0; }
-.peek-summary-prefix, .peek-summary-provenance { color: #666; font-weight: 400; }
-.peek-summary-separator { color: #999; font-weight: 400; }
-.peek-summary-omitted { color: #767676; font-weight: 400; }
+.peek-summary-prefix, .peek-summary-provenance { color: var(--summary-context); font-weight: 400; }
+.peek-summary-separator { color: var(--separator); font-weight: 400; }
+.peek-summary-omitted { color: var(--summary-later); font-weight: 400; }
 .is-open .section-reveal { position: relative; top: auto; visibility: visible; pointer-events: auto; transition: none; }
 .is-open .section-content { height: auto; overflow: visible; padding-bottom: 32px; transition: none; }
 /* Room for the first link's outline below the opaque sticky header. Peek's
@@ -118,9 +120,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .bookmark-title:focus-visible { outline-offset: -1px; }
 .non-navigating { cursor: default; }
 .bookmark-ending, .bookmark-scheme { white-space: nowrap; }
-.favicon-frame { display: inline-block; padding: .1em; background: #eee; line-height: 0; vertical-align: -.01em; margin-right: .12em; }
+.favicon-frame { display: inline-block; padding: .1em; background: var(--frame); line-height: 0; vertical-align: -.01em; margin-right: .12em; }
 .favicon { display: block; width: auto; height: .8em; vertical-align: top; filter: grayscale(1); }
-.favicon-placeholder { width: .8em; background: #d0d0d0; }
+.favicon-placeholder { width: .8em; background: var(--placeholder); }
 .bookmark-item:hover .favicon, .bookmark-item:focus-within .favicon { filter: grayscale(0); }
 .folder-trigger { font: inherit; line-height: inherit; letter-spacing: inherit; text-align: left; }
 .folder-trigger:hover { text-decoration: none; }
@@ -140,7 +142,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
   position: absolute; left: 0; top: 0; z-index: 1;
   font: 10px/10px Helvetica, Arial, sans-serif; letter-spacing: 0; white-space: nowrap;
   visibility: hidden; max-height: 10px; overflow: clip; width: max-content;
-  pointer-events: none; color: #515151;
+  pointer-events: none; color: var(--annotation);
+  text-shadow: -1px 0 var(--annotation-halo), 1px 0 var(--annotation-halo), 0 -1px var(--annotation-halo), 0 1px var(--annotation-halo);
 }
 .bookmark-item:hover > .item-annotation, .bookmark-item:focus-within > .item-annotation,
 .tag-match > .item-annotation { visibility: visible; }
@@ -153,14 +156,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .tag-match > .item-annotation > .matched-annotations { display: inline; }
 .tag-match:hover > .item-annotation > .matched-annotations,
 .tag-match:focus-within > .item-annotation > .matched-annotations { display: none; }
-.empty-folder { font: 16px/1.5 Helvetica, Arial, sans-serif; letter-spacing: 0; color: #686868; }
+.empty-folder { font: 16px/1.5 Helvetica, Arial, sans-serif; letter-spacing: 0; color: var(--secondary); }
 .empty-catalogue { padding: 32px var(--page-gutter); }
 .search-mode { padding-block: 4px 34px; }
 .search-mode input { display: block; width: 100%; border: 0; border-radius: 0; border-bottom: 1px solid transparent; padding: 0; background: transparent; font-family: var(--catalogue-font); font-size: clamp(32px, 2.5vw, 48px); letter-spacing: -.01em; }
-.search-mode input:focus { outline: none; border-bottom-color: #b0b0b0; }
-.search-caption { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: 12px; color: #686868; }
+.search-mode input:focus { outline: none; border-bottom-color: var(--input-rule); }
+.search-caption { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: 12px; color: var(--secondary); }
 .search-caption button { margin-left: auto; }
-.status-error { font-size: 16px; color: #852929; overflow-wrap: anywhere; }
+.status-error { font-size: 16px; color: var(--error); overflow-wrap: anywhere; }
 .management-heading { display: flex; gap: 24px; justify-content: space-between; padding-block: 24px; }
 @media (max-width: 700px) {
   .catalogue-navigation { align-items: flex-start; flex-wrap: wrap; gap: 20px; }
@@ -173,3 +176,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
   .section-slot .section-reveal, .section-slot .section-content { transition: none; }
   .is-open .section-content > .catalogue-flow { animation: none; }
 }
+
+.appearance-setting { margin-block: 16px; }
+.appearance-setting select { background: var(--control-surface); border: 1px solid var(--control-border); padding: 4px 8px; }
+.appearance-setting small { color: var(--secondary); }
+.catalogue-footer a:focus-visible { outline-color: var(--footer-text); }
+@media (prefers-color-scheme: dark) { :root:not([data-appearance="light"]) button:disabled { opacity: 1; color: var(--disabled); } }
+:root[data-appearance="dark"] button:disabled { opacity: 1; color: var(--disabled); }

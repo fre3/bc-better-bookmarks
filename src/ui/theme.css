@@ -1,0 +1,62 @@
+/* Loaded in the head, before the application. Native System updates do not
+   rerender React or restart animation; explicit preferences pin color-scheme. */
+:root {
+  color-scheme: light dark;
+  --surface: light-dark(#fff, #282828);
+  --text: light-dark(#191919, #f0f0ed);
+  --secondary: light-dark(#686868, #bdbdbd);
+  --annotation: light-dark(#515151, #f0f0ed);
+  --annotation-halo: light-dark(transparent, #282828);
+  --summary-first: light-dark(#111, #f0f0ed);
+  --summary-second: light-dark(#666, #c4c4c4);
+  --summary-later: light-dark(#767676, #ababab);
+  --summary-context: light-dark(#666, #bdbdbd);
+  --separator: light-dark(#999, #9b9b9b);
+  --focus: light-dark(#191919, #f0f0ed);
+  --control-focus: light-dark(#2563eb, #a6c8ff);
+  --frame: light-dark(#eee, #bdbdbd);
+  --placeholder-text: light-dark(#757575, #bdbdbd);
+  --placeholder: light-dark(#d0d0d0, #929292);
+  --input-rule: light-dark(#b0b0b0, #929292);
+  --control-surface: light-dark(#fff, #303030);
+  --control-border: light-dark(#aeb9c7, #858585);
+  --control-hover: light-dark(#eef3fb, #3b4552);
+  --panel-border: light-dark(#d9e0e9, #656565);
+  --metadata: light-dark(#536176, #bac6d7);
+  --link: light-dark(#164dab, #a6c8ff);
+  --selected: light-dark(#e5edff, #334763);
+  --selected-border: light-dark(#4775c3, #8ab4f8);
+  --tag-surface: light-dark(#eef2f7, #3b414a);
+  --warning-surface: light-dark(#fff6db, #443b24);
+  --warning-border: light-dark(#b87d12, #d9b765);
+  --system-border: light-dark(#dac487, #b89c54);
+  --warning: light-dark(#8a4d00, #f1ce8c);
+  --error: light-dark(#852929, #ffbdbd);
+  --error-surface: light-dark(#ffeded, #48282b);
+  --error-panel-text: light-dark(#8c2424, #ffc4c4);
+  --selection: light-dark(#b7d5ff, #526b89);
+  --selection-text: light-dark(#191919, #fff);
+  --disabled: light-dark(#727272, #aaa);
+  --footer-surface: #000;
+  --footer-text: #fff;
+  --dither: #000;
+  background: var(--surface); color: var(--text);
+}
+:root[data-appearance="light"] { color-scheme: only light; }
+:root[data-appearance="dark"] { color-scheme: only dark; }
+::selection { background: var(--selection); color: var(--selection-text); }
+input, textarea { caret-color: var(--text); }
+::placeholder { color: var(--placeholder-text); opacity: 1; }
+/* Honor Windows contrast themes instead of forcing the authored dark palette.
+   UA color adjustment stays enabled, including images/native form controls. */
+@media (forced-colors: active) {
+  :root { --surface: Canvas; --text: CanvasText; --secondary: CanvasText;
+    --annotation: CanvasText; --annotation-halo: transparent; --focus: Highlight;
+    --control-focus: Highlight; --control-surface: Field; --control-border: ButtonText;
+    --footer-surface: Canvas; --footer-text: LinkText; --dither: CanvasText;
+    --summary-first: CanvasText; --summary-second: CanvasText; --summary-later: CanvasText;
+    --summary-context: CanvasText; --separator: CanvasText; --disabled: GrayText;
+  }
+  :root .has-top-shadow::before { mask: none; background: none; border-bottom: 1px solid CanvasText; }
+  :root .favicon-frame { outline: 1px solid CanvasText; }
+}

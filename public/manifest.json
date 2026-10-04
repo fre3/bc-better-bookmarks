@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Better Bookmarks — Technical MVP",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Edge Favorites dashboard with experimental synchronized tags and identity diagnostics.",
   "permissions": [
     "bookmarks",

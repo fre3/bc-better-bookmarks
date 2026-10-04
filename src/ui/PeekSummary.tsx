@@ -34,7 +34,7 @@ export function PeekSummary({ items, allRoots }: { items: readonly CoveredLabel[
       const [start, end] = summaryGap(part.kind);
       return <span key={index} className={`peek-summary-${part.kind}`} style={{
         marginInlineStart: `${start}em`, marginInlineEnd: `${end}em`,
-        color: part.kind === 'name' ? part.index === 0 ? '#111' : part.index === 1 ? '#666' : '#767676' : undefined,
+        color: part.kind === 'name' ? part.index === 0 ? 'var(--summary-first)' : part.index === 1 ? 'var(--summary-second)' : 'var(--summary-later)' : undefined,
       }}>{part.text}</span>;
     })}</span>
   </div>;
