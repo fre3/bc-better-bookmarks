@@ -289,3 +289,11 @@ Comparable captures: [light closed](visual-review/generated/0.1.15-light-closed.
 ## Visual phase acceptance — 0.1.15
 
 On 2026-10-04 the user confirmed all requested native Edge tests passed for 0.1.15, including appearance and footer/peek behavior. The visual checkpoint is accepted. Preserve its geometry, themes and interactions during the separately authorized first catalogue editing increment. This acceptance does not constitute new cross-device synchronization evidence.
+
+## 0.1.16 — first catalogue editor
+
+Visual phase accepted at `ui-validated-0.1.15`; native Edge acceptance applies to that version. The separately authorized editing branch adds **Edit / Editing · Done** in editorial navigation. Active mode keeps typography/prose flow and uses dotted hover/focus title underlining. Favorite destinations are removed while selecting for editing; folders and sections continue normal navigation. No permanent item controls.
+
+For this increment the user explicitly selected a modal instead of the earlier proposed inline editor. Theme-token surfaces, a restrained backdrop, visible 16px form labels/fields, read-only folder context and textual Save/Cancel maintain the accepted visual language. Selected Favorites receive a quiet highlight without geometry changes. Native background inertness plus explicit Tab wrapping protects keyboard interaction; title receives initial focus, and unchanged/dirty Cancel/Escape follow immediate-close/discard-choice semantics. A live draft blocks application navigation and search commands. No backdrop dismissal, move, deletion, folder editor or drag/drop.
+
+Existing 1000ms auto-scroll, motion, summary, footer support, final-surface hover, search snapshot and themes are unchanged outside modal activity. Opening a modal cancels active peeks; safe supporting footer space may remain under the established cleanup policy. Root scrolling is locked while the dialog is open without adding a scrollbar gutter on overlay-scrollbar platforms. The form can scroll within a narrow/short viewport. Source and generated 0.1.16 captures use synthetic data; Edge editing acceptance is pending. See the current handoff for checks and scope/partial-save limits.

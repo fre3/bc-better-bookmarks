@@ -4,21 +4,27 @@ A Manifest V3 New Tab dashboard over your **real Microsoft Edge Favorites**. Fav
 
 **Baseline single-device behavior and sequential two-way metadata synchronization are manually validated in real Edge.** On 2026-09-28 the user reported successful fresh B → A creation with tags, followed by A → B and B → A tag edits on the same identity, all converging correctly. Cross-device sync is generally working reliably for this tested workflow. The earlier metadata-loss incident remains documented with its cause unresolved; the planned A–G session is complete within recorded scope, with D using accepted prior baseline evidence; deferred ambiguity/delivery cases remain outside that scope. The development ID matches on two independently built machines. A local `storage.sync.set()` success alone is still not remote acknowledgement. See [the manual test results](docs/cross-device-test.md).
 
-## UI/UX visual-review checkpoint
+## Accepted visual checkpoint
 
-Build **0.1.15** on `feature/ui-ux-redesign` refines the typographic browse/search catalogue. All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. **Manage** retains the existing MVP editing and diagnostic controls pending the separate Edit-mode redesign. Browsing roots never changes the saved mutation scope. Folder tags remain deferred.
+The user accepted **0.1.15** in native Edge, including appearance, footer and peek behavior. Annotated tag `ui-validated-0.1.15` and `feature/ui-ux-redesign` preserve that checkpoint. The current **0.1.16** editing review is on `feature/bookmark-editing`.
 
-Read [the design decisions, Edge load instructions and visual checklist](docs/ui-ux-design.md) before reviewing this checkpoint. Automated checks pass. The user reviewed 0.1.2 in Edge and accepted search, navigation, scope and runtime behavior; the main 0.1.8 command workflows/configurability are accepted; the user accepted temporary search scope/Escape restoration, top-row Alt+1–9 and the 1000ms scrolling delay. The user reports the 0.1.14 final-preview/footer hover problem largely resolved, without comprehensive acceptance. Build 0.1.15 adds device-local System/Light/Dark appearance in Manage; its palette awaits Edge review. Complete footer-adjacent previews and Next styling are preserved. The preserved functional baseline remains at tag `mvp-validated-0.1.1`.
+All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. Manage retains existing MVP operations, settings and diagnostics. Browsing roots never changes the saved mutation scope. Folder tags remain deferred. [Design and load instructions](docs/ui-ux-design.md). The separate validated functional baseline remains at `mvp-validated-0.1.1`.
 
 ## Keyboard search command
 
 At `edge://extensions/shortcuts`, inspect **Open dashboard in search mode** and assign/reassign it if needed. **Ctrl+Shift+B** is the Windows suggestion, not a guaranteed assignment. Manage displays the actual assignment read from the browser. Removing it is respected.
 
-The command reuses a dashboard in the current window or opens one there. From another tab, it temporarily searches All bookmarks; Escape restores the original browse scope and view. Dashboard-origin search keeps its scope. Manage/active saves pause it to preserve edits. Ordinary Ctrl+T still focuses the address bar; the user-confirmed fallback is **Ctrl+T → Ctrl+F6 → type**. The accepted already-open dashboard/address-bar limitation can leave typing in the address bar; use Ctrl+F6. This checkpoint preserves it.
+The command reuses a dashboard in the current window or opens one there. From another tab, it temporarily searches All bookmarks; Escape restores the original browse scope and view. Dashboard-origin search keeps its scope. An open catalogue editor, Manage and active saves pause it to preserve edits. Ordinary Ctrl+T still focuses the address bar; the user-confirmed fallback is **Ctrl+T → Ctrl+F6 → type**. The accepted already-open dashboard/address-bar limitation can leave typing in the address bar; use Ctrl+F6. This checkpoint preserves it.
 
 **Top-row Alt+1–9** selects roots in displayed order, preserving query/selection during search. **Manage → Auto-scroll peek previews** toggles device-local scrolling (default on): mouse-header hover waits 1 second, then scrolls slowly to the end. Keyboard-only peek and reduced motion stay static. Windows Alt+numpad symbol entry remains accepted platform behavior.
 
 See [command behavior, added tabs permission, focus limitations and Edge checklist](docs/keyboard-search.md). Slash wrapping is also included in 0.1.8; current observed English/German behavior is accepted without language-model changes.
+
+## Catalogue editing — 0.1.16 review
+
+The user accepted the 0.1.15 visual phase; `ui-validated-0.1.15` preserves it. On `feature/bookmark-editing`, select **Edit**, open a section and choose a Favorite. The modal edits title, URL and comma-separated tags through the existing save safeguards. **Editing · Done** returns to browsing. Configure the editable mutation scope in Manage if saving is disabled; browse scope is independent. Folder context is read-only.
+
+Save keeps Edit mode active. Cancel/Escape protects changed drafts, and Ctrl+Shift+B cannot replace a modal draft. A failed/stale save keeps the draft available; copy needed text before reopening to review current values. Drafts are not recovered after reload or closing the tab. Existing Manage operations remain available. Native Edge editing review is pending; see [the focused checklist](docs/development-state.md#edge-review).
 
 ## Build
 

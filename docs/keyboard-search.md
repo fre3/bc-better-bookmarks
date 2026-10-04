@@ -1,4 +1,4 @@
-# Dashboard search and preview controls — 0.1.15 Edge checkpoint
+# Dashboard search and preview controls — 0.1.16 editing checkpoint
 
 The browser-scoped command is `open-dashboard-search`, described as **Open dashboard in search mode**, with **Ctrl+Shift+B suggested on Windows**. It is not an OS-global shortcut. The user confirmed this default; Ctrl+B is only an optional user reassignment. Alt+Shift+F is not used.
 
@@ -14,7 +14,7 @@ await chrome.commands.getAll()
 
 Normal `Ctrl+T` continues to leave focus in Edge's address bar. The user-confirmed fallback remains **Ctrl+T → Ctrl+F6 → type**. If the command prepares search but typing stays in browser chrome, use **Ctrl+F6**, then type. No simulated keystrokes or delay-based focus loops are implemented.
 
-Reload the existing WSL `dist/` extension at `edge://extensions`, retain the existing `tabs` permission (none added in 0.1.9), verify **0.1.15**, and open a fresh New Tab. The artifact is already built:
+Reload the existing WSL `dist/` extension at `edge://extensions`, retain the existing `tabs` permission (none added in 0.1.9), verify **0.1.16**, and open a fresh New Tab. The artifact is already built:
 
 ```text
 \\wsl.localhost\Ubuntu-24.04\home\dev\projects\bc-better-bookmarks\dist
@@ -29,7 +29,7 @@ No push was made; a remote Windows clone will not receive this checkpoint by pul
 - Leaving the target tab/window, closing it or navigating away cancels pending focus work. Readiness does not reactivate a tab the user left. The browser adapter validates own extension pages and sender identity. No website content script is involved.
 - The originating tab is captured before activation. Commands from another tab temporarily select **All bookmarks**. Dashboard-origin commands, typing, `/` and Search retain the current scope. An existing query is selected for replacement. A single pre-search snapshot restores the original root, section, expanded branch and scroll/focus on Escape; repeated commands or root changes do not replace it. A new dashboard starts at All bookmarks with empty search.
 - When browser chrome has focus, an explicit renderer navigation to `search.html?launch=<random token>` is attempted. Before navigation, a one-shot **tab-local sessionStorage handoff** preserves catalogue state, query and Escape's scroll/focus target. This is transient UI state, not bookmark/metadata persistence or sync. It is consumed once after the new page's snapshot is ready. A page already focused can use the existing input without navigation. Ordinary New Tab never initiates this route.
-- **Manage or an active save blocks the command**, showing a notice. It does not unmount Manage, discard a draft, navigate away, bypass mutation guards, or queue a surprise focus change after editing. Finish editing, return to the catalogue and invoke again.
+- **An open catalogue editor, Manage or an active save blocks the command**, showing a notice. It does not unmount Manage, discard a draft, navigate away, bypass mutation guards, or queue a surprise focus change after editing. Finish editing, return to the catalogue and invoke again.
 - If the transient handoff cannot be stored, navigation is refused and a Ctrl+F6 fallback message appears; existing catalogue state is retained.
 
 `document.hasFocus()` is used only to decide whether to attempt the explicit route; neither it nor `activeElement` is treated as evidence that native keyboard focus transferred. Query selection and DOM focus alone are insufficient verification.
@@ -71,6 +71,6 @@ The user accepts top-number-row Alt+1–9 and Windows Alt+numpad character entry
 5. Leave/re-enter, switch headers and click during scrolling: preview resets and normal opening begins at the top. Switching away from a long open card keeps the new header visible.
 6. Confirm static keyboard peek, reduced motion, the disable toggle (including reload), stationary header targets (footer/document bottom may extend temporarily near the end), and no reappearing coverage gaps at narrow widths/zoom.
 
-The accepted already-open-address-bar case may still need Ctrl+F6; no new investigation is requested. Stop for user Edge review. Website thumbnails, Edit-mode redesign, drag/drop and synchronization changes remain deferred.
+The accepted already-open-address-bar case may still need Ctrl+F6; no new investigation is requested. Stop for user Edge review. Website thumbnails, further editing operations, drag/drop and synchronization changes remain deferred.
 
-For the current appearance/footer regression review, use [the 0.1.15 focused checklist](development-state.md#files-and-edge-review). The keyboard behaviors above are accepted baseline evidence, not an outstanding request to repeat the entire shortcut investigation.
+For the current editing review, use [the 0.1.16 focused checklist](development-state.md#edge-review). The keyboard behaviors above are accepted baseline evidence, not an outstanding request to repeat the entire shortcut investigation.

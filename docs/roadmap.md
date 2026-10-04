@@ -4,14 +4,14 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated functional baseline is preserved at `mvp-validated-0.1.1`. The user accepted the 0.1.15 visual checkpoint in native Edge. Close visual work, tag that checkpoint and start `feature/bookmark-editing` from it. The first authorized increment is transient catalogue Edit mode and a title/URL/tags modal, reusing existing Manage validation, identity and mutation safeguards. Folder editing, move/delete UI, bulk operations, drag/drop and thumbnails remain deferred. Folder tags require separate metadata-model authorization. See `development-state.md` for current implementation status.
+The validated functional baseline is preserved at `mvp-validated-0.1.1`. The user accepted the 0.1.15 visual checkpoint in native Edge. Visual work is closed at annotated `ui-validated-0.1.15`; `feature/bookmark-editing` starts there. Its first title/URL/tags modal increment is implemented in 0.1.16 and awaits native Edge review. The first authorized increment is transient catalogue Edit mode and a title/URL/tags modal, reusing existing Manage validation, identity and mutation safeguards. Folder editing, move/delete UI, bulk operations, drag/drop and thumbnails remain deferred. Folder tags require separate metadata-model authorization. See `development-state.md` for current implementation status.
 
 ## Future catalogue imagery and motion
 
 - Locally cached website thumbnails may later take precedence over favicons.
 - Actual website thumbnails should initially use no light-gray backing or frame padding; favicons/placeholders retain the framed treatment.
 - Website capture, permissions, cache/storage and fallback policy require a separate implementation decision. No thumbnail infrastructure or thumbnail permissions are part of 0.1.15.
-- Delayed automatic preview scrolling was explicitly promoted for 0.1.9, independently switchable in Manage; see `ui-ux-design.md`. Edit mode and drag/drop remain deferred.
+- Delayed automatic preview scrolling was explicitly promoted for 0.1.9, independently switchable in Manage; see `ui-ux-design.md`. The first catalogue Edit mode/modal is implemented in 0.1.16; further editing operations and drag/drop remain deferred.
 
 ## Language-aware title hyphenation
 

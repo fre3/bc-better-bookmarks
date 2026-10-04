@@ -1,63 +1,50 @@
 # Development State
 
 Last updated: 2026-10-04
-Current branch: `feature/ui-ux-redesign`. Browser-review build: **0.1.15**.
-Validated baseline: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated tag `mvp-validated-0.1.1`.
+Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.16**.
+Validated MVP: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated tag `mvp-validated-0.1.1`.
+Accepted visual checkpoint: annotated **`ui-validated-0.1.15`**, targeting **`0e6a596210b2be2d273eab4a19d2268d9a1407a1`**. `feature/ui-ux-redesign` remains at that checkpoint; editing branched directly from it. No push.
 
 ## Current checkpoint and next action
 
-**Visual phase accepted by the user on 2026-10-04.** All requested native Edge tests for **0.1.15** passed, including Light/Dark/System appearance, footer and peek behavior. This supersedes the pending-review wording in the implementation evidence below. It is native Edge user evidence, not a new cross-device sync test.
+**Next action: native Edge review of the first catalogue editing increment, 0.1.16. Stop here.** Reload the existing unpacked extension at `edge://extensions`, verify **0.1.16**, then open a fresh New Tab. Use tracked `dist/`; development/build/testing remains WSL `/home/dev/projects/bc-better-bookmarks`. Supplied media and the Windows clone are untouched.
 
-Close and annotate this checkpoint, then start `feature/bookmark-editing` from it. The authorized first increment is catalogue Edit mode plus a title/URL/tags modal reusing existing mutation safeguards. Other editing operations, drag/drop, thumbnails, semantic search and synchronization changes remain deferred. No push; supplied media and validated MVP references remain untouched.
+The user confirmed **all requested native Edge checks passed for 0.1.15**, including Light/Dark/System appearance and footer/peek behavior. The visual phase is closed. This is user-reported native evidence, not new cross-device synchronization evidence. The 0.1.13 safe temporary-space cleanup and 0.1.14 final-section hover retention remain intact.
 
-## Appearance implementation
+## Implemented editing increment
 
-Manage now has an explicitly labelled **Appearance** selector: **System / Light / Dark**, default System. The authoritative value is `ui:appearance` in `chrome.storage.local`, written through the existing worker queue using a separate typed UI command. It never enters synchronized bookmark metadata or the saved mutation scope. `storage.onChanged` updates open dashboards without reload. The preference component is independent of the legacy editor and never saves, resets or replaces a draft.
+- Quiet **Edit** navigation control becomes **Editing · Done**. Mode is transient; a fresh dashboard starts browsing. Real Favorites in open sections, expanded folders and search results become single keyboard targets for editing; destinations are absent in this mode, including modifier/middle-click paths. Folder/section/root/search navigation remains available. Peek contents remain inert.
+- Native modal with visible Title, URL and comma-separated Tags labels, read-only folder path and Save/Cancel. Title initially focused; explicit Tab wrapping supplements native background inertness. No backdrop dismissal. Dirty Cancel/Escape offers **Discard changes / Continue editing**; unchanged forms close immediately. Background shortcuts and dashboard-search commands are blocked without consuming/replacing the draft. Background peeks cancel, while safe footer-space support remains available.
+- Modal does not rewrap the catalogue or move document scroll. Existing scrollbar space is preserved only when present; overlay-scrollbar platforms do not gain a new gutter. Selected Favorite has a subtle theme-aware highlight. Both accepted themes and narrow layouts supported.
+- Shared field validation comes from `src/core/link-input.ts`, extracted unchanged from the service rules: required trimmed title, existing URL policy and tag normalization/limits. URL remains a textarea, preserving bookmarklet code. Every bookmarklet save still calls `confirmLinkInput`; no persisted confirmation. Manage reuses the same confident-mapping tag lookup.
+- The editor sends the existing typed **edit** command with the captured `editToken` and original parent. The worker queue, stable identity, health/preflight/journal/sync path and all permissions/schemas remain unchanged. Browse scope never grants write access: select an editable mutation scope in **Manage** if needed. Managed/out-of-scope Favorites cannot be saved.
+- Save is guarded against duplicate submissions. Errors retain the modal/draft. Live external title/URL/folder/tag changes and deletion are detected against the original token; stale drafts are never automatically rebased or recreated. The service independently rechecks before mutations. After confirmed success the existing snapshot refresh updates the catalogue, Edit mode remains active, and focus returns after dialog teardown. If the item no longer matches search, focus returns to its unchanged query; a polite status announces success. Scope, expansion and original pre-search Escape snapshot survive.
 
-An external, parser-blocking `theme-init.js` reads the non-authoritative extension-origin `localStorage` key `ui:appearance-cache` before the application; it applies the preference and initial color-scheme hint. Shared CSS supplies the initial canvas. The browser adapter subscribes before reading canonical storage, resolves the authoritative value before mounting React and refreshes the cache. A slow read cannot overwrite a newer change. No timeout/loading-screen delay is introduced. If canonical storage fails, the cache/System remains usable; a failed save is surfaced and leaves the saved theme/draft intact.
+## Verification
 
-Theme selection changes the root attribute only. CSS `color-scheme` and `light-dark()` follow live system changes or pin an explicit override without remounting the catalogue. Geometry, selection, focus, scroll, query/snapshot, expansion and valid running peek animations are preserved. No broad color transitions. [Palette and detailed decisions](ui-ux-design.md#015-appearance-checkpoint).
+`npm run check` passes typecheck/lint, **194 tests / 15 files**, build/version consistency and unchanged extension ID **`nfhbegeoeafnpejpjdljhgagefbpafal`**. Package/lockfile, public manifest and tracked `dist/` are **0.1.16**.
 
-Charcoal sheets `#282828`, off-white text `#f0f0ed`, readable gray provenance/Next levels, black footer and black dither are proposed for review. The unchanged 7×20 SVG supplies an alpha mask, preserving its pattern/transparency/direction while exposing a semantic shadow color. Light closed rendering compares pixel-identically with 0.1.14. A neutral light-gray favicon frame keeps transparent dark logos visible; images retain their own colors and existing grayscale interaction. Dark annotations use a crisp charcoal text outline to remain legible over frames. The accepted limited annotation/frame overlap remains; no change to leading or type size.
+- New unit checks cover browse/edit semantics, one non-navigating selection target, original-parent/token capture, title/URL/folder/tag/deletion conflicts, mutation scope/managed restrictions, shared validation, normalized tags and explicit bookmarklet confirmation. Existing service metadata-health, stale-edit, identity, partial-write and synchronization tests still pass.
+- `node scripts/check-editing.mjs`: real App plus real `DashboardService` and metadata repository over isolated synthetic browser ports. Chromium light/dark: modifier/middle/keyboard activation, Tab wrap, initial/return focus, backdrop and wheel isolation, no modal-induced reflow, dirty confirmation, blocked dashboard-search command/root shortcuts, validation errors, failed save, duplicate submission prevention, title/URL/tags save, unchanged parent, bookmarklet cancel/confirm, external rename/move/deletion, missing-metadata and scope guards, theme changes with a draft, matching/disappearing search results, original Escape/root/folder restoration, active-preview cancellation, narrow layouts and transient mode on reload. No real Favorites are touched.
+- Existing `scripts/check-appearance.mjs` passes, including Manage draft protection and search restoration. Existing `scripts/check-peek-scroll.mjs` passes actual wheel/pointer repeated-cycle checks (light and dark), including final hover, safe space cleanup and search/Escape. These are Chromium fixtures, not native Edge acceptance.
+- Light/dark desktop and narrow modal captures under `docs/visual-review/generated/0.1.16-*`; representative renders were inspected with the image viewer. Prior supplied and generated review media are preserved.
 
-Native controls/caret/selection, Manage panels/status/errors, empty states and focus use shared tokens. Windows forced-colors keeps UA adjustments enabled and uses system colors plus a thin sheet boundary instead of authored dither. Native browser-owned confirm/prompt dialogs remain browser/OS styled. A small grid/min-width correction prevents long Manage root options from widening narrow layouts; editing semantics are unchanged.
+## Limits and reuse decisions
 
-## Preserved footer and catalogue behavior
+This authorized modal supersedes the earlier preference for inline editing **for this first increment only**. No suitable existing custom dialog was available; native dialog supplies top-layer/background isolation, supplemented with explicit focus wrapping. No UI framework or dependencies added.
 
-The 0.1.13 safe temporary-space cleanup and 0.1.14 final-hover implementation are untouched. Final mouse peeks retain the header/white surface through footer top; earlier sections remain header-only. Genuine exit may retain only space required to support the viewport, released by upward scrolling or explicit navigation. No forced scrolling, unsafe contraction, permanent reservation or new pointer layer.
+The existing mutation-root setup remains required and independent of browse scope. Metadata-health errors may only become known on the service preflight; their full errors appear in the retained modal. Browser and metadata writes are still separate operations: a late storage/remote failure can partially save native fields. The draft remains, but a resulting stale token blocks blind retry; copy needed text, cancel and reopen to review current values. No new recovery or overwrite facility is introduced. Drafts are memory-only; no recovery across tab closure/reload is promised. Externally changed/deleted drafts can be copied but are not auto-merged. No new native Edge or cross-device sync verification is claimed for 0.1.16.
 
-Unchanged: 2.5-line depth, Next grouping, 1000ms delay and one-line/2750ms scrolling, preference/reduced motion, 140/90ms peek and 220ms opening, wrapping/annotations, original Escape snapshot, Ctrl+Shift+B, Alt+top-row shortcuts, accepted Alt+numpad and address-bar/Ctrl+F6 limitations. No dependencies, permissions, manifest key or SVG artwork changes.
+## Edge review
 
-## Verification and limitations
+1. Confirm 0.1.16. Normal Favorite clicks still navigate; Edit → click/Enter/Space opens the modal. Modifier/middle activation must not open destinations. Done restores browsing. Expand folders and change roots in Edit mode.
+2. Edit title, URL and comma-separated tags; Save updates the catalogue and stays in Edit mode. Check the real Favorite and tags. Invalid fields show nearby messages. If blocked by scope, configure the existing mutation scope in Manage.
+3. Cancel/Escape unchanged closes; dirty offers discard/continue. Backdrop clicks, Tab/Shift+Tab and Ctrl+Shift+B must retain the draft and modal. Verify title focus, background isolation, return focus, stable scroll and no rewrapping.
+4. Edit a search result so it still matches, then one so it disappears. Query/scope remain; Escape after closing the modal restores the original root, section/folder and scroll state.
+5. While editing, change/move/delete the Favorite in Edge Favorites or another dashboard. Expect a retained draft and conflict, no silent overwrite/recreation. Check failed-save text if an existing safe blocked-metadata test case is available; do not damage metadata to manufacture a failure.
+6. Inspect Light/Dark and narrow views, selected-item highlight, keyboard focus, normal footer/peek interaction and long-card context. Manage remains available. Accepted address-bar/Ctrl+F6 and Alt+numpad behavior are unchanged.
 
-`npm run check` passes typecheck/lint, **190 tests / 14 files**, build/version and unchanged extension ID `nfhbegeoeafnpejpjdljhgagefbpafal`. Tracked `dist/`, package/lockfile and manifests are **0.1.15**.
-
-- New unit coverage: defaults/overrides, local-only storage, worker save/error path, event filtering/removal, read/change race and unavailable storage/cache.
-- `scripts/check-appearance.mjs`: real App over synthetic Favorites/shared API bridge. System/overrides/live changes, startup-frame palette, persistence, two-tab propagation, unsaved drafts/save errors, query/caret/focus/Escape/root/folder/scroll preservation, active peek progress, grayscale/color icons, readable text, narrow layouts, reduced motion and forced colors. Resting light catalogue is pixel-identical to the 0.1.14 stylesheet in the same fixture. Sampled text contrast: minimum **4.54:1 light / 6.42:1 dark** (including later summary names); frame-overlap readability also depends on the dark text outline and was inspected visually.
-- `scripts/check-peek-scroll.mjs`: **12 repeated wheel/pointer cycles per palette (24 total)**, including final-surface retention, footer entry/links, stationary waits, viewport stability, safe cleanup, root changes and search/Escape. Existing geometry algorithms were not modified.
-- Comparable closed/peek/open/search/Manage, icon/annotation, error, narrow and forced-colors captures are under `docs/visual-review/generated/0.1.15-*`; representative renders were visually inspected. All use synthetic bookmarks.
-
-**Native limitations:** two isolated Chromium extension-loading attempts did not register the unpacked extension or expose its worker (profile registry contained only the built-in PDF extension). Thus actual storage/worker delivery in a loaded extension remains Edge review; adapter logic and synthetic cross-tab delivery passed. No claim of native Edge, Windows contrast-theme or sync acceptance. First authored-frame samples passed with System and cached overrides opposite the OS; browser-owned pre-document paint and the rare missing/stale startup-cache reconciliation still require fresh-tab Edge inspection. No artificial delay hides this case. The user subsequently accepted the palette and requested native Edge checks; the automated evidence above remains separately attributed.
-
-```sh
-cd /home/dev/projects/bc-better-bookmarks
-npm run check
-node scripts/check-appearance.mjs
-node scripts/check-peek-scroll.mjs
-CATALOGUE_COLOR_SCHEME=dark node scripts/check-peek-scroll.mjs
-```
-
-Use `PLAYWRIGHT_BROWSERS_PATH` only if needed for a non-default installed Chromium. Scripts print temporary fixture/trace locations; committed reports contain summarized synthetic evidence. Completed functional/cross-device tests were not reopened.
-
-## Files and Edge review
-
-Changed: new browser appearance adapter, startup script, theme tokens and Appearance setting; small worker/main/App integration; catalogue/legacy CSS and summary colors; entry HTML/build guard, unit/browser regressions, version files, regenerated `dist/`, docs/evidence. Footer/hover/coverage implementations and bookmark/sync services are untouched.
-
-1. Manage → Appearance: System/Light/Dark; reload and open another dashboard. Change the setting and confirm both tabs update. With System, change Windows appearance while open.
-2. Fresh New Tabs with saved Light on a dark system and saved Dark on a light system: check flashes. Ordinary Ctrl+T address-bar focus is unchanged.
-3. Compare closed/peek/open sheets, first/cover/footer shadows, mixed-root Next text, tags/HTTP annotations and transparent/white/color icons. Check keyboard focus and Windows contrast themes.
-4. Keep an unsaved Manage draft and a second tab with scoped search/open folders; change appearance. Draft, query/selection, original Escape restoration and viewport should survive.
-5. Final peek → preview → wheel toward footer → footer links, then earlier headers: no jitter. Check narrow/reduced-motion views and safe cleanup after leaving.
+Folder editing, move/delete UI, bulk selection, drag/drop, thumbnails, semantic search, folder tags and synchronization changes remain deferred. Do not start another increment before review.
 
 ## Completed validation
 
