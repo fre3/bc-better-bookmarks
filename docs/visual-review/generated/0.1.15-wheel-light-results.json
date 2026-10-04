@@ -1,0 +1,42 @@
+[
+  {
+    "width": 1250,
+    "height": 600,
+    "reduced": false,
+    "cycles": 3,
+    "frames": 1602,
+    "passed": true
+  },
+  {
+    "width": 390,
+    "height": 700,
+    "reduced": false,
+    "cycles": 3,
+    "frames": 1600,
+    "passed": true
+  },
+  {
+    "width": 1490,
+    "height": 950,
+    "reduced": false,
+    "cycles": 3,
+    "frames": 1603,
+    "passed": true
+  },
+  {
+    "width": 1250,
+    "height": 600,
+    "reduced": true,
+    "cycles": 3,
+    "frames": 1597,
+    "passed": true
+  },
+  {
+    "shortPage": true,
+    "whiteSurface": true,
+    "resize": true,
+    "headerActivationOnly": true,
+    "keyboardStatic": true,
+    "passed": true
+  }
+]

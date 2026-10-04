@@ -4,13 +4,13 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated functional baseline is preserved at `mvp-validated-0.1.1`. The UI/UX feature branch has reached the final visual follow-up checkpoint (0.1.14), awaiting user Edge acceptance. After acceptance, close visual work and start `feature/bookmark-editing` from the accepted commit. Do not create that branch or declare acceptance before the user review. Preserve behavior, identity rules and accepted bookmarklet handling. Folder tags require a separately authorized metadata-model extension and remain deferred; their intended overlay styling is recorded in `ui-ux-design.md`. Drag/drop is also deferred. Start with `development-state.md` for current status.
+The validated functional baseline is preserved at `mvp-validated-0.1.1`. The UI/UX feature branch has reached the final visual follow-up checkpoint (0.1.15), awaiting user Edge acceptance. After acceptance, close visual work and start `feature/bookmark-editing` from the accepted commit. Do not create that branch or declare acceptance before the user review. Preserve behavior, identity rules and accepted bookmarklet handling. Folder tags require a separately authorized metadata-model extension and remain deferred; their intended overlay styling is recorded in `ui-ux-design.md`. Drag/drop is also deferred. Start with `development-state.md` for current status.
 
 ## Future catalogue imagery and motion
 
 - Locally cached website thumbnails may later take precedence over favicons.
 - Actual website thumbnails should initially use no light-gray backing or frame padding; favicons/placeholders retain the framed treatment.
-- Website capture, permissions, cache/storage and fallback policy require a separate implementation decision. No thumbnail infrastructure or thumbnail permissions are part of 0.1.14.
+- Website capture, permissions, cache/storage and fallback policy require a separate implementation decision. No thumbnail infrastructure or thumbnail permissions are part of 0.1.15.
 - Delayed automatic preview scrolling was explicitly promoted for 0.1.9, independently switchable in Manage; see `ui-ux-design.md`. Edit mode and drag/drop remain deferred.
 
 ## Language-aware title hyphenation

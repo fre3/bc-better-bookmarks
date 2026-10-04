@@ -22,9 +22,10 @@ createRoot(document.getElementById('root')).render(<Catalogue snapshot={snapshot
 await writeFile(join(output, 'index.html'), '<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="fixture.css"></head><body><main id="root" class="catalogue-page"></main><script src="fixture.js"></script></body></html>');
 const browser = await chromium.launch();
 const reports = [];
+const colorScheme = process.env.CATALOGUE_COLOR_SCHEME === 'dark' ? 'dark' : 'light';
 try {
   for (const [width, height, reduced] of [[1250, 600, false], [390, 700, false], [1490, 950, false], [1250, 600, true]]) {
-    const page = await browser.newPage({ viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+    const page = await browser.newPage({ colorScheme, viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference' });
     const errors = []; page.on('pageerror', error => errors.push(error.message));
     await page.addInitScript(() => {
       const raf = window.requestAnimationFrame.bind(window), cancel = window.cancelAnimationFrame.bind(window);
@@ -148,12 +149,12 @@ try {
     }
     assert.deepEqual(errors, []);
     await writeFile(join(output, `trace-${width}-${reduced}.json`), JSON.stringify(trace));
-    reports.push({ width, height, reduced, cycles: 3, frames: trace.filter(x => x.type === 'frame').length, passed: true });
+    reports.push({ colorScheme, width, height, reduced, cycles: 3, frames: trace.filter(x => x.type === 'frame').length, passed: true });
     await page.close();
   }
   // A short catalogue has white flex space beyond the preview content itself.
   // Only an active final-header session may retain that area.
-  const short = await browser.newPage({viewport:{width:1250,height:800}});
+  const short = await browser.newPage({colorScheme,viewport:{width:1250,height:800}});
   await short.goto(pathToFileURL(join(output,'index.html')).href+'?single');
   const last = short.locator('[id="section-folder:s0"]');
   await short.mouse.move(120,600); await short.waitForTimeout(200);

@@ -1,6 +1,6 @@
 # Typographic catalogue — browsing/search checkpoint
 
-Status: **0.1.14 final-section hover-retention checkpoint**, awaiting Edge review. The user accepted 0.1.8 main command workflows and configurability, including the documented address-bar/Ctrl+F6 limitation. See [keyboard-search.md](keyboard-search.md) for the command and native-focus limitations; prior 0.1.7 visual evidence remains below. The user accepted 0.1.6's 14px additional leading, measured peek coverage and 220ms full-open reveal; these are preserved. The user manually reviewed 0.1.2 using real bookmarks, screenshots, keyboard testing and a recording; search, roots, scope handling, runtime stability and most keyboard behavior were reported working well. No new Edit mode, inline CRUD redesign, drag/drop, or folder-tag persistence. The validated 0.1.1 baseline remains at `1217369dd10638942d80107d5f33d7f61491d075` on `master`, `archive/mvp-validated-0.1.1`, and annotated tag `mvp-validated-0.1.1`.
+Status: **0.1.15 appearance checkpoint**, awaiting Edge review. The user accepted 0.1.8 main command workflows and configurability, including the documented address-bar/Ctrl+F6 limitation. See [keyboard-search.md](keyboard-search.md) for the command and native-focus limitations; prior 0.1.7 visual evidence remains below. The user accepted 0.1.6's 14px additional leading, measured peek coverage and 220ms full-open reveal; these are preserved. The user manually reviewed 0.1.2 using real bookmarks, screenshots, keyboard testing and a recording; search, roots, scope handling, runtime stability and most keyboard behavior were reported working well. No new Edit mode, inline CRUD redesign, drag/drop, or folder-tag persistence. The validated 0.1.1 baseline remains at `1217369dd10638942d80107d5f33d7f61491d075` on `master`, `archive/mvp-validated-0.1.1`, and annotated tag `mvp-validated-0.1.1`.
 
 ## Implemented presentation
 
@@ -59,7 +59,7 @@ On this machine the Windows-visible path is `\\wsl.localhost\Ubuntu-24.04\home\d
 
 The committed `dist/` is already built; rebuilding is unnecessary merely to review this checkpoint. `wslpath -w` prints the exact Windows-visible folder to select in Edge. Do not build or install dependencies in a Windows clone. This feature branch has not been pushed, so pulling the remote Windows clone will not obtain this checkpoint yet.
 
-In the intended Windows Edge profile, open `edge://extensions`. For an existing extension whose loaded path is this WSL `dist/`, click **Reload**, then open a fresh New Tab. If the existing extension points to a Windows clone, use **Load unpacked** with the Windows path printed above; verify that the extension's Details now show that path and version **0.1.14** before testing. Do not remove/uninstall the existing extension merely to change paths; uninstalling can discard profile-local metadata. If Edge does not permit switching the loaded path, stop and report that loading issue rather than resetting the profile. Expected ID: `nfhbegeoeafnpejpjdljhgagefbpafal`.
+In the intended Windows Edge profile, open `edge://extensions`. For an existing extension whose loaded path is this WSL `dist/`, click **Reload**, then open a fresh New Tab. If the existing extension points to a Windows clone, use **Load unpacked** with the Windows path printed above; verify that the extension's Details now show that path and version **0.1.15** before testing. Do not remove/uninstall the existing extension merely to change paths; uninstalling can discard profile-local metadata. If Edge does not permit switching the loaded path, stop and report that loading issue rather than resetting the profile. Expected ID: `nfhbegeoeafnpejpjdljhgagefbpafal`.
 
 Privileged New Tab/extension pages are for user-controlled Edge review. No automated Edge visual or Microsoft sync validation is claimed.
 
@@ -237,3 +237,51 @@ The supplied 11.53-second recording was decoded; representative frames including
 The 0.1.13 spacer/safe-cleanup code is untouched. Genuine exit can still leave the minimum space supporting the current viewport; ordinary upward scrolling or explicit navigation releases it. No unsafe contraction, scroll forcing, permanent gap or pointer-suppression workaround is added. Earlier sections, inert previews, keyboard focus, reduced motion, Next presentation and all accepted timing remain unchanged.
 
 `npm run check` passes 185 tests / 13 files, typecheck/lint/build/identity verification. The expanded real-pointer/wheel regression covers twelve repeated cycles, continuity and scrolling during delay/active motion, footer access and scroll-driven exit, dynamic last-section identity, safe cleanup and search restoration. Additional short-page/resize/keyboard checks cover white space beyond the preview content. The original 0.1.13 component fails the new retention assertion. [Rendered results](visual-review/generated/0.1.14-wheel-results.json), [desktop retention](visual-review/generated/0.1.14-retained-preview.png), [narrow retention](visual-review/generated/0.1.14-retained-preview-narrow.png), [short-page white surface](visual-review/generated/0.1.14-white-surface.png) use synthetic bookmarks only; Chromium evidence is not native Edge acceptance.
+
+## 0.1.15 appearance checkpoint
+
+User review of 0.1.14: the footer problem is largely resolved; final peek remains across its white surface through footer top, and hovering the footer dismisses it. This specific observation does not certify all cases. The 0.1.13 safe spacer and 0.1.14 hover code remain unchanged.
+
+Manage → Appearance offers System (default), Light and Dark. `chrome.storage.local['ui:appearance']` is authoritative, with a typed command through the existing worker queue. Local change events update each open dashboard. The synchronous `localStorage['ui:appearance-cache']` copy is solely a first-paint aid, read by the CSP-compatible external classic `theme-init.js` before the application. Canonical storage is reconciled before React mounts; event/read races cannot restore stale values. Neither store is synchronized bookmark metadata. No permission or dependency additions.
+
+CSS `color-scheme` pins explicit overrides; System tracks device changes natively via `light-dark()` without React rendering. This also themes native controls and scrollbars. See [MDN color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme) and [Chrome storage documentation](https://developer.chrome.com/docs/extensions/reference/api/storage). Dark/light switching changes colors only, retaining draft/query/focus/selection/scroll and valid animation state. Browser-owned confirm/prompt dialogs remain under browser/Windows control.
+
+### Proposed palette
+
+All values live in `src/ui/theme.css`; light catalogue colors preserve the existing palette.
+
+| Role | Light | Dark proposal |
+| --- | --- | --- |
+| Sheets/page/peek/temporary area | `#fff` | `#282828` |
+| Primary text/focus | `#191919` | `#f0f0ed` |
+| Provenance/secondary | `#686868` | `#bdbdbd` |
+| Next names 1 / 2 / later | `#111 / #666 / #767676` | `#f0f0ed / #c4c4c4 / #ababab` |
+| Next prefix/provenance | `#666` | `#bdbdbd` |
+| Decorative separators | `#999` | `#9b9b9b` |
+| Annotations | `#515151` | `#f0f0ed`, crisp `#282828` outline |
+| Favicon frame / placeholder | `#eee / #d0d0d0` | `#bdbdbd / #929292` |
+| Control surface / border | `#fff / #aeb9c7` | `#303030 / #858585` |
+| Control hover / panel border | `#eef3fb / #d9e0e9` | `#3b4552 / #656565` |
+| Manage link and focus | `#164dab / #2563eb` | `#a6c8ff` |
+| Manage metadata | `#536176` | `#bac6d7` |
+| Selected control / border | `#e5edff / #4775c3` | `#334763 / #8ab4f8` |
+| Tag background | `#eef2f7` | `#3b414a` |
+| Warning background / text | `#fff6db / #8a4d00` | `#443b24 / #f1ce8c` |
+| Error / panel background | `#852929 / #ffeded` | `#ffbdbd / #48282b` |
+| Selection background / text | `#b7d5ff / #191919` | `#526b89 / #fff` |
+| Footer background / text | `#000 / #fff` | `#000 / #fff` |
+| Dither | `#000` | `#000` |
+
+The original transparent 7×20 SVG is unchanged and supplies a repeating alpha mask in both themes. This makes shadow color semantic without introducing an inverted white glow. Pattern, direction, opaque covers and footer boundary remain intact; the closed light fixture is pixel-identical to the 0.1.14 stylesheet. Black against charcoal is deliberately subtle and needs Edge review.
+
+Favicon image pixels are never inverted. Light-gray dark-mode frames make transparent black logos readable, while existing white-backed images stay white-backed. Grayscale-at-rest/color-on-item-hover/focus is preserved. Annotations retain 10px/10px typography, item-local/search visibility and out-of-flow placement. A crisp one-pixel charcoal text outline maintains readability over light frames; accepted limited frame overlap remains. No leading/spacing changes or collision machinery.
+
+Forced colors is handled separately: UA adjustment remains enabled, system text/surface/focus colors take precedence, and sheet shadows become thin system-color boundaries. No global `forced-color-adjust: none`. Native Windows dialogs, color themes and browser-owned startup paint need manual verification. The cache covers ordinary saved overrides; if it is unavailable/stale, asynchronous canonical reconciliation can still correct the initial palette. No loading delay disguises that limit.
+
+### Verification and review
+
+190 tests / 14 files and full `npm run check` pass. Browser checks cover System/overrides/live changes, early authored frames, two-tab updates over a synthetic API bridge, draft/query/selection/focus/scroll/Escape preservation, running peeks, error handling, icons, narrow views, reduced motion and forced colors. A narrow Manage grid fix prevents long native select options from forcing overflow; it changes no editing semantics. Minimum sampled text contrasts are 4.54:1 light and 6.42:1 dark. These are sampled rendered colors, not a claim of complete accessibility certification.
+
+The repeated real-pointer/wheel regression passes twelve cycles in each palette, with safe cleanup/retention intact. Isolated native Chromium sideload attempts did not register the extension, so actual extension storage/worker propagation remains an Edge check. Synthetic checks do not establish native Edge/Windows acceptance.
+
+Comparable captures: [light closed](visual-review/generated/0.1.15-light-closed.png), [dark closed](visual-review/generated/0.1.15-dark-closed.png), [light peek](visual-review/generated/0.1.15-light-peek.png), [dark peek](visual-review/generated/0.1.15-dark-peek.png), [light open](visual-review/generated/0.1.15-light-open.png), [dark open](visual-review/generated/0.1.15-dark-open.png), [light search](visual-review/generated/0.1.15-light-search.png), [dark search](visual-review/generated/0.1.15-dark-search.png), [light Manage](visual-review/generated/0.1.15-light-manage.png), [dark Manage](visual-review/generated/0.1.15-dark-manage.png). Additional icon/error/narrow/forced-color captures and JSON reports use the same prefix. All are synthetic data. Stop for Edge review; semantic search, thumbnails, editing redesign, drag/drop and synchronization changes remain deferred.
