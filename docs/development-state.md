@@ -6,9 +6,9 @@ Validated baseline: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `ma
 
 ## Current checkpoint and next action
 
-**Next action: Edge review of the proposed dark palette and appearance setting in 0.1.15. Stop here.** No push. Development/tooling remains WSL `/home/dev/projects/bc-better-bookmarks`; supplied media and the Windows clone are untouched. Reload tracked `dist/` at `edge://extensions`, verify **0.1.15**, and open a fresh New Tab. [Load instructions](ui-ux-design.md#build-and-load-in-edge).
+**Visual phase accepted by the user on 2026-10-04.** All requested native Edge tests for **0.1.15** passed, including Light/Dark/System appearance, footer and peek behavior. This supersedes the pending-review wording in the implementation evidence below. It is native Edge user evidence, not a new cross-device sync test.
 
-**Specific user observation for 0.1.14:** the footer problem is largely resolved: the final section's peek remains active across its preview surface up to the footer and disappears when hovering over the footer. This is not comprehensive acceptance of untested states. Visual work is not closed; do not create `feature/bookmark-editing` until explicit acceptance. Semantic search, editing redesign, drag/drop, thumbnails, folder tags and synchronization changes remain deferred.
+Close and annotate this checkpoint, then start `feature/bookmark-editing` from it. The authorized first increment is catalogue Edit mode plus a title/URL/tags modal reusing existing mutation safeguards. Other editing operations, drag/drop, thumbnails, semantic search and synchronization changes remain deferred. No push; supplied media and validated MVP references remain untouched.
 
 ## Appearance implementation
 
@@ -37,7 +37,7 @@ Unchanged: 2.5-line depth, Next grouping, 1000ms delay and one-line/2750ms scrol
 - `scripts/check-peek-scroll.mjs`: **12 repeated wheel/pointer cycles per palette (24 total)**, including final-surface retention, footer entry/links, stationary waits, viewport stability, safe cleanup, root changes and search/Escape. Existing geometry algorithms were not modified.
 - Comparable closed/peek/open/search/Manage, icon/annotation, error, narrow and forced-colors captures are under `docs/visual-review/generated/0.1.15-*`; representative renders were visually inspected. All use synthetic bookmarks.
 
-**Native limitations:** two isolated Chromium extension-loading attempts did not register the unpacked extension or expose its worker (profile registry contained only the built-in PDF extension). Thus actual storage/worker delivery in a loaded extension remains Edge review; adapter logic and synthetic cross-tab delivery passed. No claim of native Edge, Windows contrast-theme or sync acceptance. First authored-frame samples passed with System and cached overrides opposite the OS; browser-owned pre-document paint and the rare missing/stale startup-cache reconciliation still require fresh-tab Edge inspection. No artificial delay hides this case. Dark palette is proposed, not accepted.
+**Native limitations:** two isolated Chromium extension-loading attempts did not register the unpacked extension or expose its worker (profile registry contained only the built-in PDF extension). Thus actual storage/worker delivery in a loaded extension remains Edge review; adapter logic and synthetic cross-tab delivery passed. No claim of native Edge, Windows contrast-theme or sync acceptance. First authored-frame samples passed with System and cached overrides opposite the OS; browser-owned pre-document paint and the rare missing/stale startup-cache reconciliation still require fresh-tab Edge inspection. No artificial delay hides this case. The user subsequently accepted the palette and requested native Edge checks; the automated evidence above remains separately attributed.
 
 ```sh
 cd /home/dev/projects/bc-better-bookmarks

@@ -4,7 +4,7 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated functional baseline is preserved at `mvp-validated-0.1.1`. The UI/UX feature branch has reached the final visual follow-up checkpoint (0.1.15), awaiting user Edge acceptance. After acceptance, close visual work and start `feature/bookmark-editing` from the accepted commit. Do not create that branch or declare acceptance before the user review. Preserve behavior, identity rules and accepted bookmarklet handling. Folder tags require a separately authorized metadata-model extension and remain deferred; their intended overlay styling is recorded in `ui-ux-design.md`. Drag/drop is also deferred. Start with `development-state.md` for current status.
+The validated functional baseline is preserved at `mvp-validated-0.1.1`. The user accepted the 0.1.15 visual checkpoint in native Edge. Close visual work, tag that checkpoint and start `feature/bookmark-editing` from it. The first authorized increment is transient catalogue Edit mode and a title/URL/tags modal, reusing existing Manage validation, identity and mutation safeguards. Folder editing, move/delete UI, bulk operations, drag/drop and thumbnails remain deferred. Folder tags require separate metadata-model authorization. See `development-state.md` for current implementation status.
 
 ## Future catalogue imagery and motion
 
