@@ -1,4 +1,4 @@
-/* global window, document */
+/* global window, document, getComputedStyle */
 import { chromium, expect } from '@playwright/test';
 import {editingFixture} from './editing-fixture.mjs';
 import {writeFile} from 'node:fs/promises';import {join} from 'node:path';import assert from 'node:assert/strict';
