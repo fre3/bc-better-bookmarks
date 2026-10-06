@@ -1,0 +1,10 @@
+[
+  {
+    "theme": "light",
+    "result": "section/root move, sustained hover expansion/reset, no peek, edge-scroll/cancel, nested folder move and wrapped/narrow targets passed"
+  },
+  {
+    "theme": "dark",
+    "result": "section/root move, sustained hover expansion/reset, no peek, edge-scroll/cancel, nested folder move and wrapped/narrow targets passed"
+  }
+]

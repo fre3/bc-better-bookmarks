@@ -432,3 +432,15 @@ Historical instructions above to enable/select a Dashboard mutation root are obs
 ### 0.1.20 review diagnosis clarification
 
 User-supplied diagnosis distinguishes Work (`4d29ce79-d3f0-4c00-8dd5-d9eb18f1106d`, candidate 1227, already unresolved in 0.1.18) from the confirmed Folder Sync Test (`e7697eb9-249f-4b65-8fd0-ce640c24af83`, mapped to 1306). Enabling Show archived exposed the pending review entries. The supplied Work screenshot and navigation recording were inspected; accompanying `Pasted text.txt` was not available in this checkout, so the UUID comparison is attributed to the user, not an independently inspected export. No lost confirmed binding or transport defect is established. Administrative review now ignores archive filtering; the conservative worker attachment/persistence path is unchanged. Isolated Chromium confirmation survived repository reconstruction and reload. This is not fresh native sync evidence and does not change the passed 0.1.18 scenarios or unconfirmed test-subtree deletion.
+
+## 0.1.21 creation and moving — pending native check
+
+The user accepted all requested native 0.1.20 checks. New 0.1.21 creation/moving has isolated service/Chromium fixture evidence, not new Microsoft sync evidence. No transport/schema/permission change or live reset is involved. The previously passed 0.1.18 scenarios remain passed; deletion propagation remains unconfirmed.
+
+Use **disposable test items only**, both devices on 0.1.21 with the same development extension ID/profile sync configuration:
+
+1. On A, create a new folder, subfolder and favorite through dashboard Add/More. Assign distinctive direct tags to the parent and favorite. On B, confirm the native structure arrives. If “Folder tags need review” appears, explicitly confirm the recognized unique association; do not guess duplicate candidates. Verify direct/inherited tags, source paths and #tag search.
+2. On A, use Move or a handle to move the tagged subtree into another disposable tagged parent (and reorder a favorite). On B, verify native location/order, preserved direct tags and existing confirmed identities, and recomputed inherited tags/source paths. An already confirmed folder should retain its mapping; do not interpret a never-confirmed pending identity as lost sync.
+3. Include an archived destination in the disposable test if practical. Keep Show archived independently configured on A/B and verify visibility follows each device's preference while direct tags remain unchanged. Do not enable it automatically to compensate for a failed move. Report delayed arrival, pending reviews or conflicts separately from transport outcomes.
+
+No new deletion test is required for this checkpoint. Record actual outcomes before claiming native two-device acceptance.

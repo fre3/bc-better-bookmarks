@@ -4,14 +4,14 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated MVP remains at `mvp-validated-0.1.1`, and accepted visual work at `ui-validated-0.1.15`. On `feature/bookmark-editing`, **0.1.19 awaits Edge review**: obsolete mutation scope removed, pending folder-binding notice, section Edit layout, pointer-versus-keyboard tags, open-state indicators, explicit-root scroll reset and compact sticky navigation. Specific 0.1.18 two-device folder binding/tag/inheritance/rename/move/archive scenarios passed natively; test-subtree deletion was not confirmed. The missing tags were received metadata awaiting explicit binding, not a transport defect. Broader editing acceptance is not inferred. See development-state.md for the targeted next review.
+The validated MVP remains at `mvp-validated-0.1.1`, and accepted visual work at `ui-validated-0.1.15`. The user accepted all requested native 0.1.20 tests. On `feature/bookmark-editing`, **0.1.21 awaits Edge review**: dashboard folder/favorite creation, duplicate-free partial-create completion, shared native moving, explicit pointer handles and keyboard Move. Review only disposable test items; run the short new two-device creation/moved-subtree check. Existing native 0.1.18 sync scenarios remain passed; deletion propagation remains unconfirmed. See development-state.md for evidence and remaining limitations.
 
 ## Future catalogue imagery and motion
 
 - Locally cached website thumbnails may later take precedence over favicons.
 - Actual website thumbnails should initially use no light-gray backing or frame padding; favicons/placeholders retain the framed treatment.
 - Website capture, permissions, cache/storage and fallback policy require a separate implementation decision. No thumbnail infrastructure or thumbnail permissions are part of 0.1.15.
-- Delayed automatic preview scrolling was explicitly promoted for 0.1.9, independently switchable in Manage; see `ui-ux-design.md`. The first catalogue Edit mode/modal is implemented in 0.1.16; further editing operations and drag/drop remain deferred.
+- Delayed automatic preview scrolling was explicitly promoted for 0.1.9, independently switchable in Manage; see `ui-ux-design.md`. The first catalogue Edit mode/modal is implemented in 0.1.16; creation and internal single-item pointer moving were promoted for 0.1.21. Copying, deletion UI, bulk operations and cross-tab/external drops remain deferred.
 
 ## Language-aware title hyphenation
 
@@ -76,3 +76,7 @@ Do not assume the development manifest key determines the production store ident
 ## Manage organization — deferred
 
 Reorganize and clean up Manage in a future update: separate everyday preferences, identity review and advanced diagnostics/setup more clearly. Do not redesign it during the 0.1.17 increment beyond the requested folder review and settings. Any metadata import/recovery workflow needs an explicit, evidence-driven design; the private reset export is not a one-click restore feature.
+
+## Local creation receipt housekeeping
+
+A future explicit recovery/housekeeping view may expose local creation receipts and safely compact completed entries. Do not automatically prune uncertain requests or recreate their items. This is separate from synced metadata restoration and must not promise durable UI draft recovery.
