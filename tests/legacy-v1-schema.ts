@@ -1,36 +1,28 @@
-import type { LocalMapping, LocalState, Locator, MetadataJournal, MetadataState } from './model';
-import { normalizeTags } from './logic';
+// Frozen 0.1.15 parser for compatibility regression evidence.
+import type { LocalMapping, LocalState, Locator, MetadataJournal, MetadataState } from '../src/core/model';
+import { normalizeTags } from '../src/core/logic';
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export const object = (v: unknown): v is Record<string, unknown> => Boolean(v) && typeof v === 'object' && !Array.isArray(v);
 export function isLocator(v: unknown): v is Locator {
-  return object(v) && (v.kind === undefined || v.kind === 'folder' && v.url === '') && typeof v.url === 'string' && typeof v.title === 'string' && Array.isArray(v.folderPath) && v.folderPath.every(p => object(p) && ['title', 'browser'].includes(String(p.kind)) && typeof p.value === 'string');
+  return object(v) && typeof v.url === 'string' && typeof v.title === 'string' && Array.isArray(v.folderPath) && v.folderPath.every(p => object(p) && ['title', 'browser'].includes(String(p.kind)) && typeof p.value === 'string');
 }
 function cleanLocator(value: Locator): Locator {
-  return { ...(value.kind === 'folder' ? { kind: 'folder' as const } : {}), url: value.url, title: value.title, folderPath: value.folderPath.map(p => ({ kind: p.kind, value: p.value })) };
+  return { url: value.url, title: value.title, folderPath: value.folderPath.map(p => ({ kind: p.kind, value: p.value })) };
 }
 const time = (v: unknown): v is string => typeof v === 'string' && Number.isFinite(Date.parse(v));
 export function parseMetadata(raw: Record<string, unknown>): MetadataState {
   const state: MetadataState = { records: [], histories: {}, tombstones: {}, invalid: [], raw };
-  const marker = raw['setup:epoch'];
-  if (object(marker) && typeof marker.generation === 'string' && UUID.test(marker.generation) && (marker.phase === 'ready' || marker.phase === 'resetting')) state.setup = { generation: marker.generation, phase: marker.phase };
   const blocked = new Set<string>();
   for (const [key, value] of Object.entries(raw)) {
-    if (key === 'setup:epoch') {
-      if (object(value) && typeof value.generation === 'string' && UUID.test(value.generation) && (value.phase === 'ready' || value.phase === 'resetting')) state.setup = { generation: value.generation, phase: value.phase };
-      else state.invalid.push(`${key}: invalid setup marker (preserved)`);
-      continue;
-    }
     const [kind, id] = key.split(':');
     if (!['meta', 'loc', 'dead'].includes(kind)) { state.invalid.push(`${key}: unknown storage key (preserved)`); continue; }
-    if (state.setup && (!object(value) || value.generation !== state.setup.generation)) { (state.ignored ??= []).push(key); continue; }
-    const generation = object(value) && typeof value.generation === 'string' && UUID.test(value.generation) ? { generation: value.generation } : {};
-    const base = object(value) && (value.schemaVersion === 1 || value.schemaVersion === 2) && (value.generation === undefined || typeof value.generation === 'string' && UUID.test(value.generation)) && value.stableId === id && UUID.test(id) && key === `${kind}:${id}`;
-    if (base && kind === 'meta' && Array.isArray(value.tags) && value.tags.every(t => typeof t === 'string') && isLocator(value.initialLocator) && time(value.updatedAt) && (value.schemaVersion === 2 || value.initialLocator.kind === undefined)) {
-      state.records.push({ ...generation, schemaVersion: value.schemaVersion as 1 | 2, stableId: id, tags: normalizeTags(value.tags as string[]), initialLocator: cleanLocator(value.initialLocator), updatedAt: value.updatedAt });
-    } else if (base && kind === 'loc' && Array.isArray(value.locators) && value.locators.length <= 12 && value.locators.every(l => isLocator(l) && (value.schemaVersion === 2 || l.kind === undefined))) {
-      state.histories[id] = { ...generation, schemaVersion: value.schemaVersion as 1 | 2, stableId: id, locators: value.locators.map(cleanLocator) };
-    } else if (base && value.schemaVersion === 1 && kind === 'dead' && time(value.deletedAt)) {
-      state.tombstones[id] = { ...generation, schemaVersion: 1, stableId: id, deletedAt: value.deletedAt };
+    const base = object(value) && value.schemaVersion === 1 && value.stableId === id && UUID.test(id) && key === `${kind}:${id}`;
+    if (base && kind === 'meta' && Array.isArray(value.tags) && value.tags.every(t => typeof t === 'string') && isLocator(value.initialLocator) && time(value.updatedAt)) {
+      state.records.push({ schemaVersion: 1, stableId: id, tags: normalizeTags(value.tags as string[]), initialLocator: cleanLocator(value.initialLocator), updatedAt: value.updatedAt });
+    } else if (base && kind === 'loc' && Array.isArray(value.locators) && value.locators.length <= 12 && value.locators.every(isLocator)) {
+      state.histories[id] = { schemaVersion: 1, stableId: id, locators: value.locators.map(cleanLocator) };
+    } else if (base && kind === 'dead' && time(value.deletedAt)) {
+      state.tombstones[id] = { schemaVersion: 1, stableId: id, deletedAt: value.deletedAt };
     } else {
       state.invalid.push(`${key}: invalid or unsupported schema (preserved)`);
       blocked.add(id);
@@ -46,7 +38,7 @@ export function parseLocal(raw: unknown): LocalState {
   for (const mapping of Object.values(raw.mappings)) {
     if (!object(mapping) || typeof mapping.stableId !== 'string' || !UUID.test(mapping.stableId) || !isLocator(mapping.lastLocator) || !['explicit', 'exact-locator'].includes(String(mapping.method)) || !(mapping.dateAdded === undefined || typeof mapping.dateAdded === 'number')) throw new Error('Invalid local mapping; refusing to overwrite local state.');
   }
-  return { schemaVersion: 1, ...(typeof raw.metadataEpoch === 'string' ? { metadataEpoch: raw.metadataEpoch } : {}), rootId: raw.rootId, pendingDeletions: raw.pendingDeletions as string[], mappings: Object.fromEntries(Object.entries(raw.mappings).map(([id, value]) => {
+  return { schemaVersion: 1, rootId: raw.rootId, pendingDeletions: raw.pendingDeletions as string[], mappings: Object.fromEntries(Object.entries(raw.mappings).map(([id, value]) => {
     const m = value as LocalMapping;
     return [id, { stableId: m.stableId, dateAdded: m.dateAdded, lastLocator: cleanLocator(m.lastLocator), method: m.method }];
   })) };

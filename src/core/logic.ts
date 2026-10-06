@@ -21,7 +21,7 @@ export function normalizeTags(tags: string[]): string[] {
 }
 export function fingerprint(locator: Locator): string {
   // Structured serialization avoids delimiter collisions. Exact URL and title are intentional.
-  return JSON.stringify([locator.url, locator.title, locator.folderPath.map(p => [p.kind, p.value])]);
+  return JSON.stringify([...(locator.kind === 'folder' ? ['folder'] : []), locator.url, locator.title, locator.folderPath.map(p => [p.kind, p.value])]);
 }
 export function flattenTree(tree: FavoriteNode[]): { favorites: Favorite[]; folders: Folder[] } {
   const favorites: Favorite[] = [];

@@ -14,7 +14,7 @@ export function reconcile(favorites: Favorite[], metadata: MetadataState, old: R
     const locators = uniqueLocators([record.initialLocator, ...(metadata.histories[record.stableId]?.locators ?? [])]);
     const keys = new Set(locators.map(fingerprint));
     candidates.set(record.stableId, favorites.filter(f => keys.has(fingerprint(f.locator))));
-    known.set(record.stableId, favorites.filter(f => old[f.id]?.stableId === record.stableId && old[f.id]?.dateAdded === f.dateAdded));
+    known.set(record.stableId, favorites.filter(f => f.locator.kind === record.initialLocator.kind && old[f.id]?.stableId === record.stableId && old[f.id]?.dateAdded === f.dateAdded));
   }
   // Evaluate globally, never greedily consume candidates according to input order.
   for (const record of [...metadata.records].sort((a, b) => a.stableId.localeCompare(b.stableId))) {
@@ -22,13 +22,13 @@ export function reconcile(favorites: Favorite[], metadata: MetadataState, old: R
     if (dead.has(id)) { result.matches.push({ stableId: id, status: 'deleted', candidateIds: [] }); continue; }
     const previous = known.get(id)!;
     const possible = candidates.get(id)!;
-    const choice = previous.length === 1 ? previous[0] : possible.length === 1 ? possible[0] : undefined;
+    const choice = previous.length === 1 ? previous[0] : record.initialLocator.kind !== 'folder' && possible.length === 1 ? possible[0] : undefined;
     const competitors = choice && metadata.records.some(other => other.stableId !== id && !dead.has(other.stableId) && (
       candidates.get(other.stableId)!.some(f => f.id === choice.id) || known.get(other.stableId)!.some(f => f.id === choice.id)
     ));
     const reused = choice && old[choice.id] && (old[choice.id].stableId !== id || old[choice.id].dateAdded !== choice.dateAdded);
     if (!choice || previous.length > 1 || competitors || reused) {
-      result.matches.push({ stableId: id, status: possible.length || previous.length || competitors ? 'ambiguous' : 'unresolved', candidateIds: [...new Set([...possible, ...previous].map(f => f.id))] });
+      result.matches.push({ stableId: id, status: possible.length > (record.initialLocator.kind === 'folder' ? 1 : 0) || previous.length || competitors ? 'ambiguous' : 'unresolved', candidateIds: [...new Set([...possible, ...previous].map(f => f.id))] });
       continue;
     }
     const mapping: LocalMapping = { stableId: id, lastLocator: choice.locator, dateAdded: choice.dateAdded, method: previous.length ? old[choice.id].method : 'exact-locator' };
@@ -39,7 +39,7 @@ export function reconcile(favorites: Favorite[], metadata: MetadataState, old: R
         result.warnings.push(`${id}: locator history limit reached; publication blocked`);
         mapping.lastLocator = old[choice.id].lastLocator;
       } else if (JSON.stringify(locators) !== JSON.stringify(metadata.histories[id]?.locators)) {
-        result.historyWrites[`loc:${id}`] = { schemaVersion: 1, stableId: id, locators };
+        result.historyWrites[`loc:${id}`] = { ...(record.generation ? { generation: record.generation } : {}), schemaVersion: record.schemaVersion, stableId: id, locators };
       }
     }
     result.mappings[choice.id] = mapping;

@@ -1,6 +1,8 @@
+import { alignMetadataEpoch, setupEpoch, SETUP_KEY } from './metadata-setup';
 import type { LocalState, LogEntry, MetadataJournal, MetadataState } from '../core/model';
-import { parseJournal, parseLocal, parseMetadata } from '../core/schema';
+import { parseJournal, parseMetadata } from '../core/schema';
 export interface StorageArea {
+  remove?(keys: string | string[]): Promise<void>;
   get(keys?: string | string[] | null): Promise<Record<string, unknown>>;
   set(items: Record<string, unknown>): Promise<void>;
   getBytesInUse(keys?: string | string[] | null): Promise<number>;
@@ -37,6 +39,8 @@ export class BrowserMetadataRepository implements MetadataRepository {
     const raw = await this.sync.get(null);
     const patch = Object.fromEntries(Object.entries(changes).filter(([key, value]) => JSON.stringify(raw[key]) !== JSON.stringify(value)));
     if (!Object.keys(patch).length) return;
+    const epoch = setupEpoch(raw[SETUP_KEY]);
+    if (epoch && (epoch.phase !== 'ready' || Object.entries(patch).some(([key, value]) => /^(meta|loc|dead):/.test(key) && (!value || typeof value !== 'object' || !('generation' in value) || value.generation !== epoch.generation)))) throw new Error('Metadata generation changed before publication. Reopen the editor; old metadata was not written.');
     const invalid = parseMetadata(raw).invalid;
     if (Object.keys(patch).some(key => invalid.some(issue => issue.startsWith(`${key}: `)))) throw new Error('Refusing to overwrite an invalid or future-schema sync record.');
     checkQuota(raw, patch);
@@ -56,7 +60,7 @@ export class BrowserMetadataRepository implements MetadataRepository {
     await this.sync.set(patch); // Browser enforces actual quotas/rate limits; rejection is shown to the user.
   }
   async readJournal() { return parseJournal((await this.local.get(JOURNAL_KEY))[JOURNAL_KEY]); }
-  async readLocal() { return parseLocal((await this.local.get('state')).state); }
+  async readLocal() { return alignMetadataEpoch(this.sync, this.local); }
   async saveLocal(state: LocalState) {
     const current = (await this.local.get('state')).state;
     if (JSON.stringify(current) !== JSON.stringify(state)) await this.local.set({ state });

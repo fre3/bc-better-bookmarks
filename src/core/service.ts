@@ -1,7 +1,9 @@
 import type { BookmarksRepository } from '../browser/bookmarks';
 import { QUOTAS, type MetadataRepository } from '../browser/metadata';
-import { editToken, flattenTree } from './logic';
+import { editToken, flattenTree, normalizeTags } from './logic';
 import type { Command, Favorite, LinkInput, LocalState, LogEntry, Snapshot } from './model';
+import { folderNode, folderEditToken } from './node-tags';
+import { EditFailure, type EditProgress } from './edit-failure';
 import { reconcile } from './reconcile';
 import { validateLinkInput } from './link-input';
 import { metadataHealth } from './metadata-diagnostics';
@@ -28,11 +30,13 @@ export class DashboardService {
   }
   async snapshot(reason: string): Promise<Snapshot> {
     const [tree, metadata, local] = await Promise.all([this.bookmarks.getTree(), this.metadata.read(), this.metadata.readLocal()]);
+    if (metadata.setup?.phase === 'resetting' || metadata.setup?.generation !== local.metadataEpoch) throw new Error('Metadata setup changed; reload the snapshot before writing.');
     const { favorites, folders } = flattenTree(tree);
-    const result = reconcile(favorites, metadata, local.mappings, local.pendingDeletions);
-    const errors = [...metadata.invalid, ...result.warnings];
+    const nodes = [...favorites, ...folders.filter(f => f.renamable).map(f => folderNode(f, folders))];
+    const result = reconcile(nodes, metadata, local.mappings, local.pendingDeletions);
+    const errors = [...metadata.invalid, ...result.warnings, ...(metadata.ignored?.length ? [`${metadata.ignored.length} old-generation metadata keys ignored after setup reset; no tags were restored.`] : [])];
     const patch: Record<string, unknown> = { ...result.historyWrites };
-    for (const id of local.pendingDeletions) if (!metadata.tombstones[id]) patch[`dead:${id}`] = { schemaVersion: 1, stableId: id, deletedAt: this.now() };
+    for (const id of local.pendingDeletions) if (!metadata.tombstones[id]) patch[`dead:${id}`] = { ...(metadata.setup ? { generation: metadata.setup.generation } : {}), schemaVersion: 1, stableId: id, deletedAt: this.now() };
     let saved = true;
     try { await this.metadata.write(patch); } catch (error) { saved = false; errors.push(String(error)); }
     if (saved) {
@@ -41,7 +45,7 @@ export class DashboardService {
       await this.metadata.saveLocal(local);
     }
     const finalMetadata = saved && Object.keys(patch).length ? await this.metadata.read() : metadata;
-    const finalResult = reconcile(favorites, finalMetadata, local.mappings, local.pendingDeletions);
+    const finalResult = reconcile(nodes, finalMetadata, local.mappings, local.pendingDeletions);
     const preservation: Snapshot['preservation'] = { available: true, stableIds: [] };
     try { preservation.stableIds = Object.keys((await this.metadata.readJournal()).entries); }
     catch { preservation.available = false; errors.push('Local metadata journal unreadable or unsupported; metadata publication is blocked.'); }
@@ -104,7 +108,7 @@ export class DashboardService {
     if (existing && JSON.stringify(existing.tags) === JSON.stringify(tags)) return;
     if (!existing && !tags.length) return;
     const stableId = existing?.stableId ?? this.uuid();
-    const record = { schemaVersion: 1 as const, stableId, initialLocator: existing?.initialLocator ?? favorite.locator, tags, updatedAt: this.now() };
+    const record = { ...(state.metadata.setup ? { generation: state.metadata.setup.generation } : {}), schemaVersion: 2 as const, stableId, initialLocator: existing?.initialLocator ?? favorite.locator, tags, updatedAt: this.now() };
     const local = await this.metadata.readLocal();
     local.mappings[favorite.id] = { stableId, lastLocator: favorite.locator, dateAdded: favorite.dateAdded, method: mapping?.method ?? 'explicit' };
     await this.metadata.write({ [`meta:${stableId}`]: record }, local);
@@ -112,6 +116,7 @@ export class DashboardService {
   async command(command: Command): Promise<Snapshot> {
     if (command.type === 'snapshot' || command.type === 'reconcile') return this.snapshot(command.type);
     const s = await this.snapshot(`before ${command.type}`);
+    if (['create', 'edit', 'edit-folder', 'attach-folder'].includes(command.type) && command.generation !== s.metadata.setup?.generation) throw new Error('Metadata was reset since this draft opened. Copy needed input, cancel and reopen.');
     if (command.type === 'set-root') {
       if (command.rootId !== null && command.rootId !== '*') this.folder(s, command.rootId, true);
       await this.metadata.saveLocal({ ...s.local, rootId: command.rootId });
@@ -120,6 +125,33 @@ export class DashboardService {
       if (!command.title.trim()) throw new Error('Folder name is required.');
       const folder = await this.bookmarks.create({ parentId: command.parentId, title: command.title.trim() });
       if (s.local.rootId === null) await this.metadata.saveLocal({ ...s.local, rootId: folder.id });
+    } else if (command.type === 'attach-folder') {
+      const folder = this.folder(s, command.id);
+      if (!folder.renamable || folderEditToken(s, folder) !== command.expected) throw new Error('Folder changed or is restricted. Reopen its editor.');
+      const match = s.reconciliation.matches.find(m => m.stableId === command.stableId);
+      const record = s.metadata.records.find(r => r.stableId === command.stableId && r.initialLocator.kind === 'folder');
+      if (!record || !match || match.status !== 'unresolved' || match.candidateIds.length !== 1 || match.candidateIds[0] !== folder.id || s.metadata.invalid.length || s.local.mappings[folder.id] || s.local.pendingDeletions.includes(record.stableId)) throw new Error('Folder identity is ambiguous, missing or already bound. No attachment was made.');
+      if (s.reconciliation.matches.some(m => m.stableId !== record.stableId && m.candidateIds.includes(folder.id))) throw new Error('Competing folder identities; attachment blocked.');
+      s.local.mappings[folder.id] = { stableId: record.stableId, lastLocator: folderNode(folder, s.folders).locator, dateAdded: folder.dateAdded, method: 'explicit' };
+      await this.metadata.saveLocal(s.local);
+    } else if (command.type === 'edit-folder') {
+      const folder = this.folder(s, command.id);
+      if (!folder.renamable) throw new Error('Browser-owned or managed folders cannot be edited.');
+      if (folderEditToken(s, folder) !== command.expected) throw new Error('Folder or direct tags changed. Reopen the editor.');
+      if (!command.title.trim()) throw new Error('A name is required.');
+      const tags = normalizeTags(command.tags);
+      if (tags.length > 30 || tags.some(t => t.length > 80)) throw new Error('Use at most 30 tags of 80 characters each.');
+      const node = folderNode(folder, s.folders);
+      this.preflightTags(s, node, tags);
+      if (!s.reconciliation.mappings[folder.id] && s.reconciliation.matches.some(m => m.candidateIds.includes(folder.id))) throw new Error('Review the existing folder metadata before assigning tags; no identity was guessed.');
+      const progress: EditProgress = { title: false, url: false, location: false, tags: 'not-confirmed' };
+      try {
+        if (folder.title !== command.title.trim()) { await this.bookmarks.update(folder.id, { title: command.title.trim() }); progress.title = true; }
+        const fresh = flattenTree(await this.bookmarks.getTree()).folders;
+        const current = fresh.find(f => f.id === folder.id);
+        if (!current) throw new Error('Folder disappeared during edit.');
+        await this.setTags(folderNode(current, fresh), tags);
+      } catch (error) { throw new EditFailure(`Folder save did not complete. ${String(error)}`, progress); }
     } else if (command.type === 'rename-folder') {
       const folder = this.folder(s, command.id);
       if (!folder.renamable) throw new Error('Browser-owned root folders cannot be renamed.');
@@ -144,13 +176,14 @@ export class DashboardService {
       const input = this.validate(command.input);
       this.folder(s, input.parentId);
       this.preflightTags(s, f, input.tags);
+      const progress: EditProgress = { title: false, url: false, location: false, tags: 'not-confirmed' };
       try {
-        if (f.title !== input.title || f.url !== input.url) await this.bookmarks.update(f.id, { title: input.title, url: input.url });
-        if (f.parentId !== input.parentId) await this.bookmarks.move(f.id, input.parentId);
+        if (f.title !== input.title || f.url !== input.url) { await this.bookmarks.update(f.id, { title: input.title, url: input.url }); progress.title = f.title !== input.title; progress.url = f.url !== input.url; }
+        if (f.parentId !== input.parentId) { await this.bookmarks.move(f.id, input.parentId); progress.location = true; }
         const fresh = flattenTree(await this.bookmarks.getTree()).favorites.find(n => n.id === f.id);
         if (!fresh) throw new Error('Favorite disappeared during edit.');
         await this.setTags(fresh, input.tags);
-      } catch (error) { throw new Error(`Edit may be partially applied to Edge Favorites. Reload and inspect before retrying. ${String(error)}`, { cause: error }); }
+      } catch (error) { throw new EditFailure(`Edit may be partially applied to Edge Favorites. ${String(error)}`, progress); }
     }
     return this.snapshot(`after ${command.type}`);
   }

@@ -12,7 +12,7 @@ export interface FavoriteNode {
   children?: FavoriteNode[];
 }
 export interface FolderPart { kind: 'title' | 'browser'; value: string }
-export interface Locator { url: string; title: string; folderPath: FolderPart[] }
+export interface Locator { kind?: 'folder'; url: string; title: string; folderPath: FolderPart[] }
 export type SystemLabel = 'JS' | 'HTTP';
 export interface Favorite extends FavoriteNode {
   url: string;
@@ -28,7 +28,8 @@ export interface Folder extends FavoriteNode {
   renamable: boolean;
 }
 export interface BookmarkMetadata {
-  schemaVersion: 1;
+  generation?: string;
+  schemaVersion: 1 | 2;
   stableId: string;
   tags: string[];
   initialLocator: Locator;
@@ -44,11 +45,12 @@ export interface MetadataHealth {
   preservedLocally: boolean;
 }
 export interface LocatorHistory {
-  schemaVersion: 1;
+  generation?: string;
+  schemaVersion: 1 | 2;
   stableId: string;
   locators: Locator[];
 }
-export interface Tombstone { schemaVersion: 1; stableId: string; deletedAt: string }
+export interface Tombstone { generation?: string; schemaVersion: 1; stableId: string; deletedAt: string }
 export interface LocalMapping {
   stableId: string;
   lastLocator: Locator;
@@ -56,6 +58,7 @@ export interface LocalMapping {
   method: 'explicit' | 'exact-locator';
 }
 export interface LocalState {
+  metadataEpoch?: string;
   schemaVersion: 1;
   mappings: Record<string, LocalMapping>;
   rootId: string | null;
@@ -63,6 +66,8 @@ export interface LocalState {
   pendingDeletions: string[];
 }
 export interface MetadataState {
+  ignored?: string[];
+  setup?: { generation: string; phase: 'resetting' | 'ready' };
   records: BookmarkMetadata[];
   histories: Record<string, LocatorHistory>;
   tombstones: Record<string, Tombstone>;
@@ -103,11 +108,13 @@ export interface Snapshot {
 }
 // Confirmation is command-only, never persisted as metadata.
 export interface LinkInput { title: string; url: string; parentId: string; tags: string[]; bookmarkletConfirmed?: boolean }
-export type Command =
+export type Command = (
   | { type: 'snapshot' | 'reconcile' }
   | { type: 'set-root'; rootId: string | null }
   | { type: 'create'; input: LinkInput }
   | { type: 'edit'; id: string; input: LinkInput; expected: string }
   | { type: 'delete'; id: string; expected: string }
   | { type: 'create-folder'; parentId: string; title: string }
-  | { type: 'rename-folder'; id: string; title: string; expectedTitle: string };
+  | { type: 'edit-folder'; id: string; title: string; tags: string[]; expected: string }
+  | { type: 'attach-folder'; id: string; stableId: string; expected: string }
+  | { type: 'rename-folder'; id: string; title: string; expectedTitle: string }) & { generation?: string };

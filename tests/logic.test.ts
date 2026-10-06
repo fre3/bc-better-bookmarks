@@ -134,7 +134,7 @@ describe('reconciliation', () => {
 });
 describe('schemas', () => {
   it('quarantines future/invalid records and preserves raw data', () => {
-    const raw = { [`meta:${idA}`]: { ...record(), schemaVersion: 2 } };
+    const raw = { [`meta:${idA}`]: { ...record(), schemaVersion: 99 } };
     const state = parseMetadata(raw); expect(state.invalid).toHaveLength(1); expect(state.records).toEqual([]); expect(state.raw).toEqual(raw);
   });
   it('a future tombstone blocks matching rather than reviving old data', () => {

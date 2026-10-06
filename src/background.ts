@@ -1,3 +1,6 @@
+import { prepareMetadataReset, resetMetadata } from './browser/metadata-setup';
+import { saveArchivePreference } from './browser/archive-preference';
+import { EditFailure } from './core/edit-failure';
 import { saveAppearance } from './browser/appearance';
 import { savePeekPreference } from './browser/ui-preferences';
 import { BrowserBookmarksRepository } from './browser/bookmarks';
@@ -49,6 +52,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     );
     return true;
   }
+  if (sender.id === chrome.runtime.id && message?.event === 'set-archive-preference' && typeof message.enabled === 'boolean') {
+    void enqueue(() => saveArchivePreference(message.enabled)).then(() => sendResponse({ ok: true }), error => sendResponse({ ok: false, error: String(error) }));
+    return true;
+  }
+  if (sender.id === chrome.runtime.id && message?.event === 'prepare-metadata-reset') {
+    void enqueue(() => prepareMetadataReset(chrome.storage.sync, chrome.storage.local)).then(backup => sendResponse({ ok: true, backup }), error => sendResponse({ ok: false, error: String(error) }));
+    return true;
+  }
+  if (sender.id === chrome.runtime.id && message?.event === 'reset-metadata' && typeof message.expected === 'string') {
+    void enqueue(() => resetMetadata(chrome.storage.sync, chrome.storage.local, message.expected)).then(() => { sendResponse({ ok: true }); notify(); }, error => sendResponse({ ok: false, error: String(error) }));
+    return true;
+  }
   if (sender.id === chrome.runtime.id && message?.event === 'set-appearance' && ['system', 'light', 'dark'].includes(message.appearance)) {
     void enqueue(() => saveAppearance(message.appearance)).then(
       () => sendResponse({ ok: true }), error => sendResponse({ ok: false, error: String(error) }),
@@ -58,7 +73,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (sender.id !== chrome.runtime.id || !message?.command) return false;
   void enqueue(() => service.command(message.command as Command)).then(
     snapshot => { sendResponse({ ok: true, snapshot }); if (message.command.type !== 'snapshot') notify(); },
-    error => { sendResponse({ ok: false, error: String(error) }); notify(); },
+    error => { sendResponse({ ok: false, error: String(error), ...(error instanceof EditFailure ? { progress: error.progress } : {}) }); notify(); },
   );
   return true;
 });

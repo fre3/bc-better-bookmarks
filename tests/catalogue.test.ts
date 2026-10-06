@@ -56,7 +56,7 @@ describe('catalogue projection over the browser tree', () => {
     const { model, snapshot } = fixture();
     expect(model.tags.get('a')).toEqual(['ai', 'reference']);
     expect(model.tags.get('b')).toEqual([]);
-    expect(model.tags.has('deep')).toBe(false);
+    expect(model.tags.get('deep')).toEqual([]);
     const result = filterCatalogue(model, snapshot.favorites, '*', 'other', true);
     const nested = result.sections[0].children[0];
     if (nested.kind !== 'folder') throw new Error('Missing context');
