@@ -9,10 +9,12 @@
   --nested-size: calc(var(--catalogue-size) * .85);
   --catalogue-line: calc(var(--catalogue-size) + 14px);
   --header-height: 85px;
-  /* Extra 11.6px structural leading clears wrapped-heading tags. Subtract
-     half from each padding edge to preserve single-line label geometry. */
-  --section-padding-start: 20.2px;
-  --section-padding-end: 28.2px;
+  /* Stable heading row plus whitespace that scrolls away above/below it. */
+  --section-intro: 14px;
+  --section-outro: 21px;
+  --chrome-intro: 31px;
+  --section-padding-start: 6.2px;
+  --section-padding-end: 10.2px;
   --page-gutter: clamp(20px, 3.5vw, 72px);
 }
 * { box-sizing: border-box; }
@@ -38,12 +40,12 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px solid var(--focus); outline-offset: 3px; }
 [hidden] { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.catalogue-navigation { --navigation-rest-padding: 43px; min-height: 0; display: flex; align-items: center; gap: 24px; padding-block: var(--navigation-rest-padding); }
+.catalogue-navigation { min-height: 0; display: flex; align-items: center; gap: 24px; padding-block: 12px; }
 .catalogue-navigation nav { display: flex; flex-wrap: wrap; gap: 14px 28px; }
 .catalogue-navigation button { text-align: left; line-height: 1.4; text-transform: uppercase; letter-spacing: .15em; font-size: 16px; font-weight: 400; overflow-wrap: anywhere; }
 .catalogue-navigation nav { min-width: 0; }
 .catalogue-navigation [aria-current] { text-decoration: underline; text-underline-offset: .2em; }
-.navigation-actions { margin-left: auto; display: flex; gap: 28px; flex-shrink: 0; }
+.navigation-actions { align-items: baseline; margin-left: auto; display: flex; gap: 28px; flex-shrink: 0; }
 .section-stack { isolation: isolate; margin-inline: calc(-1 * var(--page-gutter)); }
 .catalogue-footer {
   position: relative; z-index: 1; margin-top: auto;
@@ -66,11 +68,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
   pointer-events: none;
 }
 .section-inner { padding-inline: var(--page-gutter); }
-.section-header { min-height: var(--header-height); background: var(--surface); }
-.section-header h2 { margin: 0; position: relative; min-height: var(--header-height); padding-block: var(--section-padding-start) var(--section-padding-end); background: var(--surface); font: 700 17.6px/33.6px Helvetica, Arial, sans-serif; overflow-wrap: anywhere; }
+.section-header { min-height: var(--header-height); padding-block: var(--section-intro) var(--section-outro); background: var(--surface); }
+.section-header h2 { margin: 0; position: relative; min-height: 50px; padding-block: var(--section-padding-start) var(--section-padding-end); background: var(--surface); font: 700 17.6px/33.6px Helvetica, Arial, sans-serif; overflow-wrap: anywhere; }
 .section-toggle, .section-label { display: inline; text-align: left; font: inherit; }
-.section-toggle::after { content: ''; position: absolute; inset: 0; }
-.section-state { display: inline-block; width: 1em; margin-right: .25em; color: var(--secondary); font-weight: 400; }
+.section-toggle::after { content: ''; position: absolute; inset: calc(-1 * var(--section-intro)) 0 calc(-1 * var(--section-outro)); }
+.section-state { position: absolute; left: max(2px, calc(var(--page-gutter) - 18px)); top: var(--section-padding-start); width: 12px; text-align: center; color: var(--secondary); font-weight: 400; }
 .section-header button:hover, .section-toggle:hover { text-decoration: none; }
 .section-header button:focus-visible, .section-toggle:focus-visible { outline: none; }
 .section-header button:focus-visible .section-heading-text, .section-toggle:focus-visible .section-heading-text { outline: 1px solid var(--focus); outline-offset: 4px; }
@@ -109,7 +111,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
    clipping and line-relative depth remain unchanged. */
 .is-open .catalogue-flow { padding-top: 6px; }
 .is-open .section-content > .catalogue-flow { animation: catalogue-open 220ms ease-out; }
-.is-open .section-header { position: sticky; top: 0; z-index: 2; }
+.is-open .section-header { position: sticky; top: calc(var(--navigation-height, 0px) - var(--section-intro)); z-index: 2; background: transparent; pointer-events: none; }
+.is-open .section-header h2 { pointer-events: auto; }
+.is-open .section-toggle::after { inset: 0; }
 @keyframes catalogue-open { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 /* Clip only at the full sheet width: long annotations and cloned hanging-inset
    margins must not extend the page. Vertical focus contours remain visible. */
@@ -161,7 +165,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .tag-match:has(> :focus-visible) > .item-annotation > .matched-annotations { display: none; }
 .empty-folder { font: 16px/1.5 Helvetica, Arial, sans-serif; letter-spacing: 0; color: var(--secondary); }
 .empty-catalogue { padding: 32px var(--page-gutter); }
-.search-mode { padding-block: 4px 34px; }
+.search-mode { padding-block: 4px 12px; }
 .search-mode input { display: block; width: 100%; border: 0; border-radius: 0; border-bottom: 1px solid transparent; padding: 0; background: transparent; font-family: var(--catalogue-font); font-size: clamp(32px, 2.5vw, 48px); letter-spacing: -.01em; }
 .search-mode input:focus { outline: none; border-bottom-color: var(--input-rule); }
 .search-caption { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: 12px; color: var(--secondary); }
@@ -200,7 +204,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .mode-button-size > span { grid-area: 1 / 1; }
 .catalogue-navigation { position: relative; }
 .is-editing .catalogue-navigation::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: 2px; background: var(--edit-accent); pointer-events: none; }
-.editing-indicator { position: absolute; top: 3px; left: 0; display: flex; gap: 12px; align-items: baseline; font: 14px/16px Helvetica, Arial, sans-serif; color: var(--edit-accent); }
+.editing-help { position: absolute; top: calc(-1 * var(--chrome-intro) + 3px); left: 0; font: 14px/16px Helvetica, Arial, sans-serif; color: var(--edit-accent); }
 .editing-badge { font-weight: bold; }
 .is-editing #catalogue-edit { color: var(--edit-accent); font-weight: bold; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
 @media (max-width: 700px) { .editing-help { display: none; } }
@@ -219,20 +223,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 
 /* Real text flow determines placement in browse and search alike. */
 .section-header h2 > .item-edit-action { display: inline-block; width: auto; min-height: 0; padding: 0; margin-left: .7em; font: 400 14px/1.4 Helvetica, Arial, sans-serif; vertical-align: baseline; }
-.catalogue-chrome { position: sticky; top: 0; z-index: 100; }
-.catalogue-chrome[data-compact="true"] { background: var(--surface); }
-.catalogue-chrome[data-compact="true"]::before { content: ''; position: absolute; inset: 0 calc(-1 * var(--page-gutter)); background: var(--surface); z-index: -1; }
-.catalogue-chrome[data-compact="true"] .catalogue-navigation { padding-block: 12px; }
-.is-editing .catalogue-chrome[data-compact="true"] .catalogue-navigation { padding-top: 24px; }
-.catalogue-chrome[data-compact="true"] .editing-help { display: none; }
-.catalogue-chrome[data-compact="true"] .search-mode { padding-bottom: 12px; }
-.chrome-reservation { pointer-events: none; height: 0; }
+.catalogue-chrome { position: sticky; top: calc(-1 * var(--chrome-intro)); padding-top: var(--chrome-intro); z-index: 100; background: var(--surface); }
+.catalogue-chrome::before { content: ''; position: absolute; inset: 0 calc(-1 * var(--page-gutter)); background: var(--surface); z-index: -1; }
+.chrome-rest-space { height: 31px; pointer-events: none; }
 .section-slot { scroll-margin-top: calc(var(--navigation-height, 0px) + 12px); }
-.is-open .section-header { top: var(--navigation-height, 0px); }
-.is-open .section-header[data-stuck="true"] { background: transparent; pointer-events: none; }
-.is-open .section-header[data-stuck="true"] h2 { min-height: 0; padding-block: 6.2px 10.2px; pointer-events: auto; }
 .catalogue-item, .item-edit-action { scroll-margin-top: calc(var(--navigation-height, 0px) + var(--sticky-heading-height, var(--header-height)) + 12px); }
 .binding-notice { padding: 0 0 8px; font: 14px/1.4 Helvetica, Arial, sans-serif; color: var(--secondary); }
 .binding-notice button { text-decoration: underline; }
 
-.peek-header-measure .section-label { display: block; min-height: var(--header-height); padding-block: 26px 34px; font: 700 17.6px/1.25 Helvetica, Arial, sans-serif; }
+.peek-header-measure .section-label { display: block; min-height: 50px; padding-block: 12px 16px; font: 700 17.6px/1.25 Helvetica, Arial, sans-serif; }

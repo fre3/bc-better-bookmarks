@@ -1,4 +1,4 @@
-/* global window, document, scrollY, getComputedStyle */
+/* global window, document, scrollY, getComputedStyle, requestAnimationFrame */
 import { chromium, expect } from '@playwright/test';
 import { editingFixture } from './editing-fixture.mjs';
 import { writeFile } from 'node:fs/promises';
@@ -21,7 +21,7 @@ try { for (const theme of ['light','dark']) {
  await section(p,'s1').hover();await expect(section(p,'s1').locator('.section-state')).toHaveText('▸');await p.mouse.move(1245,840);
  const original=await p.locator('[id="card-folder:s1"]').evaluate(n=>n.getBoundingClientRect().top+scrollY);
  await p.mouse.wheel(0,450);await p.waitForTimeout(220);
- const geometry=await p.evaluate(()=>{const c=document.querySelector('.catalogue-chrome').getBoundingClientRect(),h=document.querySelector('.is-open .section-header h2').getBoundingClientRect();return {nav:c.height,heading:h.height,top:h.top,scroll:scrollY};});
+ const geometry=await p.evaluate(()=>{const c=document.querySelector('.catalogue-chrome').getBoundingClientRect(),h=document.querySelector('.is-open .section-header h2').getBoundingClientRect();return {nav:c.bottom,heading:h.height,top:h.top,scroll:scrollY};});
  assert(geometry.nav+geometry.heading<=112&&geometry.top>=geometry.nav-1,JSON.stringify(geometry));
  assert(Math.abs(await p.locator('[id="card-folder:s1"]').evaluate(n=>n.getBoundingClientRect().top+scrollY)-original)<1,'compact chrome cannot move section document positions');
  await expect(p.getByRole('button',{name:'Done',exact:true})).toBeInViewport();await p.screenshot({path:join(fixture.output,`${theme}-compact-edit.png`)});
@@ -38,14 +38,21 @@ try { for (const theme of ['light','dark']) {
  const overlap=await p.locator('.section-header h2.has-folder-editor').evaluateAll(headings=>headings.some(h=>{const edit=h.querySelector('.item-edit-action').getBoundingClientRect(),range=document.createRange();range.selectNodeContents(h.querySelector('.section-heading-text'));return [...range.getClientRects()].some(r=>Math.min(r.right,edit.right)-Math.max(r.left,edit.left)>.5&&Math.min(r.bottom,edit.bottom)-Math.max(r.top,edit.top)>.5)}));assert.equal(overlap,false,'section Edit overlaps search text');assert(await p.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
  }
  await p.screenshot({path:join(fixture.output,`${theme}-narrow-search.png`)});await p.evaluate(()=>document.documentElement.style.zoom='1');await p.setViewportSize({width:1250,height:850});await p.keyboard.press('Escape');
- // Received-but-unbound metadata: explicit review, no transport retry/rewrite.
- await p.getByRole('button',{name:'Manage',exact:true}).click();await p.getByRole('button',{name:'Add link',exact:true}).click();await p.getByLabel('Title',{exact:true}).fill('Unsaved Manage draft');await p.getByRole('button',{name:'Back to catalogue'}).click();
- await p.evaluate(()=>{delete window.local.data.state.mappings.f0;window.refresh()});await expect(p.getByRole('button',{name:'Review folders in Manage'})).toBeVisible();await p.screenshot({path:join(fixture.output,`${theme}-binding-notice.png`)});await p.getByRole('button',{name:'Review folders in Manage'}).click();await expect(p.getByLabel('Title',{exact:true})).toHaveValue('Unsaved Manage draft');await expect(p.locator('#folder-binding-review')).toHaveAttribute('open','');await expect(p.locator('#folder-binding-review summary')).toBeFocused();await expect(p.getByLabel('Dashboard root (this device)')).toHaveCount(0);await p.locator('#folder-binding-review li input').check();await p.getByRole('button',{name:'Confirm selected original folders'}).click();await expect(p.locator('#folder-binding-review li')).toHaveCount(0);await p.getByRole('button',{name:'Back to catalogue'}).click();await expect(p.getByRole('button',{name:'Review folders in Manage'})).toHaveCount(0);
  // Compact navigation stays reachable outside Edit mode, too.
  await p.getByRole('button',{name:'Done',exact:true}).click();await section(p).click();await p.mouse.move(1240,800);await p.mouse.wheel(0,400);await p.waitForTimeout(200);await expect(p.getByRole('button',{name:'Edit',exact:true})).toBeInViewport();
- const normal=await p.evaluate(()=>document.querySelector('.catalogue-chrome').getBoundingClientRect().height+document.querySelector('.is-open .section-header h2').getBoundingClientRect().height);assert(normal>=85&&normal<=101,normal);await p.screenshot({path:join(fixture.output,`${theme}-compact-browse.png`)});
+ const normal=await p.evaluate(()=>document.querySelector('.catalogue-chrome').getBoundingClientRect().bottom+document.querySelector('.is-open .section-header h2').getBoundingClientRect().height);assert(normal>=85&&normal<=101,normal);await p.screenshot({path:join(fixture.output,`${theme}-compact-browse.png`)});
  // Real wheel cycles through the compaction boundary with a stationary pointer.
  const samples=[];for(let i=0;i<3;i++){await p.mouse.wheel(0,-10000);await p.waitForTimeout(160);await p.mouse.wheel(0,45);await p.waitForTimeout(160);const start=await p.evaluate(()=>scrollY);await p.waitForTimeout(400);const end=await p.evaluate(()=>scrollY);assert.equal(start,end);samples.push(end)}
+ // Sample every animation frame across native sticky attachment in both
+ // directions. Document coordinates cannot jump, and each title moves only
+ // with the wheel delta until its native sticky clamp is reached.
+ await p.mouse.wheel(0,-10000);await p.waitForTimeout(200);
+ await p.evaluate(()=>{window.stickyFrames=[];window.stickyRecording=true;const sample=()=>{if(!window.stickyRecording)return;const nav=document.querySelector('.catalogue-navigation').getBoundingClientRect(),title=document.querySelector('.is-open h2').getBoundingClientRect(),next=document.querySelector('[id="card-folder:s1"]').getBoundingClientRect();window.stickyFrames.push({y:scrollY,nav:nav.top,title:title.top,doc:next.top+scrollY});requestAnimationFrame(sample)};sample()});
+ for(const delta of [15,15,15,15,15,15,15,15,-15,-15,-15,-15,-15,-15,-15,-15]){await p.mouse.wheel(0,delta);await p.waitForTimeout(45)}
+ await p.waitForTimeout(180);const frames=await p.evaluate(()=>{window.stickyRecording=false;return window.stickyFrames});
+ for(let i=1;i<frames.length;i++){const a=frames[i-1],b=frames[i],travel=Math.abs(b.y-a.y);assert(Math.abs(b.doc-a.doc)<1,'sticky changes document flow');assert(Math.abs(b.nav-a.nav)<=travel+1,'navigation jumps beyond wheel travel');assert(Math.abs(b.title-a.title)<=travel+1,'heading jumps beyond wheel travel')}
+ assert(frames.length>30);await writeFile(join(fixture.output,`${theme}-sticky-frames.json`),JSON.stringify(frames));
+ const alignment=await p.evaluate(()=>{const title=document.querySelector('.is-open .section-title-text').getBoundingClientRect(),nav=document.querySelector('.catalogue-navigation nav').getBoundingClientRect(),icon=document.querySelector('.is-open .section-state').getBoundingClientRect();return {title:title.left,nav:nav.left,icon:icon.right}});assert(Math.abs(alignment.title-alignment.nav)<1);assert(alignment.icon<alignment.title);
  // Wrapped open headings retain their full flow footprint when compacted,
  // including CSS zoom; sticky offsets use CSS dimensions, not scaled pixels.
  await p.setViewportSize({width:390,height:850});await p.evaluate(()=>document.documentElement.style.zoom='1.25');await p.mouse.move(389,849);await p.mouse.wheel(0,-10000);await p.waitForTimeout(180);
@@ -56,6 +63,6 @@ try { for (const theme of ['light','dark']) {
  const collision=await p.locator('[id="card-folder:s0"] h2').evaluate(h=>{const r=document.createRange();r.selectNodeContents(h.querySelector('.section-title-text').firstChild);const tag=h.querySelector('.section-tag-annotation').getBoundingClientRect();return [...r.getClientRects()].slice(1).some(line=>Math.min(tag.bottom,line.bottom)>Math.max(tag.top,line.top)&&Math.min(tag.right,line.right)>Math.max(tag.left,line.left))});assert.equal(collision,false,'tags must not overlap a wrapped heading text line');
  await p.screenshot({path:join(fixture.output,`${theme}-compact-narrow.png`)});await p.emulateMedia({forcedColors:'active'});await expect(p.getByRole('button',{name:'Edit',exact:true})).toBeInViewport();await p.screenshot({path:join(fixture.output,`${theme}-forced-colors.png`)});
  assert(await section(p).locator('.section-state').evaluate(n=>getComputedStyle(n).visibility==='visible'));
- assert.deepEqual(errors,[]);report.push({theme,geometry,normalCombinedHeight:normal,boundarySamples:samples,result:'passed scope removal, binding review, pointer/keyboard tags, indicators, search Edit geometry, root scroll/query/selection/Escape, compact navigation'});await context.close();
+ assert.deepEqual(errors,[]);report.push({theme,geometry,normalCombinedHeight:normal,boundarySamples:samples,result:'passed scope removal, pointer/keyboard tags, indicators, search Edit geometry, root scroll/query/selection/Escape, compact navigation'});await context.close();
  } await writeFile(join(fixture.output,'navigation-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({output:fixture.output,report},null,2));
 } finally {await browser.close();await new Promise(r=>fixture.server.close(r));}

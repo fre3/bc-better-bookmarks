@@ -19,7 +19,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
   const [handoff] = useState(() => typeof location === 'undefined' ? undefined : catalogueHandoff(takeSearchHandoff()));
   const [state, dispatch] = useReducer(catalogueReducer, handoff?.state ?? initialCatalogueState);
   const [editing, setEditing] = useState(false);
-  const { chrome, reservation } = useCatalogueChrome();
+  const { chrome } = useCatalogueChrome();
   const [launchError, setLaunchError] = useState('');
   const peekFooter = usePeekFooter(state.peekEpoch, suspended);
   const lastFocused = useRef<HTMLElement | null>(null);
@@ -134,7 +134,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
   return <div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-expansion-end={EXPANSION_END} hidden={suspended}>
     <div ref={chrome} className="catalogue-chrome">
     <header className="catalogue-navigation">
-      {editing && <div className="editing-indicator"><span className="editing-badge">Editing</span><span className="editing-help">Click Edit beside a favorite or folder to make changes.</span></div>}
+      {editing && <div className="editing-help">Click Edit beside a favorite or folder to make changes.</div>}
       <nav aria-label="Bookmark roots">
         {roots.map((root, index) => <button key={root.id} aria-current={scope === root.id ? 'page' : undefined}
           title={index < 9 ? `${root.title} · Alt+${index + 1}` : root.title}
@@ -143,6 +143,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
           onClick={() => switchScope(root.id)}>{root.title || '(untitled root)'}</button>)}
       </nav>
       <div className="navigation-actions">
+        {editing && <span className="editing-badge">Editing</span>}
         <button ref={searchButton} onClick={() => searching ? input.current?.focus() : startSearch()}>Search /</button>
         {onEdit && <button id="catalogue-edit" aria-pressed={editing} onClick={() => setEditing(!editing)}><span className="mode-button-size"><span aria-hidden={editing} style={{ visibility: editing ? 'hidden' : 'visible' }}>Edit</span><span aria-hidden={!editing} style={{ visibility: editing ? 'visible' : 'hidden' }}>Done</span></span></button>}
         <button onClick={onManage}>Manage</button>
@@ -159,7 +160,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       <div className="search-caption"><span role="status">{visible.count} {visible.count === 1 ? 'result' : 'results'}</span><span id="search-syntax">plain text · #tag · @folder</span><button onClick={exitSearch}>Close search · Esc</button></div>
     </section>}
     </div>
-    <div ref={reservation} className="chrome-reservation" aria-hidden="true" />
+    <div className="chrome-rest-space" aria-hidden="true" />
     {launchError && <p role="alert">{launchError}</p>}
     <div className="section-stack" aria-label="Bookmark catalogue">
       {visible.sections.map((section, index) => <SectionCard key={section.id} blocked={modalOpen} selectedId={selectedId} onEdit={editing ? onEdit : undefined} section={section} nextSection={visible.sections[index + 1]} sections={visible.sections} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended} onToggle={() => {
