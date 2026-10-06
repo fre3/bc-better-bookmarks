@@ -1,4 +1,4 @@
-import { destinationToken } from '../src/core/operations';
+import { destinationToken, sourceToken, placementToken, planMove } from '../src/core/operations';
 import { describe, expect, it } from 'vitest';
 import { BrowserMetadataRepository, checkQuota, type StorageArea } from '../src/browser/metadata';
 import type { BookmarksRepository } from '../src/browser/bookmarks';
@@ -28,11 +28,10 @@ class MemoryBookmarks implements BookmarksRepository {
     this.all().find(n => n.id === input.parentId)!.children!.push(node); return node;
   }
   async update(id: string, changes: { title?: string; url?: string }) { this.calls.push('update'); Object.assign(this.all().find(n => n.id === id)!, changes); }
-  async move(id: string, parentId: string) {
+  async move(id: string, parentId: string, index?:number) {
     this.calls.push('move'); const node = this.all().find(n => n.id === id)!;
     const oldParent = this.all().find(n => n.id === node.parentId)!;
-    oldParent.children = oldParent.children!.filter(n => n.id !== id);
-    node.parentId = parentId; this.all().find(n => n.id === parentId)!.children!.push(node);
+    const old=oldParent.children!.indexOf(node),parent=this.all().find(n=>n.id===parentId)!;let at=index??parent.children!.length;if(parent===oldParent&&old<at)at--;oldParent.children=oldParent.children!.filter(n=>n.id!==id);node.parentId=parentId;parent.children!.splice(at,0,node);
   }
   async removeLink(id: string) { this.calls.push('delete'); const node = this.all().find(n => n.id === id)!; const p = this.all().find(n => n.id === node.parentId)!; p.children = p.children!.filter(n => n.id !== id); }
 }
@@ -244,7 +243,8 @@ describe('two profile simulation (not Microsoft transport validation)', () => {
     expect(s.metadata.records[0].tags).toEqual(['remote-tag']); expect(s.metadata.histories[idA].locators).toHaveLength(2);
   });
 });
-describe('creation receipts',()=>{
+
+describe('creation receipts and shared moving',()=>{
  it('completes a partially created folder after worker restart without a duplicate',async()=>{
   const {service,bookmarks,sync,repository}=setup();const s=await service.snapshot('start');
   const command={type:'create-folder' as const,parentId:'1',title:'New folder',tags:['parent'],requestId:'request-12345',destinationExpected:destinationToken(s,'1')};
@@ -255,5 +255,35 @@ describe('creation receipts',()=>{
  it('rejects a changed destination before creating and a changed created item during retry',async()=>{
   const {service,bookmarks,sync}=setup();let s=await service.snapshot('start');const command={type:'create' as const,requestId:'request-12345',destinationExpected:destinationToken(s,'10'),input:{title:'New',url:'https://example.test/',parentId:'10',tags:['tag']}};
   await bookmarks.update('10',{title:'Changed'});await expect(service.command(command)).rejects.toThrow('Destination changed');expect(bookmarks.calls).toEqual(['update']);s=await service.snapshot('refresh');command.destinationExpected=destinationToken(s,'10');sync.fail=true;await expect(service.command(command)).rejects.toThrow('was CREATED');sync.fail=false;await bookmarks.update('101',{title:'External'});await expect(service.command(command)).rejects.toThrow('changed or disappeared');expect(bookmarks.calls.filter(x=>x==='create')).toHaveLength(1);
+ });
+ it('uses full sibling gaps, rejects cycles/no-op/stale order and preserves identity',async()=>{
+  const {service,bookmarks}=setup(true);bookmarks.all().find(n=>n.id==='10')!.children!.push({id:'21',parentId:'10',title:'Hidden',url:'https://hidden.test/'},{id:'22',parentId:'10',title:'Last',url:'https://last.test/'});
+  let s=await service.snapshot('start');let placement={parentId:'10',anchorId:'22',side:'after' as const};expect(planMove(s,'20',placement).index).toBe(3);
+  const result=await service.command({type:'move',id:'20',expected:sourceToken(s,'20'),placement,destinationExpected:placementToken(s,placement)});expect(bookmarks.all().find(n=>n.id==='10')!.children!.map(n=>n.id)).toEqual(['21','22','20']);expect(result.local.mappings['20'].stableId).toBe(idA);expect(result.metadata.records[0].tags).toEqual(['azure','development']);
+  s=await service.snapshot('next');expect(()=>planMove(s,'20',{parentId:'10',side:'end'})).toThrow('already');expect(()=>planMove(s,'10',{parentId:'10',side:'end'})).toThrow('itself');
+  placement={parentId:'10',anchorId:'22',side:'after'};const stale=placementToken(s,placement);await bookmarks.update('22',{title:'Changed'});await expect(service.command({type:'move',id:'21',expected:sourceToken(s,'21'),placement,destinationExpected:stale})).rejects.toThrow('changed');
+ });
+});
+
+describe('creation/move safety boundaries',()=>{
+ it('does not repeat a native create with an uncertain outcome',async()=>{
+  const {service,bookmarks}=setup();bookmarks.create=async()=>{bookmarks.calls.push('create');throw Error('lost native response');};
+  const command={type:'create-folder' as const,requestId:'uncertain-123',parentId:'1',title:'New'};
+  await expect(service.command(command)).rejects.toThrow('may have reached Edge');await expect(service.command(command)).rejects.toThrow('uncertain');expect(bookmarks.calls).toEqual(['create']);
+ });
+ it('rejects virtual/managed destinations and browser roots as sources',async()=>{
+  const {service,bookmarks}=setup();bookmarks.all().find(n=>n.id==='11')!.unmodifiable='managed';const s=await service.snapshot('test');
+  for(const id of ['0','11','*'])await expect(service.command({type:'create-folder',parentId:id,title:'No'})).rejects.toThrow('writable');
+  for(const [id,parentId] of [['1','10'],['20','11'],['20','0']]){const placement={parentId,side:'end' as const};await expect(service.command({type:'move',id,placement,expected:sourceToken(s,id),destinationExpected:placementToken(s,placement)})).rejects.toThrow();}
+  expect(bookmarks.calls).toEqual([]);
+ });
+ it('preserves subtree identities/direct tags while recomputing archive inheritance',async()=>{
+  const {bookmarks,repository}=setup(true);let uuid=2;const service=new DashboardService(bookmarks,repository,{extensionId:'test',version:'test'},()=>`00000000-0000-4000-8000-${String(uuid++).padStart(12,'0')}`);
+  const {folderEditToken,nodeTags}=await import('../src/core/node-tags');let s=await service.snapshot('start');
+  for(const [id,tags] of [['10',['source']],['11',['archived','destination']]] as const){s=await service.command({type:'edit-folder',id,title:s.folders.find(f=>f.id===id)!.title,tags:[...tags],expected:folderEditToken(s,s.folders.find(f=>f.id===id)!)});}
+  const original=Object.fromEntries(s.metadata.records.map(r=>[r.stableId,r.tags]));let placement={parentId:'11',side:'end' as const};s=await service.command({type:'move',id:'10',expected:sourceToken(s,'10'),placement,destinationExpected:placementToken(s,placement)});
+  expect(nodeTags(s).get('20')?.effective).toEqual(['archived','azure','destination','development','source']);expect(nodeTags(s).get('20')?.sources.map(f=>f.path.join('/'))).toEqual(['Favorites bar/Other','Favorites bar/Other/Dashboard']);expect(Object.fromEntries(s.metadata.records.map(r=>[r.stableId,r.tags]))).toEqual(original);expect(s.local.mappings['20'].stableId).toBe(idA);
+  placement={parentId:'1',side:'end'};s=await service.command({type:'move',id:'10',expected:sourceToken(s,'10'),placement,destinationExpected:placementToken(s,placement)});expect(nodeTags(s).get('20')?.archived).toBe(false);
+  const local=await repository.readLocal();delete local.mappings['10'];await repository.saveLocal(local);s=await service.snapshot('unbound');placement={parentId:'11',side:'end'};await expect(service.command({type:'move',id:'10',expected:sourceToken(s,'10'),placement,destinationExpected:placementToken(s,placement)})).rejects.toThrow('binding review');
  });
 });

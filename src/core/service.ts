@@ -6,7 +6,7 @@ import { folderNode, folderEditToken } from './node-tags';
 import { EditFailure, type EditProgress } from './edit-failure';
 import { reconcile } from './reconcile';
 import { validateLinkInput } from './link-input';
-import { destinationToken, nativeToken, nodeById } from './operations';
+import { destinationToken, nativeToken, nodeById, sourceToken, placementToken, planMove } from './operations';
 import { metadataHealth } from './metadata-diagnostics';
 
 export class DashboardService {
@@ -160,6 +160,14 @@ export class DashboardService {
     if (['create', 'create-folder', 'move', 'edit', 'edit-folder', 'attach-folder'].includes(command.type) && command.generation !== s.metadata.setup?.generation) throw new Error('Metadata was reset since this draft opened. Copy needed input, cancel and reopen.');
     if (command.type === 'create-folder' || command.type === 'create') {
       return this.createItem(s, command);
+    } else if (command.type === 'move') {
+      if(sourceToken(s,command.id)!==command.expected || placementToken(s,command.placement)!==command.destinationExpected)throw Error('Source, destination or sibling order changed. Review the move again.');
+      const target=planMove(s,command.id,command.placement);
+      const moving=nodeById(s,command.id)!;
+      const nodes=[...s.favorites,...s.folders.filter(f=>f.renamable).map(f=>folderNode(f,s.folders))].filter(n=>n.id===moving.id || n.ancestorIds.includes(moving.id) || n.id===target.parentId || s.folders.find(f=>f.id===target.parentId)?.ancestorIds.includes(n.id));
+      for(const n of nodes){this.preflightTags(s,n,this.tags(s,n.id));if(!s.reconciliation.mappings[n.id] && s.reconciliation.matches.some(m=>m.candidateIds.includes(n.id)))throw Error('Folder or favorite metadata needs binding review before moving.');}
+      await this.bookmarks.move(command.id,target.parentId,target.index);
+      try { return {...await this.snapshot('after move'),mutation:{id:command.id,parentId:target.parentId}}; } catch(error) {throw Error(`Item ${command.id} was MOVED, but refreshing metadata did not complete. Inspect its current location before retrying. ${String(error)}`,{cause:error});}
     } else if (command.type === 'attach-folder') {
       const folder = this.folder(s, command.id);
       if (!folder.renamable || folderEditToken(s, folder) !== command.expected) throw new Error('Folder changed or is restricted. Reopen its editor.');
