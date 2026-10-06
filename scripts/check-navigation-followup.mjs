@@ -46,7 +46,7 @@ try { for (const theme of ['light','dark']) {
  // Sample every animation frame across native sticky attachment in both
  // directions. Document coordinates cannot jump, and each title moves only
  // with the wheel delta until its native sticky clamp is reached.
- await p.mouse.wheel(0,-10000);await p.waitForTimeout(200);
+ await p.mouse.wheel(0,-10000);await p.waitForTimeout(200);await p.mouse.move(15,85);
  await p.evaluate(()=>{window.stickyFrames=[];window.stickyRecording=true;const sample=()=>{if(!window.stickyRecording)return;const nav=document.querySelector('.catalogue-navigation').getBoundingClientRect(),title=document.querySelector('.is-open h2').getBoundingClientRect(),next=document.querySelector('[id="card-folder:s1"]').getBoundingClientRect();window.stickyFrames.push({y:scrollY,nav:nav.top,title:title.top,doc:next.top+scrollY});requestAnimationFrame(sample)};sample()});
  for(const delta of [15,15,15,15,15,15,15,15,-15,-15,-15,-15,-15,-15,-15,-15]){await p.mouse.wheel(0,delta);await p.waitForTimeout(45)}
  await p.waitForTimeout(180);const frames=await p.evaluate(()=>{window.stickyRecording=false;return window.stickyFrames});
