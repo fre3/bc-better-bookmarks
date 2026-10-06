@@ -67,7 +67,7 @@ export function App() {
   useLayoutEffect(() => {
     if (draft || !restoreFavorite.current) return;
     const favorite = document.getElementById(`edit-folder-${restoreFavorite.current}`) ?? document.getElementById(`edit-bookmark-${restoreFavorite.current}`);
-    const nearby = [...document.querySelectorAll<HTMLElement>('.section-header button')].find(element => {
+    const nearby = [...document.querySelectorAll<HTMLElement>('.section-header .section-toggle')].find(element => {
       const rect = element.getBoundingClientRect(); return !element.closest('[inert]') && rect.bottom > 0 && rect.top < window.innerHeight;
     });
     const retained = favorite && !favorite.closest('[inert], [hidden]');

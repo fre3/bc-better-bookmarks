@@ -43,7 +43,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
   useLayoutEffect(() => {
     const nav = navigation.current;
     if (!nav) return;
-    const update = () => nav.parentElement?.style.setProperty('--editing-nav-height', editing ? `${nav.getBoundingClientRect().height}px` : '0px');
+    const update = () => nav.parentElement?.style.setProperty('--editing-nav-height', editing ? `${nav.offsetHeight}px` : '0px');
     const position = () => setNavStuck(editing && (nav.parentElement?.getBoundingClientRect().top ?? 0) < 0);
     const observer = new ResizeObserver(update); observer.observe(nav); update(); position();
     window.addEventListener('scroll', position, { passive: true });

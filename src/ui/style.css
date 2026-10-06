@@ -64,13 +64,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .section-inner { padding-inline: var(--page-gutter); }
 .section-header { min-height: var(--header-height); background: var(--surface); }
 .section-header h2 { margin: 0; font: inherit; }
-.section-header button, .section-label {
+.section-header button, .section-toggle, .section-label {
   display: flex; align-items: center; text-align: left; width: 100%; min-height: var(--header-height);
   padding-block: 26px 34px; overflow-wrap: anywhere; font: 700 17.6px/1.25 Helvetica, Arial, sans-serif;
 }
-.section-header button:hover { text-decoration: none; }
-.section-header button:focus-visible { outline: none; }
-.section-header button:focus-visible .section-heading-text { outline: 1px solid var(--focus); outline-offset: 4px; }
+.section-header button:hover, .section-toggle:hover { text-decoration: none; }
+.section-header button:focus-visible, .section-toggle:focus-visible { outline: none; }
+.section-header button:focus-visible .section-heading-text, .section-toggle:focus-visible .section-heading-text { outline: 1px solid var(--focus); outline-offset: 4px; }
 .root-provenance { color: var(--secondary); font-weight: 400; }
 .section-reveal {
   position: absolute; top: 100%; inset-inline: 0; background: var(--surface); pointer-events: none;
@@ -187,7 +187,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 /* Text buttons remain siblings of the associated link/expansion control. */
 .item-edit-action { display: inline; font: 400 14px/1.4 Helvetica, Arial, sans-serif; letter-spacing: 0; vertical-align: baseline; margin-left: .7em; white-space: nowrap; text-decoration: underline; }
 .section-header h2.has-folder-editor { display: block; }
-.section-header h2.has-folder-editor > button:first-child, .has-folder-editor > .section-label { display: inline; width: auto; min-height: 0; padding: 0; font: inherit; }
+.section-header h2.has-folder-editor > .section-toggle, .has-folder-editor > .section-label { display: inline; width: auto; min-height: 0; padding: 0; font: inherit; }
 .section-header h2.has-folder-editor { min-height: var(--header-height); padding-top: 26px; padding-bottom: 34px; font: 700 17.6px/1.25 Helvetica, Arial, sans-serif; }
 .section-header h2 > .item-edit-action { display: inline; width: auto; min-height: 0; padding: 0; font: 400 14px/1.4 Helvetica, Arial, sans-serif; }
 .section-header .item-edit-action:focus-visible { outline: 1px solid var(--focus); outline-offset: 4px; }
@@ -209,7 +209,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .is-editing .is-open .section-header { top: var(--editing-nav-height, 0px); }
 .is-editing .catalogue-item, .is-editing .item-edit-action { scroll-margin-top: calc(var(--editing-nav-height, 0px) + var(--header-height) + 12px); }
 @media (max-width: 700px) { .editing-help { display: none; } }
-.has-folder-editor > button:first-child::after { content: ''; position: absolute; inset: 0; }
+.has-folder-editor > .section-toggle::after { content: ''; position: absolute; inset: 0; }
 .section-header .item-edit-action { position: relative; z-index: 1; }
 
 /* A zero-advance sibling button occupies space reserved in the protected ending.
@@ -221,3 +221,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .catalogue-item > .item-edit-action { display: inline-block; width: var(--item-edit-space); margin-left: calc(-1 * var(--item-edit-space)); padding-left: 10px; text-align: left; position: relative; }
 .is-editing .catalogue-navigation[data-stuck="true"]::after { content: ''; position: absolute; inset: 0 calc(-1 * var(--page-gutter)); z-index: -1; background: var(--surface); }
 .editing-badge { border: 1px solid currentColor; padding-inline: 4px; font-size: 12px; line-height: 12px; }
+
+.folder-trigger, .section-toggle { cursor: pointer; text-decoration: none; }
+.has-folder-editor > .section-toggle { padding-right: var(--item-edit-space) !important; }
+.has-folder-editor > .item-edit-action { display: inline-block; width: var(--item-edit-space); margin-left: calc(-1 * var(--item-edit-space)); padding-left: 10px; }
+.section-header h2.has-folder-editor > .item-edit-action { display: inline-block; width: var(--item-edit-space); padding-left: 10px; margin-left: calc(-1 * var(--item-edit-space)); }

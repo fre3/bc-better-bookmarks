@@ -15,7 +15,7 @@ const cancel=p=>p.getByRole('button',{name:'Cancel',exact:true});
 const modal=p=>p.getByRole('dialog');
 const manage=p=>p.getByRole('button',{name:'Manage',exact:true});
 const back=p=>p.getByRole('button',{name:'Back to catalogue',exact:true});
-async function editFolder(p,id,name,t){await folderEdit(p,id).click();await expect(title(p)).toBeFocused();await expect(p.locator('#favorite-edit-url')).toHaveCount(0);if(name)await title(p).fill(name);await tags(p).fill(t);await save(p).click();await expect(modal(p)).toHaveCount(0);}
+async function editFolder(p,id,name,t){await folderEdit(p,id).click();await expect(title(p)).toBeFocused();await expect(p.locator('#favorite-edit-url')).toHaveCount(0);if(name)await title(p).fill(name);await tags(p).fill(t);await p.getByLabel('Archive this folder and its contents',{exact:true}).setChecked(t.toLowerCase().split(',').map(t=>t.trim()).includes('archived'));await save(p).click();await expect(modal(p)).toHaveCount(0);}
 try {
  for (const theme of ['light','dark']) {
   const context=await browser.newContext({viewport:{width:1250,height:850},colorScheme:theme,acceptDownloads:true}); const p=await context.newPage();await p.goto(url);await p.getByRole('button',{name:'Edit',exact:true}).click();

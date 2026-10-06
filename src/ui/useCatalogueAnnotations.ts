@@ -35,8 +35,11 @@ export function useCatalogueAnnotations() {
         const parent = annotation.offsetParent as HTMLElement | null;
         if (!parent) continue;
         const origin = parent.getBoundingClientRect();
-        annotation.style.left = `${fragment.left - origin.left}px`;
-        annotation.style.top = `${fragment.bottom - origin.top + 2}px`;
+        const css = getComputedStyle(parent);
+        const scaleX = origin.width / parseFloat(css.width) || 1;
+        const scaleY = origin.height / parseFloat(css.height) || 1;
+        annotation.style.left = `${(fragment.left - origin.left) / scaleX}px`;
+        annotation.style.top = `${(fragment.bottom - origin.top) / scaleY + 2}px`;
       }
     };
     const observer = new ResizeObserver(update);

@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createServer } from 'node:http';
 
-export async function editingFixture() {
+export async function editingFixture({ deep = false } = {}) {
 const output = await mkdtemp(join(tmpdir(), 'bb-editing-'));
 await build({ stdin: { contents: `
 import {prepareMetadataReset,resetMetadata} from './src/browser/metadata-setup';
@@ -15,11 +15,12 @@ class Storage {
  async set(value){if(this===sync&&window.failTagWrite&&Object.keys(value).some(k=>k.startsWith('meta:')))throw Error('Synthetic tag persistence failure');Object.assign(this.data,structuredClone(value))} async remove(keys){for(const key of typeof keys==='string'?[keys]:keys)delete this.data[key]} async getBytesInUse(){return JSON.stringify(this.data).length}
 }
 const sections=Array.from({length:12},(_,i)=>({id:'s'+i,parentId:i<6?'r1':'r2',title:['Design','Reference','Career','Crypto','Personal','Development'][i%6]+' '+i,children:[{id:'f'+i,parentId:'s'+i,title:'Nested folder',children:[{id:'n'+i,parentId:'f'+i,title:'Nested favorite',url:'https://example.test/nested'}]},...Array.from({length:20},(_,j)=>({id:i+'-'+j,parentId:'s'+i,title:j===0?'Unique target '+i:'Ordinary favorite '+j,url:'https://example.test/'+i+'/'+j}))]}));
+if (${deep}) sections[0].children[0].children.push({id:'deep',parentId:'f0',title:'A long nested folder title for wrapping across available lines',children:[{id:'deep-link',parentId:'deep',title:'Deep favorite',url:'https://example.test/deep'}]});
 const tree=[{id:'0',title:'',children:[{id:'r1',parentId:'0',title:'Favorites bar',children:sections.slice(0,6)},{id:'r2',parentId:'0',title:'Workspaces',children:sections.slice(6)}]}];
 const nodes=()=>{const walk=items=>items.flatMap(n=>[n,...walk(n.children??[])]);return walk(tree)};
 const bookmarks={getTree:async()=>structuredClone(tree),update:async(id,value)=>{if(window.failSave)throw Error('Synthetic browser write failure');Object.assign(nodes().find(n=>n.id===id),value)},move:async()=>{throw Error('Unexpected move')},create:async()=>{throw Error('Unexpected create')},removeLink:async()=>{throw Error('Unexpected deletion')}};
 const local=new Storage();local.data.state={schemaVersion:1,rootId:'*',mappings:{},pendingDeletions:[]};const sync=new Storage();
-const service=new DashboardService(bookmarks,new BrowserMetadataRepository(sync,local),{extensionId:'fixture',version:'0.1.17'});
+const service=new DashboardService(bookmarks,new BrowserMetadataRepository(sync,local),{extensionId:'fixture',version:'0.1.18'});
 const listeners=new Set(),storageListeners=new Set();let queue=Promise.resolve();
 local.data['ui:show-archived']=localStorage.getItem('ui:show-archived')==='true';
 window.addEventListener('storage',e=>{if(e.key==='ui:show-archived'){local.data[e.key]=e.newValue==='true';storageListeners.forEach(f=>f({[e.key]:{newValue:e.newValue==='true'}},'local'))}});

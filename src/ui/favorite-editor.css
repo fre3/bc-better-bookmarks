@@ -12,3 +12,6 @@
 .catalogue .bookmark-item.is-selected .bookmark-title { background: var(--selected); box-decoration-break: clone; }
 .catalogue .navigation-actions { flex-wrap: wrap; max-width: 100%; }
 @media (max-width: 600px) { .favorite-editor { padding: 18px; } }
+
+.favorite-editor .archive-choice { display: flex; align-items: baseline; gap: 8px; }
+.favorite-editor .archive-choice input { display: inline; width: auto; padding: 0; accent-color: var(--edit-accent); }

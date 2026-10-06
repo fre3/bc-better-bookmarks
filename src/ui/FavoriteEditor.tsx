@@ -1,3 +1,4 @@
+import { editorTags, splitArchiveTag } from './editor-tags';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { confirmLinkInput, isBookmarklet, normalizeTags } from '../core/logic';
 import { linkInputErrors, type LinkErrors } from '../core/link-input';
@@ -14,7 +15,8 @@ interface Props {
   onClose: (saved: boolean) => void;
 }
 export function FavoriteEditor({ draft, snapshot, execute, onClose }: Props) {
-  const [input, setInput] = useState(draft.input);
+  const [input, setInput] = useState(() => ({ ...draft.input, tags: splitArchiveTag(draft.input.tags).tags }));
+  const [archived, setArchived] = useState(() => splitArchiveTag(draft.input.tags).archived);
   const [errors, setErrors] = useState<LinkErrors>({});
   const [failure, setFailure] = useState<SaveFailure>();
   const [review, setReview] = useState(false);
@@ -24,17 +26,25 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose }: Props) {
   const [saving, setSaving] = useState(false);
   const submitting = useRef(false);
   const focusFrame = useRef(0);
+  // Tag blur can check the box between pointerdown and native click. Preserve
+  // the user's intended toggle, rather than toggling the newly normalized value.
+  const archivePointerIntent = useRef<boolean | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const title = useRef<HTMLInputElement>(null);
   const continueEditing = useRef<HTMLButtonElement>(null);
   const cancel = useRef<HTMLButtonElement>(null);
-  const dirty = JSON.stringify(input) !== JSON.stringify(draft.input);
+  const submitted = { ...input, tags: editorTags(input.tags, archived) };
+  const dirty = JSON.stringify(submitted) !== JSON.stringify({ ...draft.input, tags: normalizeTags(draft.input.tags) });
   const conflict = draftConflict(snapshot, { ...draft, expected });
   const tags = useMemo(() => nodeTags(snapshot).get(draft.id), [snapshot, draft.id]);
   const current = draft.isFolder ? snapshot.folders.find(f => f.id === draft.id) : snapshot.favorites.find(f => f.id === draft.id);
   const candidate = draft.isFolder && !snapshot.local.mappings[draft.id] ? snapshot.reconciliation.matches.find(m => m.candidateIds.includes(draft.id)) : undefined;
   const candidateRecord = snapshot.metadata.records.find(r => r.stableId === candidate?.stableId);
-  const willArchive = normalizeTags(input.tags).includes('archived') || tags?.inherited.includes('archived');
+  const archiveSources = tags?.sources.filter(source => source.tags.includes('archived')) ?? [];
+  function finishTagEntry() {
+    const split = splitArchiveTag(input.tags);
+    if (split.archived) { setArchived(true); setInput(value => ({ ...value, tags: split.tags })); }
+  }
   useLayoutEffect(() => {
     const element = dialog.current!;
     element.showModal(); title.current?.focus({ preventScroll: true });
@@ -58,20 +68,21 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose }: Props) {
   }
   async function save() {
     if (submitting.current || conflict || discard) return;
+    finishTagEntry();
     // Validate opaque bookmarklet syntax without skipping its explicit save-time
     // confirmation (the transient permission is never kept in the draft).
-    const nextErrors = linkInputErrors({ ...input, bookmarkletConfirmed: isBookmarklet(input.url) });
+    const nextErrors = linkInputErrors({ ...submitted, bookmarkletConfirmed: isBookmarklet(input.url) });
     if (draft.isFolder) { delete nextErrors.url; if (nextErrors.title) nextErrors.title = 'A name is required.'; }
     setErrors(nextErrors); setFailure(undefined);
     if (Object.keys(nextErrors).length) {
       const field = nextErrors.title ? 'title' : nextErrors.url ? 'url' : 'tags';
       document.getElementById(`favorite-edit-${field}`)?.focus(); return;
     }
-    const confirmed = draft.isFolder ? input : confirmLinkInput(input, message => window.confirm(message));
+    const confirmed = draft.isFolder ? submitted : confirmLinkInput(submitted, message => window.confirm(message));
     if (!confirmed) return;
     submitting.current = true; setSaving(true); title.current?.focus({ preventScroll: true });
     try {
-      const error = await execute(draft.isFolder ? { type: 'edit-folder', generation: draft.generation, id: draft.id, expected, title: input.title, tags: input.tags } : { type: 'edit', generation: draft.generation, id: draft.id, expected, input: confirmed });
+      const error = await execute(draft.isFolder ? { type: 'edit-folder', generation: draft.generation, id: draft.id, expected, title: submitted.title, tags: submitted.tags } : { type: 'edit', generation: draft.generation, id: draft.id, expected, input: confirmed });
       if (error !== undefined) setFailure(error); else onClose(true);
     } catch (error) { setFailure({ error: String(error) }); }
     finally { submitting.current = false; setSaving(false); }
@@ -86,7 +97,7 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose }: Props) {
         return;
       }
       if (event.key !== 'Tab') return;
-      const stops = [...event.currentTarget.querySelectorAll<HTMLElement>('input, textarea, button:not(:disabled)')];
+      const stops = [...event.currentTarget.querySelectorAll<HTMLElement>('input:not(:disabled), textarea:not(:disabled), button:not(:disabled)')];
       const first = stops[0], last = stops.at(-1);
       if (!stops.includes(document.activeElement as HTMLElement)) { event.preventDefault(); (event.shiftKey ? last : first)?.focus(); }
       else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
@@ -102,11 +113,13 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose }: Props) {
       <textarea id="favorite-edit-url" rows={3} spellCheck={false} value={input.url} readOnly={saving} required aria-invalid={Boolean(errors.url)} aria-describedby={errors.url ? 'favorite-url-error' : undefined} onChange={e => setInput({ ...input, url: e.target.value })} />
       {errors.url && <p id="favorite-url-error" className="editor-error">{errors.url}</p>}</>}
       <label htmlFor="favorite-edit-tags">Tags (comma separated; stored lowercase)</label>
-      <input id="favorite-edit-tags" value={input.tags.join(',')} readOnly={saving} aria-invalid={Boolean(errors.tags)} aria-describedby={errors.tags ? 'favorite-tags-error' : undefined} onChange={e => setInput({ ...input, tags: e.target.value.split(',') })} />
+      <input id="favorite-edit-tags" value={input.tags.join(',')} readOnly={saving} aria-invalid={Boolean(errors.tags)} aria-describedby={errors.tags ? 'favorite-tags-error' : undefined} onBlur={finishTagEntry} onChange={e => setInput({ ...input, tags: e.target.value.split(',') })} />
       {errors.tags && <p id="favorite-tags-error" className="editor-error">{errors.tags}</p>}
-      <p className="editor-context">Enter direct tags without #. The tag archived hides this item and, for folders, its descendants from the dashboard and search unless Show archived is enabled.</p>
+      <p className="editor-context">Enter direct tags without #.</p>
       {tags && tags.sources.length > 0 && <div className="editor-inheritance"><p>Inherited tags (read only). Change these at their source:</p><ul>{tags.sources.map(source => <li key={source.id}><strong>{source.tags.map(tag => `#${tag}`).join(' · ')}</strong> — {source.path.join(' / ')} [folder {source.id}]</li>)}</ul><p>Removing a direct tag leaves any inherited assignment in effect.</p></div>}
-      {willArchive && <p role="note">#archived excludes this item{draft.isFolder ? ' and its entire subtree' : ''} from the dashboard and search unless Show archived is enabled. Edge Favorites are unchanged.{tags?.inherited.includes('archived') ? ' Archive status is inherited from the source folder(s) above and cannot be removed here.' : ' Archive status is directly assigned here.'}</p>}
+      <label className="archive-choice"><input type="checkbox" checked={archived} onPointerDown={() => { archivePointerIntent.current = !archived; }} onPointerCancel={() => { archivePointerIntent.current = null; }} onKeyDown={() => { archivePointerIntent.current = null; }} onBlur={() => { archivePointerIntent.current = null; }} disabled={saving} aria-describedby="archive-help archive-inheritance" onChange={event => { setArchived(archivePointerIntent.current ?? event.target.checked); archivePointerIntent.current = null; setInput(value => ({ ...value, tags: splitArchiveTag(value.tags).tags })); }} /> {draft.isFolder ? 'Archive this folder and its contents' : 'Archive this favorite'}</label>
+      <p id="archive-help" className="editor-context">Hidden from the dashboard and search unless Show archived is enabled.</p>
+      <p id="archive-inheritance" hidden={!archiveSources.length}>{archived ? 'Unchecking here does not remove inherited archiving.' : 'This item is archived by its source folders; restore them to restore visibility.'} Sources: {archiveSources.map(source => `${source.path.join(' / ')} [folder ${source.id}]`).join('; ')}. Any remaining ancestor assignment can keep this item archived.</p>
       {draft.isFolder && <p className="editor-context">Folder tags require version 0.1.17 or later on every device.</p>}
       {candidateRecord && <p>{candidate?.bookmarkId ? 'This location also matches metadata already bound to another folder. A copy does not receive that identity. Give the copy a distinct name or location through Edge Favorites before first tagging it.' : 'Existing folder metadata is unresolved for this device. Cancel and use Manage → Folder identity review to confirm original folders together. Matching names and paths do not prove identity.'}</p>}
       {conflict && <p className="editor-error" role="alert">{conflict}</p>}
