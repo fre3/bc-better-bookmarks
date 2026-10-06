@@ -1,3 +1,5 @@
+import { CreateDialog, type CreateRequest } from './CreateDialog';
+import { MoveDialog } from './MoveDialog';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { onDashboardChanged, sendCommand } from '../browser/client';
 import type { Command, Snapshot } from '../core/model';
@@ -18,6 +20,11 @@ import { favoriteDraft, type FavoriteDraft } from './favorite-editor';
 import { AppearanceSetting } from './AppearanceSetting';
 
 export function App() {
+  useEffect(()=>{const prevent=(e:DragEvent)=>e.preventDefault();window.addEventListener('drop',prevent);window.addEventListener('dragover',prevent);return()=>{window.removeEventListener('drop',prevent);window.removeEventListener('dragover',prevent);};},[]);
+  const [reveal,setReveal]=useState<{id:string;sequence:number}>();
+  const [creating,setCreating]=useState<CreateRequest>();
+  const [moving,setMoving]=useState<string>();
+  const operationReturn=useRef<HTMLElement|null>(null);
   const [bindingReview, setBindingReview] = useState<{ folderId?: string }>();
   const bindingReturn = useRef<HTMLElement | null>(null);
   const restoreBinding = useRef(false);
@@ -35,13 +42,13 @@ export function App() {
   const [shortcut, setShortcut] = useState<string>();
   useEffect(() => onDashboardSearch(id => {
     if (!snapshot) return 'not-ready';
-    if (managing || busy || draft || bindingReview) {
+    if (managing || busy || draft || bindingReview || creating || moving) {
       setNotice('Search shortcut paused while an editor, Manage or a save is active. Finish editing, return to the catalogue, then invoke it again.');
       return 'blocked';
     }
     setSearchRequest(id);
     return 'accepted';
-  }), [snapshot, managing, busy, draft, bindingReview]);
+  }), [snapshot, managing, busy, draft, bindingReview, creating, moving]);
   useEffect(() => {
     if (!managing) return;
     let disposed = false;
@@ -60,8 +67,9 @@ export function App() {
   async function execute(command: Command, onError?: (failure: SaveFailure) => void) {
     setBusy(true); setError(''); setNotice('');
     try {
-      setSnapshot(await sendCommand(command));
-      if (!['snapshot', 'reconcile'].includes(command.type)) setNotice(command.type === 'attach-folder' ? 'Folder binding confirmed. Received tags applied on this device.' : 'Saved in this browser.');
+      const result=await sendCommand(command);setSnapshot(result);
+      if(result.mutation){if(command.type==='create'||command.type==='create-folder')setReveal({id:result.mutation.id,sequence:Date.now()});restoreFavorite.current=result.mutation.id;const path=result.folders.find(f=>f.id===result.mutation!.parentId)?.path.join(' / ');setNotice(`${command.type==='move'?'Moved':'Created'} in ${path}. The current scope and query are unchanged; archived or nonmatching items may not be visible.`);}
+      if (!result.mutation && !['snapshot', 'reconcile'].includes(command.type)) setNotice(command.type === 'attach-folder' ? 'Folder binding confirmed. Received tags applied on this device.' : 'Saved in this browser.');
       return true;
     } catch (e) {
       if (onError) onError({ error: errorText(e), ...(e instanceof EditFailure ? { progress: e.progress } : {}) }); else setError(e instanceof EditFailure ? `${errorText(e)} Completed native changes: ${[e.progress.title && 'title/name', e.progress.url && 'URL', e.progress.location && 'location'].filter(Boolean).join(', ') || 'none confirmed'}. Tag persistence was not confirmed. Keep needed input and reopen to review current values before retrying.` : errorText(e));
@@ -70,7 +78,7 @@ export function App() {
     } finally { setBusy(false); }
   }
   useLayoutEffect(() => {
-    if (draft || bindingReview || !restoreFavorite.current) return;
+    if (draft || bindingReview || creating || moving || !restoreFavorite.current) return;
     const favorite = document.getElementById(`edit-folder-${restoreFavorite.current}`) ?? document.getElementById(`edit-bookmark-${restoreFavorite.current}`);
     const nearby = [...document.querySelectorAll<HTMLElement>('.section-header .section-toggle')].find(element => {
       const rect = element.getBoundingClientRect(); return !element.closest('[inert]') && rect.bottom > 0 && rect.top < window.innerHeight;
@@ -83,7 +91,7 @@ export function App() {
       if (rect.bottom <= 0 || rect.top >= window.innerHeight) target.scrollIntoView({ block: 'nearest', behavior: 'instant' });
     }
     restoreFavorite.current = null;
-  }, [draft, bindingReview, snapshot]);
+  }, [draft, bindingReview, creating, moving, snapshot]);
   function openBindingReview(folderId?: string) {
     bindingReturn.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setBindingReview({ folderId });
@@ -106,7 +114,9 @@ export function App() {
     {error && <p className="status-error" role="alert">{error}</p>}
     <p className={managing ? undefined : 'sr-only'} hidden={managing && !notice} role="status" aria-atomic="true">{notice}</p>
     {snapshot.errors.length > 0 && <details className="status-error"><summary>{snapshot.errors.length} diagnostic warnings/errors</summary><ul>{snapshot.errors.map((message, i) => <li key={i}>{message}</li>)}</ul></details>}
-    <Catalogue bindingReviews={folderBindings(snapshot)} onReviewBindings={() => openBindingReview()} snapshot={snapshot} showArchived={archivePreference.enabled} selectedId={draft?.id} modalOpen={Boolean(draft || bindingReview)} onEdit={id => { const favorite = [...snapshot.favorites, ...snapshot.folders].find(item => item.id === id); if (favorite) { setNotice(''); if (favorite.url === undefined && folderNeedsReview(snapshot, id)) openBindingReview(id); else setDraft(favoriteDraft(snapshot, favorite)); } }} suspended={managing} autoScrollPeek={peekPreference.enabled} searchRequest={searchRequest} onManage={() => { setManaging(true); setNotice(''); }} />
+    <Catalogue bindingReviews={folderBindings(snapshot)} onReviewBindings={() => openBindingReview()} snapshot={snapshot} showArchived={archivePreference.enabled} selectedId={draft?.id} modalOpen={Boolean(draft || bindingReview || creating || moving)} reveal={reveal} onDropMove={async command=>{const failure=await executeReviewed(command);if(failure){setError(failure.error);if(failure.error.includes('binding'))openBindingReview();}}} onCreate={(folder,parentId)=>{const active=document.activeElement as HTMLElement;operationReturn.current=(active.closest('[popover]')?.previousElementSibling as HTMLElement)??active;setCreating({folder,parentId});}} onMove={id=>{const active=document.activeElement as HTMLElement;operationReturn.current=(active.closest('[popover]')?.previousElementSibling as HTMLElement)??active;if(folderNeedsReview(snapshot,id))openBindingReview(id);else setMoving(id);}} onEdit={id => { const favorite = [...snapshot.favorites, ...snapshot.folders].find(item => item.id === id); if (favorite) { setNotice(''); if (favorite.url === undefined && folderNeedsReview(snapshot, id)) openBindingReview(id); else setDraft(favoriteDraft(snapshot, favorite)); } }} suspended={managing} autoScrollPeek={peekPreference.enabled} searchRequest={searchRequest} onManage={() => { setManaging(true); setNotice(''); }} />
+    {creating && <CreateDialog request={creating} snapshot={snapshot} showArchived={archivePreference.enabled} execute={executeReviewed} onClose={()=>{setCreating(undefined);operationReturn.current?.focus({preventScroll:true});}} />}
+    {moving && <MoveDialog id={moving} snapshot={snapshot} showArchived={archivePreference.enabled} execute={executeReviewed} onReview={()=>openBindingReview()} onClose={()=>{setMoving(undefined);operationReturn.current?.focus({preventScroll:true});}} />}
     {draft && <FavoriteEditor draft={draft} snapshot={snapshot} onReviewBinding={() => openBindingReview(draft.id)} execute={executeReviewed} onClose={saved => {
       restoreFavorite.current = draft.id;
       setDraft(undefined);

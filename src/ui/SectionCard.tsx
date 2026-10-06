@@ -1,3 +1,4 @@
+import { AddMenu } from './ItemActions';
 import { EditAction } from './EditAction';
 import { TagText } from './TagAnnotation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -73,6 +74,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
             <span className="section-heading-text"><span className="section-title-text">{section.title || '(untitled)'}</span>{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span>
           </a>}
         {onEdit && section.folder?.renamable && <EditAction id={section.folder.id} title={section.title} folder onEdit={onEdit} />}
+        {onEdit && !section.folder && <AddMenu parentId={section.parentId} />}
         {Boolean(section.tagInfo?.effective.length) && <span className={`section-tag-annotation${explainsTags ? ' explains-search' : ''}`}><TagText tags={section.tagInfo!.effective} info={section.tagInfo} folder /></span>}
         </h2>
       </div>

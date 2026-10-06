@@ -1,3 +1,7 @@
+import { nodeTags } from '../core/node-tags';
+import { useCatalogueDrag } from './useCatalogueDrag';
+import type { Command } from '../core/model';
+import { ActionsContext, AddMenu } from './ItemActions';
 import { useCatalogueChrome } from './useCatalogueChrome';
 import type { folderBindings } from './folder-bindings';
 import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
@@ -15,10 +19,16 @@ import { catalogueHandoff } from './catalogue-handoff';
 // Nested expansions always remain inline.
 const EXPANSION_END: 'inline' | 'break' = 'inline';
 
-export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek = true, showArchived = false, modalOpen = false, selectedId, onEdit, onManage, bindingReviews = [], onReviewBindings }: { bindingReviews?: ReturnType<typeof folderBindings>; onReviewBindings?: () => void; snapshot: Snapshot; suspended: boolean; searchRequest?: SearchIntent; autoScrollPeek?: boolean; onManage: () => void; modalOpen?: boolean; showArchived?: boolean; selectedId?: string; onEdit?: (id: string) => void }) {
+export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek = true, showArchived = false, modalOpen = false, selectedId, onEdit, onManage, bindingReviews = [], onReviewBindings, onCreate, onMove, onDropMove, reveal }: { reveal?: {id:string;sequence:number}; onDropMove?: (c:Command)=>Promise<unknown>; onCreate?: (folder:boolean,parentId:string)=>void; onMove?: (id:string)=>void; bindingReviews?: ReturnType<typeof folderBindings>; onReviewBindings?: () => void; snapshot: Snapshot; suspended: boolean; searchRequest?: SearchIntent; autoScrollPeek?: boolean; onManage: () => void; modalOpen?: boolean; showArchived?: boolean; selectedId?: string; onEdit?: (id: string) => void }) {
   const [handoff] = useState(() => typeof location === 'undefined' ? undefined : catalogueHandoff(takeSearchHandoff()));
   const [state, dispatch] = useReducer(catalogueReducer, handoff?.state ?? initialCatalogueState);
   const [editing, setEditing] = useState(false);
+  const drag=useCatalogueDrag(snapshot,state,editing&&!modalOpen&&!suspended&&state.query===null,dispatch,onDropMove,onReviewBindings);
+  const revealed=useRef(0);
+  useEffect(()=>{if(!reveal||revealed.current===reveal.sequence||modalOpen)return;revealed.current=reveal.sequence;const node=[...snapshot.favorites,...snapshot.folders].find(n=>n.id===reveal.id);if(!node)return;const info=nodeTags(snapshot).get(node.id);if(!showArchived&&info?.archived||state.scope!=='*'&&!node.ancestorIds.includes(state.scope))return;
+   if(state.query===null){const section=node.ancestorIds[2];if(section)dispatch({type:'view',openSection:`folder:${section}`,expanded:node.ancestorIds.slice(3)});else if(node.url!==undefined)dispatch({type:'view',openSection:`loose:${node.parentId}`,expanded:[]});}
+   const frame=requestAnimationFrame(()=>{const target=document.getElementById(`edit-bookmark-${node.id}`)??document.getElementById(`edit-folder-${node.id}`);if(target){target.focus({preventScroll:true});target.scrollIntoView({block:'nearest',behavior:'instant'});}});return()=>cancelAnimationFrame(frame);
+  },[reveal,modalOpen,snapshot]);
   const { chrome } = useCatalogueChrome();
   const [launchError, setLaunchError] = useState('');
   const peekFooter = usePeekFooter(state.peekEpoch, suspended);
@@ -70,7 +80,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
   }
   useEffect(() => { if (searching && !suspended && !modalOpen) input.current?.focus(); }, [searching, suspended]);
   useLayoutEffect(() => {
-    if (suspended || modalOpen) return;
+    if (suspended || modalOpen || drag.active) return;
     if (searchRequest && consumedSearchRequest.current !== searchRequest.id) {
       consumedSearchRequest.current = searchRequest.id;
       selectRequested.current = true;
@@ -103,7 +113,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     scrollToSection.current = null;
   }, [state.openSection]);
   useEffect(() => {
-    if (suspended || modalOpen) return;
+    if (suspended || modalOpen || drag.active) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.isComposing) return;
       const target = event.target instanceof Element ? event.target : null;
@@ -131,12 +141,12 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     return () => window.removeEventListener('keydown', onKey);
   });
 
-  return <div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-expansion-end={EXPANSION_END} hidden={suspended}>
+  return <ActionsContext.Provider value={editing && onCreate && onMove ? {create:onCreate,move:onMove,searching} : undefined}><div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-dragging={drag.active} data-expansion-end={EXPANSION_END} hidden={suspended}>
     <div ref={chrome} className="catalogue-chrome">
     <header className="catalogue-navigation">
       {editing && <div className="editing-help">Click Edit beside a favorite or folder to make changes.</div>}
       <nav aria-label="Bookmark roots">
-        {roots.map((root, index) => <button key={root.id} aria-current={scope === root.id ? 'page' : undefined}
+        {roots.map((root, index) => <button data-root-id={root.id === '*' ? undefined : root.id} key={root.id} aria-current={scope === root.id ? 'page' : undefined}
           title={index < 9 ? `${root.title} · Alt+${index + 1}` : root.title}
           aria-keyshortcuts={index < 9 ? `Alt+${index + 1}` : undefined}
           aria-description={index < 9 ? `Switch root with Alt+${index + 1}` : undefined}
@@ -146,6 +156,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
         {editing && <span className="editing-badge">Editing</span>}
         <button ref={searchButton} onClick={() => searching ? input.current?.focus() : startSearch()}>Search /</button>
         {onEdit && <button id="catalogue-edit" aria-pressed={editing} onClick={() => setEditing(!editing)}><span className="mode-button-size"><span aria-hidden={editing} style={{ visibility: editing ? 'hidden' : 'visible' }}>Edit</span><span aria-hidden={!editing} style={{ visibility: editing ? 'visible' : 'hidden' }}>Done</span></span></button>}
+        {editing && <AddMenu parentId={scope === '*' ? '' : scope} />}
         <button onClick={onManage}>Manage</button>
       </div>
     </header>
@@ -162,8 +173,9 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     </div>
     <div className="chrome-rest-space" aria-hidden="true" />
     {launchError && <p role="alert">{launchError}</p>}
+    {drag.feedback && <><div aria-hidden="true" className={`drag-cue${drag.feedback.invalid?' invalid':''}`} style={drag.feedback.rect}/><p className="drag-status" role="status">{drag.feedback.label}</p></>}
     <div className="section-stack" aria-label="Bookmark catalogue">
-      {visible.sections.map((section, index) => <SectionCard key={section.id} blocked={modalOpen} selectedId={selectedId} onEdit={editing ? onEdit : undefined} section={section} nextSection={visible.sections[index + 1]} sections={visible.sections} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended} onToggle={() => {
+      {visible.sections.map((section, index) => <SectionCard key={section.id} blocked={modalOpen || drag.active} selectedId={selectedId} onEdit={editing ? onEdit : undefined} section={section} nextSection={visible.sections[index + 1]} sections={visible.sections} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended && !drag.active} onToggle={() => {
         if (state.openSection && state.openSection !== section.id) scrollToSection.current = section.id;
         dispatch({ type: 'section', id: section.id });
       }} onFolder={id => {
@@ -176,5 +188,5 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     </div>
     <div ref={peekFooter} className="peek-footer-space" aria-hidden="true" />
     <CatalogueFooter />
-  </div>;
+  </div></ActionsContext.Provider>;
 }

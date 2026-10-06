@@ -24,3 +24,18 @@
 .favorite-editor .binding-records input { display: inline; width: auto; }
 .binding-relevant { border-inline-start: 2px solid var(--edit-accent); padding-inline-start: 12px; }
 .folder-binding-workflow > button { text-decoration: underline; margin-top: 12px; }
+.item-actions, .drag-handle { font: 400 14px/1.4 Helvetica, Arial, sans-serif; letter-spacing: 0; vertical-align: baseline; position: relative; z-index: 1; margin-left: .6em; }
+.item-actions > button { text-decoration: underline; }
+.drag-handle { cursor: grab; touch-action: none; }
+.item-menu { position: fixed; inset: auto; margin: 0; padding: 12px; border: 1px solid var(--secondary); background: var(--surface); color: var(--text); width: 230px; font: 16px/1.5 Helvetica, Arial, sans-serif; }
+.item-menu button { display: block; margin-block: 6px; }
+.item-menu small { display: block; }
+.operation-dialog select { width: 100%; font: 16px/1.5 Helvetica, Arial, sans-serif; padding-block: 8px; }
+.operation-dialog label { margin-top: 12px; }
+.drag-cue { position: fixed; pointer-events: none; z-index: 150; outline: 2px solid var(--edit-accent); background: transparent; }
+.drag-cue.invalid { outline-style: dashed; }
+.drag-status { position: fixed; bottom: 16px; left: var(--page-gutter); right: var(--page-gutter); z-index: 151; padding: 8px; margin: 0; background: var(--surface); color: var(--text); border: 1px solid currentColor; font: 16px/1.4 Helvetica, Arial, sans-serif; pointer-events: none; }
+.extra-actions { display: inline-block; white-space: nowrap; font: 14px/1.4 Helvetica, Arial, sans-serif; letter-spacing: 0; }
+.catalogue-item:has(> .extra-actions :focus-visible) > .item-annotation { visibility: visible; }
+.drag-status { overflow-wrap: anywhere; max-height: 30svh; overflow: hidden; }
+.item-menu { width: min(230px, calc(100vw - 16px)); max-height: calc(100svh - 16px); overflow: auto; }

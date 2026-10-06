@@ -124,6 +124,8 @@ export class DashboardService {
     if(!receipt && command.destinationExpected!==undefined && destinationToken(s,parent.id)!==command.destinationExpected)throw Error('Destination changed. Review and select it again before creating.');
     if(s.metadata.invalid.length || !s.preservation.available)throw Error('Metadata integrity prevents creation. Review Manage diagnostics.');
     if(!receipt){
+      const freshTree=await this.bookmarks.getTree();const fresh={...s,tree:freshTree,...flattenTree(freshTree)};
+      if(destinationToken(fresh,parent.id)!==destinationToken(s,parent.id))throw Error('Destination changed before creation. Nothing was created.');
       receipt={request,generation:s.metadata.setup?.generation,stableId:this.uuid()};
       await this.metadata.saveCreation(requestId,receipt); // durable intent before native creation
       try {
@@ -166,6 +168,10 @@ export class DashboardService {
       const moving=nodeById(s,command.id)!;
       const nodes=[...s.favorites,...s.folders.filter(f=>f.renamable).map(f=>folderNode(f,s.folders))].filter(n=>n.id===moving.id || n.ancestorIds.includes(moving.id) || n.id===target.parentId || s.folders.find(f=>f.id===target.parentId)?.ancestorIds.includes(n.id));
       for(const n of nodes){this.preflightTags(s,n,this.tags(s,n.id));if(!s.reconciliation.mappings[n.id] && s.reconciliation.matches.some(m=>m.candidateIds.includes(n.id)))throw Error('Folder or favorite metadata needs binding review before moving.');}
+      const freshTree=await this.bookmarks.getTree();
+      const fresh={...s,tree:freshTree,...flattenTree(freshTree)};
+      if(sourceToken(fresh,command.id)!==command.expected || placementToken(fresh,command.placement)!==command.destinationExpected)throw Error('Native source or destination changed before the move. Nothing was moved.');
+      planMove(fresh,command.id,command.placement);
       await this.bookmarks.move(command.id,target.parentId,target.index);
       try { return {...await this.snapshot('after move'),mutation:{id:command.id,parentId:target.parentId}}; } catch(error) {throw Error(`Item ${command.id} was MOVED, but refreshing metadata did not complete. Inspect its current location before retrying. ${String(error)}`,{cause:error});}
     } else if (command.type === 'attach-folder') {

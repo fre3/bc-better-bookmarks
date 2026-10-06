@@ -36,7 +36,14 @@ export function checkQuota(raw: Record<string, unknown>, patch: Record<string, u
 export class BrowserMetadataRepository implements MetadataRepository {
   constructor(private readonly sync: StorageArea = chrome.storage.sync, private readonly local: StorageArea = chrome.storage.local,
     private readonly journalLimits = JOURNAL_LIMITS, private readonly now: () => string = () => new Date().toISOString()) {}
-  async readCreation(id: string) { return (await this.local.get(`creation:${id}`))[`creation:${id}`] as CreationReceipt | undefined; }
+  async readCreation(id: string): Promise<CreationReceipt | undefined> {
+    const raw=(await this.local.get(`creation:${id}`))[`creation:${id}`];
+    if(raw===undefined)return undefined;
+    if(!raw || typeof raw!=='object')throw new Error('Invalid creation receipt; this request is blocked, never repeated.');
+    const r=raw as CreationReceipt;
+    if(typeof r.request!=='string' || typeof r.stableId!=='string' || !/^[0-9a-f-]{36}$/i.test(r.stableId) || r.generation!==undefined&&typeof r.generation!=='string' || r.id!==undefined&&typeof r.id!=='string' || r.native!==undefined&&typeof r.native!=='string' || r.complete!==undefined&&typeof r.complete!=='boolean' || r.complete&&(!r.id||!r.native) || r.record&&parseMetadata({[`meta:${r.stableId}`]:r.record}).invalid.length)throw new Error('Invalid creation receipt; inspect local diagnostics before retrying.');
+    return r;
+  }
   async saveCreation(id: string, receipt: CreationReceipt) { await this.local.set({ [`creation:${id}`]: receipt }); }
   async read() { return parseMetadata(await this.sync.get(null)); }
   async write(changes: Record<string, unknown>, authoredLocalState?: LocalState) {

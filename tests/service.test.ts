@@ -266,6 +266,10 @@ describe('creation receipts and shared moving',()=>{
 });
 
 describe('creation/move safety boundaries',()=>{
+ it('never replaces a corrupt receipt with another native create',async()=>{
+  const {service,local,bookmarks}=setup();local.data['creation:corrupt-request']=null;
+  await expect(service.command({type:'create-folder',requestId:'corrupt-request',parentId:'1',title:'New'})).rejects.toThrow('Invalid creation receipt');expect(bookmarks.calls).toEqual([]);
+ });
  it('does not repeat a native create with an uncertain outcome',async()=>{
   const {service,bookmarks}=setup();bookmarks.create=async()=>{bookmarks.calls.push('create');throw Error('lost native response');};
   const command={type:'create-folder' as const,requestId:'uncertain-123',parentId:'1',title:'New'};
