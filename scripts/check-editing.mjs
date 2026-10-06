@@ -10,22 +10,23 @@ const { output, server, url } = await editingFixture();
 const browser=await chromium.launch();const report=[];
 const section=(page,i)=>page.locator(`[id="section-folder:s${i}"]`);
 const bookmark=(page,id)=>page.locator(`[id="bookmark-${id}"]`);
+const edit=(page,id)=>page.locator(`[id="edit-bookmark-${id}"]`);
 const title=page=>page.getByLabel('Title',{exact:true});
 const save=page=>page.getByRole('button',{name:'Save',exact:true});
 const cancel=page=>page.getByRole('button',{name:'Cancel',exact:true});
 const dialog=page=>page.getByRole('dialog',{name:'Edit Favorite'});
 async function closeDirty(page){await cancel(page).click();await page.getByRole('button',{name:'Discard changes',exact:true}).click();await expect(dialog(page)).toHaveCount(0)}
-async function open(page,id='0-0'){await bookmark(page,id).click();await expect(title(page)).toBeFocused()}
+async function open(page,id='0-0'){await edit(page,id).click();await expect(title(page)).toBeFocused()}
 try {
  for(const theme of ['light','dark']){
   const context=await browser.newContext({viewport:{width:1250,height:800},colorScheme:theme});const page=await context.newPage();
   const uncaught=[];page.on('pageerror',e=>uncaught.push(e.message));await page.goto(url);
   await section(page,0).click();await expect(bookmark(page,'0-0')).toHaveAttribute('href','https://example.test/0/0');
-  await page.getByRole('button',{name:'Edit',exact:true}).click();await expect(bookmark(page,'0-0')).not.toHaveAttribute('href');
-  // Ctrl/middle activation cannot open a destination. A single semantic target
-  // preserves natural inline text layout (no button-shaped inline block).
+  await page.getByRole('button',{name:'Edit',exact:true}).click();await expect(bookmark(page,'0-0')).toHaveAttribute('href','https://example.test/0/0');
+  // Edit controls never navigate; title links keep native activation semantics.
+  await page.waitForTimeout(240);
   const beforeModal=await page.evaluate(()=>({y:window.scrollY,width:document.querySelector('.catalogue-flow').getBoundingClientRect().width,height:Math.round(document.querySelector('.catalogue-flow').getBoundingClientRect().height*100)/100}));
-  await bookmark(page,'0-0').click({modifiers:['Control']});await expect(title(page)).toBeFocused();assert.equal(context.pages().length,1);
+  const editBox=await edit(page,'0-0').boundingBox();await page.keyboard.down('Control');await page.mouse.click(editBox.x+editBox.width/2,editBox.y+editBox.height/2);await page.keyboard.up('Control');await expect(title(page)).toBeFocused();assert.equal(context.pages().length,1);
   assert.deepEqual(await page.evaluate(()=>({y:window.scrollY,width:document.querySelector('.catalogue-flow').getBoundingClientRect().width,height:Math.round(document.querySelector('.catalogue-flow').getBoundingClientRect().height*100)/100})),beforeModal);
   const geometry=await page.evaluate(()=>({y:window.scrollY,x:document.querySelector('.section-stack').getBoundingClientRect().x}));
   await page.keyboard.press('Shift+Tab');assert.equal(await page.evaluate(()=>document.activeElement.textContent),'Cancel');
@@ -36,10 +37,10 @@ try {
   await page.mouse.click(4,4);await expect(dialog(page)).toBeVisible();
   await page.mouse.wheel(0,450);await page.waitForTimeout(150);assert.equal(await page.evaluate(()=>window.scrollY),geometry.y);
   await page.screenshot({path:join(output,`${theme}-modal.png`)});
-  await page.keyboard.press('Escape');await expect(dialog(page)).toHaveCount(0);await expect(bookmark(page,'0-0')).toBeFocused();
+  await page.keyboard.press('Escape');await expect(dialog(page)).toHaveCount(0);await expect(edit(page,'0-0')).toBeFocused();
   assert.deepEqual(await page.evaluate(()=>({y:window.scrollY,x:document.querySelector('.section-stack').getBoundingClientRect().x})),geometry);
-  await bookmark(page,'0-0').click({button:'middle'});await expect(dialog(page)).toBeVisible();assert.equal(context.pages().length,1);await cancel(page).click();
-  await bookmark(page,'0-0').focus();await page.keyboard.press('Space');await expect(title(page)).toBeFocused();
+  await bookmark(page,'0-0').click({button:'middle'});await expect(dialog(page)).toHaveCount(0);await expect.poll(()=>context.pages().length).toBe(2);await context.pages()[1].close();
+  await edit(page,'0-0').focus();await page.keyboard.press('Space');await expect(title(page)).toBeFocused();
   await title(page).fill('Draft retained');await page.evaluate(theme=>window.chrome.runtime.sendMessage({event:'set-appearance',appearance:theme==='light'?'dark':'light'}),theme);await expect(title(page)).toHaveValue('Draft retained');await expect(title(page)).toBeFocused();await page.evaluate(theme=>window.chrome.runtime.sendMessage({event:'set-appearance',appearance:theme}),theme);await page.keyboard.press('Escape');await expect(page.getByRole('button',{name:'Continue editing'})).toBeFocused();
   await page.getByRole('button',{name:'Continue editing'}).click();await expect(title(page)).toBeFocused();await expect(title(page)).toHaveValue('Draft retained');
   await cancel(page).click();await page.keyboard.press('Escape');await expect(dialog(page)).toBeVisible();await expect(title(page)).toHaveValue('Draft retained');
@@ -52,9 +53,9 @@ try {
   await page.evaluate(()=>{window.failSave=false;window.holdSave=true});await save(page).click();await expect(page.getByRole('button',{name:'Saving…'})).toBeDisabled();
   await page.locator('dialog form').evaluate(form=>{form.requestSubmit();form.requestSubmit()});await page.keyboard.press('Escape');await expect(dialog(page)).toBeVisible();
   assert.equal(await page.evaluate(()=>window.commands.filter(c=>c.type==='edit').length),2);
-  await page.evaluate(()=>{window.holdSave=false;window.releaseSave()});await expect(dialog(page)).toHaveCount(0);await expect(bookmark(page,'0-0')).toBeFocused();await expect(bookmark(page,'0-0')).toContainText('Saved title');
+  await page.evaluate(()=>{window.holdSave=false;window.releaseSave()});await expect(dialog(page)).toHaveCount(0);await expect(edit(page,'0-0')).toBeFocused();await expect(bookmark(page,'0-0')).toContainText('Saved title');
   const saved=await page.evaluate(async()=>{const s=await window.service.snapshot('check');return {favorite:s.favorites.find(f=>f.id==='0-0'),tags:s.metadata.records[0].tags}});assert.equal(saved.favorite.url,'https://example.test/changed');assert.deepEqual(saved.tags,['reference','work']);assert.equal(saved.favorite.parentId,'s0');
-  await expect(page.getByRole('button',{name:'Editing · Done'})).toHaveAttribute('aria-pressed','true');
+  await expect(page.getByRole('button',{name:'Done',exact:true})).toHaveAttribute('aria-pressed','true');
   // Every bookmarklet save retains the existing explicit browser confirmation.
   await open(page,'0-5');const code='javascript:alert(1)\n// exact opaque code';await page.locator('#favorite-edit-url').fill(code);
   const prior=await page.evaluate(()=>window.commands.filter(c=>c.type==='edit').length);page.once('dialog',d=>d.dismiss());await save(page).click();await expect(dialog(page)).toBeVisible();assert.equal(await page.evaluate(()=>window.commands.filter(c=>c.type==='edit').length),prior);
@@ -73,13 +74,13 @@ try {
   // Search edits remove results only after save; query/scope and original Escape
   // snapshot survive, with an accessible nearby focus fallback.
   await page.getByRole('button',{name:'Favorites bar',exact:true}).click();await section(page,0).click();await page.locator('#folder-f0').click();
-  await page.getByRole('button',{name:'Search /',exact:true}).click();const search=page.getByRole('textbox',{name:'Search bookmarks'});await search.fill('"no match"');await search.fill('Ordinary favorite 4');await open(page,'0-4');await page.locator('#favorite-edit-tags').fill('retained-result');await save(page).click();await expect(dialog(page)).toHaveCount(0);await expect(bookmark(page,'0-4')).toBeFocused();await expect(search).toHaveValue('Ordinary favorite 4');await search.fill('Unique target 1');
+  await page.getByRole('button',{name:'Search /',exact:true}).click();const search=page.getByRole('textbox',{name:'Search bookmarks'});await search.fill('"no match"');await search.fill('Ordinary favorite 4');await open(page,'0-4');await page.locator('#favorite-edit-tags').fill('retained-result');await save(page).click();await expect(dialog(page)).toHaveCount(0);await expect(edit(page,'0-4')).toBeFocused();await expect(search).toHaveValue('Ordinary favorite 4');await search.fill('Unique target 1');
   await open(page,'1-0');await title(page).fill('Renamed search result');await save(page).click();await expect(dialog(page)).toHaveCount(0);await expect(search).toBeFocused();await expect(search).toHaveValue('Unique target 1');await expect(bookmark(page,'1-0')).toHaveCount(0);await expect(page.getByRole('status').filter({hasText:'Favorite saved'})).toHaveCount(1);
   await page.keyboard.press('Escape');await expect(page.locator('[aria-current="page"]')).toHaveText('Favorites bar');await expect(section(page,0)).toHaveAttribute('aria-expanded','true');await expect(page.locator('#folder-f0')).toHaveAttribute('aria-expanded','true');
   await section(page,1).hover();await page.waitForTimeout(1250);await expect(page.locator('.is-peeking')).toHaveCount(1);
-  const beforePeekModal=await page.evaluate(()=>window.scrollY);await bookmark(page,'n0').evaluate(n=>n.focus({preventScroll:true}));await page.keyboard.press('Enter');await expect(title(page)).toBeFocused();await expect(page.locator('.is-peeking, .is-leaving')).toHaveCount(0);assert.equal(await page.evaluate(()=>window.scrollY),beforePeekModal);
+  const beforePeekModal=await page.evaluate(()=>window.scrollY);await edit(page,'n0').evaluate(n=>n.focus({preventScroll:true}));await page.keyboard.press('Enter');await expect(title(page)).toBeFocused();await expect(page.locator('.is-peeking, .is-leaving')).toHaveCount(0);assert.equal(await page.evaluate(()=>window.scrollY),beforePeekModal);
   await page.setViewportSize({width:390,height:700});await expect(title(page)).toBeFocused();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true);assert.equal(await dialog(page).evaluate(d=>d.scrollWidth<=d.clientWidth),true);await page.screenshot({path:join(output,`${theme}-narrow.png`)});await cancel(page).click();
-  await page.getByRole('button',{name:'Editing · Done'}).click();await expect(bookmark(page,'n0')).toHaveAttribute('href');
+  await page.getByRole('button',{name:'Done',exact:true}).click();await expect(bookmark(page,'n0')).toHaveAttribute('href');
   await page.reload();await expect(page.getByRole('button',{name:'Edit',exact:true})).toHaveAttribute('aria-pressed','false');
   assert.deepEqual(uncaught,[]);report.push({theme,checks:'activation, focus trap/restoration, modal isolation, validation, failed/duplicate/success saves, dirty protection, external conflicts, metadata/scope guards, search removal/Escape, narrow layout, transient mode'});await context.close();
  }

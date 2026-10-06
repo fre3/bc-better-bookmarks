@@ -10,14 +10,14 @@ function snapshot(): Snapshot {
   return { favorites: [favorite()], metadata: metadata(), reconciliation: { mappings: mapping() }, local: { rootId: '*' } } as Snapshot;
 }
 describe('catalogue editor integration', () => {
-  it('keeps normal links but gives editing one non-navigating keyboard target', () => {
+  it('keeps normal links and provides a separate contextual Edit button', () => {
     const props = { items: [{ kind: 'bookmark' as const, favorite: favorite(), tags: [], ambiguous: false }], expanded: [], onToggle: () => undefined, query: null };
     const browse = renderToStaticMarkup(<CatalogueItems {...props} />);
     const editing = renderToStaticMarkup(<CatalogueItems {...props} onEdit={() => undefined} selectedId="20" />);
     expect(browse).toContain('href="https://azure.com/"');
-    expect(editing).not.toContain('href=');
-    expect(editing.match(/tabindex="0"/g)).toHaveLength(1);
-    expect(editing).toContain('role="button"'); expect(editing).toContain('aria-haspopup="dialog"'); expect(editing).toContain('is-selected');
+    expect(editing).toContain('href="https://azure.com/"');
+    expect(editing.match(/<button/g)).toHaveLength(1);
+    expect(editing).toContain('aria-label="Edit favorite Azure"'); expect(editing).toContain('aria-haspopup="dialog"'); expect(editing).toContain('is-selected');
   });
   it('captures original identity token and parent, rejecting external title, URL, folder and tag changes', () => {
     for (const mutation of ['title', 'url', 'parent', 'tags', 'removed'] as const) {

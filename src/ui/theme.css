@@ -13,6 +13,7 @@
   --summary-context: light-dark(#666, #bdbdbd);
   --separator: light-dark(#999, #9b9b9b);
   --focus: light-dark(#191919, #f0f0ed);
+  --edit-accent: light-dark(#855216, #e9ba7a);
   --control-focus: light-dark(#2563eb, #a6c8ff);
   --frame: light-dark(#eee, #bdbdbd);
   --placeholder-text: light-dark(#757575, #bdbdbd);
@@ -52,7 +53,7 @@ input, textarea { caret-color: var(--text); }
 @media (forced-colors: active) {
   :root { --surface: Canvas; --text: CanvasText; --secondary: CanvasText;
     --annotation: CanvasText; --annotation-halo: transparent; --focus: Highlight;
-    --control-focus: Highlight; --control-surface: Field; --control-border: ButtonText;
+    --edit-accent: Highlight; --control-focus: Highlight; --control-surface: Field; --control-border: ButtonText;
     --footer-surface: Canvas; --footer-text: LinkText; --dither: CanvasText;
     --summary-first: CanvasText; --summary-second: CanvasText; --summary-later: CanvasText;
     --summary-context: CanvasText; --separator: CanvasText; --disabled: GrayText;

@@ -17,10 +17,12 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
   const [handoff] = useState(() => typeof location === 'undefined' ? undefined : catalogueHandoff(takeSearchHandoff()));
   const [state, dispatch] = useReducer(catalogueReducer, handoff?.state ?? initialCatalogueState);
   const [editing, setEditing] = useState(false);
+  const [navStuck, setNavStuck] = useState(false);
   const [launchError, setLaunchError] = useState('');
   const peekFooter = usePeekFooter(state.peekEpoch, suspended);
   const lastFocused = useRef<HTMLElement | null>(null);
   const input = useRef<HTMLInputElement>(null);
+  const navigation = useRef<HTMLElement>(null);
   const searchButton = useRef<HTMLButtonElement>(null);
   const scrollToSection = useRef<string | null>(null);
   const browsePosition = useRef({ scroll: handoff?.browseScroll ?? 0, focus: null as HTMLElement | null, focusId: handoff?.browseFocusId ?? null as string | null });
@@ -38,6 +40,15 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       (input.current ?? searchButton.current)?.focus({ preventScroll: true });
     }
   }, [visible, modalOpen, suspended]);
+  useLayoutEffect(() => {
+    const nav = navigation.current;
+    if (!nav) return;
+    const update = () => nav.parentElement?.style.setProperty('--editing-nav-height', editing ? `${nav.getBoundingClientRect().height}px` : '0px');
+    const position = () => setNavStuck(editing && (nav.parentElement?.getBoundingClientRect().top ?? 0) < 0);
+    const observer = new ResizeObserver(update); observer.observe(nav); update(); position();
+    window.addEventListener('scroll', position, { passive: true });
+    return () => { observer.disconnect(); window.removeEventListener('scroll', position); };
+  }, [editing]);
   const roots = [{ id: '*', title: 'All bookmarks' }, ...model.roots];
   function switchScope(id: string) {
     dispatch({ type: 'scope', id });
@@ -121,7 +132,8 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
   });
 
   return <div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-expansion-end={EXPANSION_END} hidden={suspended}>
-    <header className="catalogue-navigation">
+    <header ref={navigation} data-stuck={navStuck} className="catalogue-navigation">
+      {editing && <div className="editing-indicator"><span className="editing-badge">Editing</span><span className="editing-help">Click Edit beside a favorite or folder to make changes.</span></div>}
       <nav aria-label="Bookmark roots">
         {roots.map((root, index) => <button key={root.id} aria-current={scope === root.id ? 'page' : undefined}
           title={index < 9 ? `${root.title} · Alt+${index + 1}` : root.title}
@@ -131,7 +143,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       </nav>
       <div className="navigation-actions">
         <button ref={searchButton} onClick={() => searching ? input.current?.focus() : startSearch()}>Search /</button>
-        {onEdit && <button id="catalogue-edit" aria-pressed={editing} onClick={() => setEditing(!editing)}>{editing ? 'Editing · Done' : 'Edit'}</button>}
+        {onEdit && <button id="catalogue-edit" aria-pressed={editing} onClick={() => setEditing(!editing)}><span className="mode-button-size"><span aria-hidden={editing} style={{ visibility: editing ? 'hidden' : 'visible' }}>Edit</span><span aria-hidden={!editing} style={{ visibility: editing ? 'visible' : 'hidden' }}>Done</span></span></button>}
         <button onClick={onManage}>Manage</button>
       </div>
     </header>

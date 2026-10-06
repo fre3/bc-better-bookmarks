@@ -9,8 +9,6 @@
 .favorite-editor .editor-actions button { min-height: 32px; }
 .favorite-editor .editor-error { color: var(--error); overflow-wrap: anywhere; margin: 6px 0; }
 .favorite-editor .discard-confirmation { margin-top: 20px; border-top: 1px solid var(--input-rule); }
-.catalogue.is-editing .bookmark-title { cursor: pointer; }
-.catalogue.is-editing .bookmark-item:hover .bookmark-text, .catalogue.is-editing .bookmark-item:focus-within .bookmark-text { text-decoration-style: dotted; }
 .catalogue .bookmark-item.is-selected .bookmark-title { background: var(--selected); box-decoration-break: clone; }
 .catalogue .navigation-actions { flex-wrap: wrap; max-width: 100%; }
 @media (max-width: 600px) { .favorite-editor { padding: 18px; } }

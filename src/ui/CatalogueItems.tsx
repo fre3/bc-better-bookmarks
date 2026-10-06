@@ -1,3 +1,4 @@
+import { EditAction } from './EditAction';
 import { TagText } from './TagAnnotation';
 import { Fragment } from 'react';
 import { BookmarkLabel } from './BookmarkLabel';
@@ -27,8 +28,7 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0, on
       return <Fragment key={folder.id}>
         <span className={`catalogue-item folder-item${tagMatch ? ' tag-match' : ''}${selectedId === folder.id ? ' is-selected' : ''}`} data-item-id={folder.id}>
           {query !== null ? <span>{title}</span> : <button id={`folder-${folder.id}`} className="folder-trigger" aria-expanded={open} aria-controls={`children-${folder.id}`} onClick={() => onToggle(folder.id)}>{title}</button>}
-          {onEdit && folder.renamable && <button id={`edit-folder-${folder.id}`} className="folder-edit-action" aria-label={`Edit folder ${folder.title}`} aria-haspopup="dialog" onClick={() => onEdit(folder.id)}>Edit</button>}
-          {tagInfo?.archived && <span className="archive-indicator">Archived</span>}
+          {onEdit && folder.renamable && <EditAction id={folder.id} title={folder.title} folder onEdit={onEdit} />}
           {folderTags.length > 0 && <span className="item-annotation"><span className="all-annotations"><TagText tags={folderTags} info={tagInfo} folder /></span>{tagMatch && <span className="matched-annotations" aria-hidden="true"><TagText tags={folderTags} info={tagInfo} folder /></span>}</span>}
         </span>
         {open && <span id={`children-${folder.id}`} className={`folder-children${depth === 0 ? ' first-expansion' : ''}`}>
@@ -48,12 +48,8 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0, on
     const annotations = tags.length > 0 || Boolean(statusText);
     const label = <BookmarkLabel title={favorite.title} icon={icon} />;
     return <Fragment key={favorite.id}><span className={`catalogue-item bookmark-item${revealed.length ? ' tag-match' : ''}${ambiguous ? ' ambiguous' : ''}${selectedId === favorite.id ? ' is-selected' : ''}`} data-item-id={favorite.id}>
-      {onEdit ? <a id={`bookmark-${favorite.id}`} className="bookmark-title" lang="" role="button" tabIndex={0} aria-label={`Edit ${favorite.title || '(untitled)'}`} aria-haspopup="dialog" aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}
-        onClick={event => { event.preventDefault(); onEdit(favorite.id); }}
-        onAuxClick={event => { event.preventDefault(); if (event.button === 1) onEdit(favorite.id); }}
-        onMouseDown={event => { if (event.button === 1) event.preventDefault(); }}
-        onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onEdit(favorite.id); } }}>{label}</a> : href ? <a id={`bookmark-${favorite.id}`} className="bookmark-title" lang="" href={href} aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}>{label}</a> : <span id={`bookmark-${favorite.id}`} className="bookmark-title non-navigating" lang="" tabIndex={0} aria-describedby={`annotation-${favorite.id}`}>{label}</span>}
-      {tagInfo?.archived && <span className="archive-indicator">Archived</span>}
+      {href ? <a id={`bookmark-${favorite.id}`} className="bookmark-title" lang="" href={href} aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}>{label}</a> : <span id={`bookmark-${favorite.id}`} className="bookmark-title non-navigating" lang="" tabIndex={0} aria-describedby={`annotation-${favorite.id}`}>{label}</span>}
+      {onEdit && !favorite.unmodifiable && <EditAction id={favorite.id} title={favorite.title} onEdit={onEdit} />}
       {annotations && <span id={`annotation-${favorite.id}`} className="item-annotation">
         {tags.length > 0 && <span className="bookmark-tags all-annotations">{<TagText tags={tags} info={tagInfo} />}</span>}
         {revealed.length > 0 && <span className="bookmark-tags matched-annotations" aria-hidden="true">{<TagText tags={revealed} info={tagInfo} />}</span>}

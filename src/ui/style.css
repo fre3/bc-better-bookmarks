@@ -184,14 +184,40 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 @media (prefers-color-scheme: dark) { :root:not([data-appearance="light"]) button:disabled { opacity: 1; color: var(--disabled); } }
 :root[data-appearance="dark"] button:disabled { opacity: 1; color: var(--disabled); }
 
-/* Edit controls are siblings of expansion controls, never nested buttons. */
-.folder-edit-action { font: 400 14px/1.4 Helvetica, Arial, sans-serif; vertical-align: top; margin-left: .7em; text-decoration: underline; }
-.section-header h2.has-folder-editor { display: flex; align-items: center; gap: 16px; }
-.section-header h2.has-folder-editor > button:first-child { flex: 1; min-width: 0; }
-.section-header h2 > .folder-edit-action { width: auto; min-height: 0; flex: none; padding: 4px 0; font-size: 14px; font-weight: 400; }
-.archive-indicator { font: 400 12px/1 Helvetica, Arial, sans-serif; color: var(--secondary); margin-left: .5em; vertical-align: top; }
+/* Text buttons remain siblings of the associated link/expansion control. */
+.item-edit-action { display: inline; font: 400 14px/1.4 Helvetica, Arial, sans-serif; letter-spacing: 0; vertical-align: baseline; margin-left: .7em; white-space: nowrap; text-decoration: underline; }
+.section-header h2.has-folder-editor { display: block; }
+.section-header h2.has-folder-editor > button:first-child, .has-folder-editor > .section-label { display: inline; width: auto; min-height: 0; padding: 0; font: inherit; }
+.section-header h2.has-folder-editor { min-height: var(--header-height); padding-top: 26px; padding-bottom: 34px; font: 700 17.6px/1.25 Helvetica, Arial, sans-serif; }
+.section-header h2 > .item-edit-action { display: inline; width: auto; min-height: 0; padding: 0; font: 400 14px/1.4 Helvetica, Arial, sans-serif; }
+.section-header .item-edit-action:focus-visible { outline: 1px solid var(--focus); outline-offset: 4px; }
+.section-header .item-edit-action:hover { text-decoration: underline; }
 .section-header h2 { position: relative; }
-.section-tag-annotation { position: absolute; bottom: 9px; left: var(--page-gutter); font: 10px/10px Helvetica, Arial, sans-serif; color: var(--annotation); white-space: nowrap; visibility: hidden; pointer-events: none; }
-.section-header:hover .section-tag-annotation, .section-header:focus-within .section-tag-annotation, .section-tag-annotation.explains-search { visibility: visible; }
+.section-tag-annotation { position: absolute; top: 0; left: 0; font: 10px/10px Helvetica, Arial, sans-serif; color: var(--annotation); white-space: nowrap; visibility: hidden; pointer-events: none; }
+.section-tag-item:hover .section-tag-annotation, .section-tag-item:focus-within .section-tag-annotation, .section-tag-annotation.explains-search { visibility: visible; }
 .folder-item.is-selected .folder-title { background: var(--selected); }
 .editor-inheritance { overflow-wrap: anywhere; }
+.mode-button-size { display: inline-grid; }
+.mode-button-size > span { grid-area: 1 / 1; }
+.catalogue-navigation { position: relative; }
+.is-editing .catalogue-navigation { position: sticky; top: 0; z-index: 100; background: transparent; }
+.is-editing .catalogue-navigation::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: 2px; background: var(--edit-accent); pointer-events: none; }
+.editing-indicator { position: absolute; top: 3px; left: 0; display: flex; gap: 12px; align-items: baseline; font: 14px/16px Helvetica, Arial, sans-serif; color: var(--edit-accent); }
+.editing-badge { font-weight: bold; }
+.is-editing #catalogue-edit { color: var(--edit-accent); font-weight: bold; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.is-editing .section-slot { scroll-margin-top: calc(var(--editing-nav-height, 0px) + 12px); }
+.is-editing .is-open .section-header { top: var(--editing-nav-height, 0px); }
+.is-editing .catalogue-item, .is-editing .item-edit-action { scroll-margin-top: calc(var(--editing-nav-height, 0px) + var(--header-height) + 12px); }
+@media (max-width: 700px) { .editing-help { display: none; } }
+.has-folder-editor > button:first-child::after { content: ''; position: absolute; inset: 0; }
+.section-header .item-edit-action { position: relative; z-index: 1; }
+
+/* A zero-advance sibling button occupies space reserved in the protected ending.
+   The actual link stays one element; copied title text gains no hidden characters. */
+.catalogue { --item-edit-space: 42px; }
+.bookmark-item:has(> .item-edit-action) .bookmark-ending { padding-right: var(--item-edit-space); }
+.folder-item:has(> .item-edit-action) .folder-trigger { padding-right: var(--item-edit-space); max-width: 100%; }
+.folder-item:has(> .item-edit-action) > span:first-child { padding-right: var(--item-edit-space); }
+.catalogue-item > .item-edit-action { display: inline-block; width: var(--item-edit-space); margin-left: calc(-1 * var(--item-edit-space)); padding-left: 10px; text-align: left; position: relative; }
+.is-editing .catalogue-navigation[data-stuck="true"]::after { content: ''; position: absolute; inset: 0 calc(-1 * var(--page-gutter)); z-index: -1; background: var(--surface); }
+.editing-badge { border: 1px solid currentColor; padding-inline: 4px; font-size: 12px; line-height: 12px; }

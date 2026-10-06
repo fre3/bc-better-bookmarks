@@ -4,7 +4,7 @@ function firstTextFragment(link: Element) {
   const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
   while (walker.nextNode()) {
     const text = walker.currentNode as Text;
-    if (!text.parentElement?.closest('.bookmark-text, .folder-title')) continue;
+    if (!text.parentElement?.closest('.bookmark-text, .folder-title, .section-title-text')) continue;
     const start = text.data.search(/\S/u);
     if (start < 0) continue;
     const range = document.createRange();
@@ -26,13 +26,15 @@ export function useCatalogueAnnotations() {
     let connected = true;
     const update = () => {
       if (!connected) return;
-      const origin = container.getBoundingClientRect();
-      for (const item of container.querySelectorAll('.catalogue-item:hover, .catalogue-item:focus-within, .catalogue-item.tag-match')) {
-        const annotation = item.querySelector<HTMLElement>('.item-annotation');
-        const link = item.querySelector('.bookmark-title, .folder-title');
+      for (const item of container.querySelectorAll('.catalogue-item:hover, .catalogue-item:focus-within, .catalogue-item.tag-match, .section-tag-item')) {
+        const annotation = item.querySelector<HTMLElement>('.item-annotation, .section-tag-annotation');
+        const link = item.querySelector('.bookmark-title, .folder-title, .section-title-text');
         if (!annotation || !link) continue;
         const fragment = firstTextFragment(link);
         if (!fragment) continue;
+        const parent = annotation.offsetParent as HTMLElement | null;
+        if (!parent) continue;
+        const origin = parent.getBoundingClientRect();
         annotation.style.left = `${fragment.left - origin.left}px`;
         annotation.style.top = `${fragment.bottom - origin.top + 2}px`;
       }

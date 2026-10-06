@@ -22,7 +22,7 @@ try {
   assert.equal(await folderEdit(p,'r1').count(),0); // browser root is never editable
   await editFolder(p,'s0','Design renamed','parent, shared');await expect(folderEdit(p,'s0')).toBeFocused();
   await section(p,0).click();await editFolder(p,'f0','Nested renamed','child, shared');await p.locator('#folder-f0').click();
-  await p.locator('#bookmark-n0').click();await expect(p.getByText('Inherited tags (read only). Change these at their source:')).toBeVisible();await expect(tags(p)).toHaveValue('');await expect(modal(p)).toContainText('Design renamed / Nested renamed');await tags(p).fill('own, shared');await save(p).click();await expect(modal(p)).toHaveCount(0);
+  await p.locator('#edit-bookmark-n0').click();await expect(p.getByText('Inherited tags (read only). Change these at their source:')).toBeVisible();await expect(tags(p)).toHaveValue('');await expect(modal(p)).toContainText('Design renamed / Nested renamed');await tags(p).fill('own, shared');await save(p).click();await expect(modal(p)).toHaveCount(0);
   await p.locator('#bookmark-n0').hover();await p.screenshot({path:join(output,`${theme}-inherited-annotations.png`)});let a=p.locator('[data-item-id="n0"] .all-annotations');await expect(a.locator('strong')).toHaveCount(3);await expect(a).toContainText('#own');assert.equal(await a.locator('strong').filter({hasText:'#shared'}).count(),1);
   const before=await p.locator('#bookmark-n0').boundingBox();await p.mouse.move(1240,5);await p.getByRole('button',{name:'Search /',exact:true}).focus();await expect(a).toBeHidden();assert.deepEqual(await p.locator('#bookmark-n0').boundingBox(),before);
   await folderEdit(p,'f0').click();await p.waitForTimeout(200);await p.screenshot({path:join(output,`${theme}-folder-editor.png`)});await cancel(p).click();
@@ -30,8 +30,8 @@ try {
   await p.getByRole('button',{name:'Search /',exact:true}).click();const search=p.getByRole('textbox',{name:'Search bookmarks'});await search.fill('#child');await expect(p.locator('#bookmark-n0')).toBeVisible();await expect(p.locator('[data-item-id="n0"] .matched-annotations strong').filter({hasText:'#child'})).toBeVisible();await p.keyboard.press('Escape');
   // Archive a descendant independently, then its source folder. Neither Edit
   // mode nor #archived bypasses the default visibility gate.
-  await p.locator('#bookmark-n0').click();await tags(p).fill('own, shared, archived');await save(p).click();await expect(modal(p)).toHaveCount(0);await expect(p.locator('#bookmark-n0')).toHaveCount(0);
-  await editFolder(p,'s0',null,'parent, shared, ARCHIVED');await expect(section(p,0)).toHaveCount(0);await expect(p.getByRole('button',{name:'Editing · Done'})).toHaveAttribute('aria-pressed','true');
+  await p.locator('#edit-bookmark-n0').click();await tags(p).fill('own, shared, archived');await save(p).click();await expect(modal(p)).toHaveCount(0);await expect(p.locator('#bookmark-n0')).toHaveCount(0);
+  await editFolder(p,'s0',null,'parent, shared, ARCHIVED');await expect(section(p,0)).toHaveCount(0);await expect(p.getByRole('button',{name:'Done',exact:true})).toHaveAttribute('aria-pressed','true');
   await p.getByRole('button',{name:'Search /',exact:true}).click();await search.fill('#archived');await expect(p.locator('.section-slot')).toHaveCount(0);await p.keyboard.press('Escape');
   await manage(p).click();await expect(p.locator('.legacy')).not.toContainText('Design renamed');await expect(p.getByLabel('Show archived',{exact:true})).not.toBeChecked();
   const other=await context.newPage();await other.goto(url);await manage(other).click();
@@ -60,7 +60,7 @@ try {
  const review=p.locator('.metadata-setup');await expect(review.getByText('candidate:',{exact:false})).toHaveCount(2);
  for (const checkbox of await review.locator('li input[type=checkbox]').all()) await checkbox.check();await p.getByRole('button',{name:'Confirm selected original folders'}).click();await expect(review.getByText('candidate:',{exact:false})).toHaveCount(0);
  await back(p).click();
- await section(p,0).click();await p.locator('#bookmark-0-0').click();await tags(p).fill('baseline');await save(p).click();await expect(modal(p)).toHaveCount(0);await p.locator('#bookmark-0-0').click();await p.getByLabel('Title',{exact:true}).fill('Native saved then moved');await tags(p).fill('remaining');await p.evaluate(()=>window.failTagWrite=true);await save(p).click();await expect(modal(p)).toContainText('Completed native changes: title');
+ await section(p,0).click();await p.locator('#edit-bookmark-0-0').click();await tags(p).fill('baseline');await save(p).click();await expect(modal(p)).toHaveCount(0);await p.locator('#edit-bookmark-0-0').click();await p.getByLabel('Title',{exact:true}).fill('Native saved then moved');await tags(p).fill('remaining');await p.evaluate(()=>window.failTagWrite=true);await save(p).click();await expect(modal(p)).toContainText('Completed native changes: title');
  await p.evaluate(()=>window.external('0-0',{parentId:'s2'}));await expect(modal(p).getByRole('alert').first()).toContainText('changed');await p.getByRole('button',{name:'Review current values for recovery'}).click();await expect(modal(p)).toContainText('Parent: Favorites bar / Career 2');await p.evaluate(()=>window.failTagWrite=false);await p.getByRole('button',{name:'Keep my input and use these values as the save baseline'}).click();await save(p).click();await expect(modal(p)).toHaveCount(0);
  assert.equal(await p.evaluate(async()=>(await window.service.snapshot('verify recovery parent')).favorites.find(f=>f.id==='0-0').parentId),'s2');
  await editFolder(p,'s1',null,'archived');await editFolder(p,'s11',null,'archived');
