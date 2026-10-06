@@ -1,3 +1,5 @@
+import { useCatalogueChrome } from './useCatalogueChrome';
+import type { folderBindings } from './folder-bindings';
 import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
 import type { Snapshot } from '../core/model';
 import { buildCatalogue, filterCatalogue } from './catalogue-model';
@@ -13,16 +15,16 @@ import { catalogueHandoff } from './catalogue-handoff';
 // Nested expansions always remain inline.
 const EXPANSION_END: 'inline' | 'break' = 'inline';
 
-export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek = true, showArchived = false, modalOpen = false, selectedId, onEdit, onManage }: { snapshot: Snapshot; suspended: boolean; searchRequest?: SearchIntent; autoScrollPeek?: boolean; onManage: () => void; modalOpen?: boolean; showArchived?: boolean; selectedId?: string; onEdit?: (id: string) => void }) {
+export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek = true, showArchived = false, modalOpen = false, selectedId, onEdit, onManage, bindingReviews = [], onReviewBindings }: { bindingReviews?: ReturnType<typeof folderBindings>; onReviewBindings?: () => void; snapshot: Snapshot; suspended: boolean; searchRequest?: SearchIntent; autoScrollPeek?: boolean; onManage: () => void; modalOpen?: boolean; showArchived?: boolean; selectedId?: string; onEdit?: (id: string) => void }) {
   const [handoff] = useState(() => typeof location === 'undefined' ? undefined : catalogueHandoff(takeSearchHandoff()));
   const [state, dispatch] = useReducer(catalogueReducer, handoff?.state ?? initialCatalogueState);
   const [editing, setEditing] = useState(false);
-  const [navStuck, setNavStuck] = useState(false);
+  const { chrome, reservation } = useCatalogueChrome();
   const [launchError, setLaunchError] = useState('');
   const peekFooter = usePeekFooter(state.peekEpoch, suspended);
   const lastFocused = useRef<HTMLElement | null>(null);
   const input = useRef<HTMLInputElement>(null);
-  const navigation = useRef<HTMLElement>(null);
+
   const searchButton = useRef<HTMLButtonElement>(null);
   const scrollToSection = useRef<string | null>(null);
   const browsePosition = useRef({ scroll: handoff?.browseScroll ?? 0, focus: null as HTMLElement | null, focusId: handoff?.browseFocusId ?? null as string | null });
@@ -40,19 +42,17 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       (input.current ?? searchButton.current)?.focus({ preventScroll: true });
     }
   }, [visible, modalOpen, suspended]);
-  useLayoutEffect(() => {
-    const nav = navigation.current;
-    if (!nav) return;
-    const update = () => nav.parentElement?.style.setProperty('--editing-nav-height', editing ? `${nav.offsetHeight}px` : '0px');
-    const position = () => setNavStuck(editing && (nav.parentElement?.getBoundingClientRect().top ?? 0) < 0);
-    const observer = new ResizeObserver(update); observer.observe(nav); update(); position();
-    window.addEventListener('scroll', position, { passive: true });
-    return () => { observer.disconnect(); window.removeEventListener('scroll', position); };
-  }, [editing]);
   const roots = [{ id: '*', title: 'All bookmarks' }, ...model.roots];
   function switchScope(id: string) {
+    const selection = input.current ? [input.current.selectionStart, input.current.selectionEnd, input.current.selectionDirection] as const : undefined;
     dispatch({ type: 'scope', id });
-    if (searching) input.current?.focus({ preventScroll: true });
+    requestAnimationFrame(() => {
+      if (searching && input.current) {
+        input.current.focus({ preventScroll: true });
+        if (selection) input.current.setSelectionRange(selection[0], selection[1], selection[2] ?? undefined);
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    });
   }
   function startSearch(value = '', allBookmarks = false) {
     if (!searching) browsePosition.current = { scroll: window.scrollY, focus: document.activeElement instanceof HTMLElement ? document.activeElement : null, focusId: document.activeElement?.id ?? null };
@@ -132,7 +132,8 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
   });
 
   return <div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-expansion-end={EXPANSION_END} hidden={suspended}>
-    <header ref={navigation} data-stuck={navStuck} className="catalogue-navigation">
+    <div ref={chrome} className="catalogue-chrome">
+    <header className="catalogue-navigation">
       {editing && <div className="editing-indicator"><span className="editing-badge">Editing</span><span className="editing-help">Click Edit beside a favorite or folder to make changes.</span></div>}
       <nav aria-label="Bookmark roots">
         {roots.map((root, index) => <button key={root.id} aria-current={scope === root.id ? 'page' : undefined}
@@ -147,11 +148,20 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
         <button onClick={onManage}>Manage</button>
       </div>
     </header>
-    {launchError && <p role="alert">{launchError}</p>}
+
     {searching && <section className="search-mode" aria-label="Search catalogue">
       <input ref={input} type="text" aria-label="Search bookmarks" aria-describedby="search-syntax" value={state.query ?? ''} onChange={e => dispatch({ type: 'query', value: e.target.value })} autoComplete="off" spellCheck={false} placeholder="Search bookmarks" />
       <div className="search-caption"><span role="status">{visible.count} {visible.count === 1 ? 'result' : 'results'}</span><span id="search-syntax">plain text · #tag · @folder</span><button onClick={exitSearch}>Close search · Esc</button></div>
     </section>}
+    </div>
+    <div ref={reservation} className="chrome-reservation" aria-hidden="true" />
+    {launchError && <p role="alert">{launchError}</p>}
+    {bindingReviews.some(review => review.available || review.ambiguous) && <p className="binding-notice" role="status">
+      Folder tags received; folder confirmation is needed before they can apply.
+      {' '}{bindingReviews.filter(review => review.available).length} pending confirmation;
+      {' '}{bindingReviews.filter(review => review.ambiguous).length} ambiguous (requires review).
+      {' '}<button onClick={onReviewBindings}>Review folders in Manage</button>
+    </p>}
     <div className="section-stack" aria-label="Bookmark catalogue">
       {visible.sections.map((section, index) => <SectionCard key={section.id} blocked={modalOpen} selectedId={selectedId} onEdit={editing ? onEdit : undefined} section={section} nextSection={visible.sections[index + 1]} sections={visible.sections} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended} onToggle={() => {
         if (state.openSection && state.openSection !== section.id) scrollToSection.current = section.id;

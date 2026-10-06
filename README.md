@@ -6,9 +6,9 @@ A Manifest V3 New Tab dashboard over your **real Microsoft Edge Favorites**. Fav
 
 ## Accepted visual checkpoint
 
-The user accepted **0.1.15** in native Edge, including appearance, footer and peek behavior. Annotated tag `ui-validated-0.1.15` and `feature/ui-ux-redesign` preserve that checkpoint. The current **0.1.18** editing presentation review is on `feature/bookmark-editing`.
+The user accepted **0.1.15** in native Edge, including appearance, footer and peek behavior. Annotated tag `ui-validated-0.1.15` and `feature/ui-ux-redesign` preserve that checkpoint. The current **0.1.19** editing presentation review is on `feature/bookmark-editing`.
 
-All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. Manage retains existing MVP operations, settings and diagnostics. Browsing roots never changes the saved mutation scope. Folder tags, computed inheritance and archive visibility are implemented for 0.1.17 review. [Design and load instructions](docs/ui-ux-design.md). The separate validated functional baseline remains at `mvp-validated-0.1.1`.
+All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. Manage retains existing MVP operations, settings and diagnostics. Browse/search roots filter presentation only; there is no mutation-scope setting. Folder tags, computed inheritance and archive visibility are implemented for 0.1.17 review. [Design and load instructions](docs/ui-ux-design.md). The separate validated functional baseline remains at `mvp-validated-0.1.1`.
 
 ## Keyboard search command
 
@@ -20,15 +20,15 @@ The command reuses a dashboard in the current window or opens one there. From an
 
 See [command behavior, added tabs permission, focus limitations and Edge checklist](docs/keyboard-search.md). Slash wrapping is also included in 0.1.8; current observed English/German behavior is accepted without language-model changes.
 
-## Catalogue editing — 0.1.18 review
+## Catalogue editing — 0.1.19 review
 
-The accepted visual checkpoint is `ui-validated-0.1.15`. Choose **Edit** in navigation, then the small **Edit** button beside a Favorite to change title, URL and direct tags. Titles remain normal links, including keyboard, modifier and middle-click navigation. Real folders/section headings have a separate **Edit** action for their name and direct tags; their labels still expand/open normally. **Done** returns to browsing; the Editing badge and sticky navigation show the active mode. Configure the existing mutation scope in Manage if saving is disabled; browse scope never grants edit permission.
+The accepted visual checkpoint is `ui-validated-0.1.15`. Choose **Edit** in navigation, then the small **Edit** button beside a Favorite to change title, URL and direct tags. Titles remain normal links, including keyboard, modifier and middle-click navigation. Real folders/section headings have a separate **Edit** action for their name and direct tags; their labels still expand/open normally. **Done** returns to browsing; the Editing badge and sticky navigation show the active mode. Editing is available across browser roots, subject to managed-node, identity and metadata-health safeguards. Old mutation-scope preferences are ignored.
 
 Folder tags apply to the folder and all descendants without copying metadata. Editors show inherited tags and source folders read-only. Enter tags without `#`; inherited Favorite annotations are bold. The editor archive checkbox adds/removes only the direct `archived` tag; other direct tags stay in the Tags field. Inherited archive status names its sources. Effective `archived` hides an item/subtree from the dashboard and search, including Edit mode. **Manage → Show archived** includes it locally; changing the setting does not change tags. `#archived` search does not bypass it. Native Edge Favorites remain visible and unchanged by archiving.
 
 Cancel/Escape protects modified drafts; Escape again at the discard question means Continue editing, preserving input; Ctrl+Shift+B cannot replace a modal draft. Late save failures can leave native changes applied while tag persistence is unconfirmed. Input remains; review the displayed current values before explicitly refreshing the save baseline/retrying. No atomic transaction or recovery after closing/reloading is promised. Existing Manage operations remain available.
 
-**Upgrade every device before using folder tags.** Unbound folder metadata requires consolidated explicit confirmation in Manage; a matching path is not proven identity. Disposable test metadata may be reset only through the deliberate export/inventory/setup workflow, preserving all native Favorites and unrelated preferences. No automatic reset occurs. Read [the coordinated reset and two-device procedure](docs/metadata-setup.md) before performing a real reset. The user reports tag changes/inheritance work well. Native Edge 0.1.18 review is pending; [checklist and current evidence](docs/development-state.md).
+**Upgrade every device before using folder tags.** Unbound folder metadata requires consolidated explicit confirmation in Manage; a matching path is not proven identity. Disposable test metadata may be reset only through the deliberate export/inventory/setup workflow, preserving all native Favorites and unrelated preferences. No automatic reset occurs. Read [the coordinated reset and two-device procedure](docs/metadata-setup.md) before performing a real reset. The user reports tag changes/inheritance work well. Native Edge 0.1.19 review is pending; [checklist and current evidence](docs/development-state.md).
 
 ## Build
 
@@ -103,3 +103,5 @@ Local check results and live-test status are recorded in the test worksheet. If 
 ## Roadmap
 
 Deferred system labels, search enhancements, metadata-recovery work and distribution considerations are tracked in [the roadmap](docs/roadmap.md). Roadmap items are not implementation requirements unless explicitly promoted into current work; see [the current development handoff](docs/development-state.md) for active status and next actions.
+
+0.1.19 adds compact sticky navigation in both modes, an open/collapsed section chevron (not shown on static search headings), explicit-root scroll-to-top and a compact notice for pending folder-binding review. Folder tags already received on another device require explicit confirmation in Manage before applying; the notice never attaches them automatically. Pointer-retained focus no longer keeps tags visible after leaving an item; keyboard focus and search explanations still reveal them.

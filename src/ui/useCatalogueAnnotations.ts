@@ -44,6 +44,7 @@ export function useCatalogueAnnotations() {
     };
     const observer = new ResizeObserver(update);
     observer.observe(container);
+    container.querySelectorAll('.section-tag-item').forEach(heading => observer.observe(heading));
     container.addEventListener('pointerover', update);
     container.addEventListener('focusin', update);
     container.addEventListener('load', update, true);

@@ -9,6 +9,10 @@
   --nested-size: calc(var(--catalogue-size) * .85);
   --catalogue-line: calc(var(--catalogue-size) + 14px);
   --header-height: 85px;
+  /* Extra 11.6px structural leading clears wrapped-heading tags. Subtract
+     half from each padding edge to preserve single-line label geometry. */
+  --section-padding-start: 20.2px;
+  --section-padding-end: 28.2px;
   --page-gutter: clamp(20px, 3.5vw, 72px);
 }
 * { box-sizing: border-box; }
@@ -34,7 +38,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px solid var(--focus); outline-offset: 3px; }
 [hidden] { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.catalogue-navigation { min-height: 108px; display: flex; align-items: center; gap: 24px; padding-block: 24px; }
+.catalogue-navigation { --navigation-rest-padding: 43px; min-height: 0; display: flex; align-items: center; gap: 24px; padding-block: var(--navigation-rest-padding); }
 .catalogue-navigation nav { display: flex; flex-wrap: wrap; gap: 14px 28px; }
 .catalogue-navigation button { text-align: left; line-height: 1.4; text-transform: uppercase; letter-spacing: .15em; font-size: 16px; font-weight: 400; overflow-wrap: anywhere; }
 .catalogue-navigation nav { min-width: 0; }
@@ -63,11 +67,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 }
 .section-inner { padding-inline: var(--page-gutter); }
 .section-header { min-height: var(--header-height); background: var(--surface); }
-.section-header h2 { margin: 0; font: inherit; }
-.section-header button, .section-toggle, .section-label {
-  display: flex; align-items: center; text-align: left; width: 100%; min-height: var(--header-height);
-  padding-block: 26px 34px; overflow-wrap: anywhere; font: 700 17.6px/1.25 Helvetica, Arial, sans-serif;
-}
+.section-header h2 { margin: 0; position: relative; min-height: var(--header-height); padding-block: var(--section-padding-start) var(--section-padding-end); background: var(--surface); font: 700 17.6px/33.6px Helvetica, Arial, sans-serif; overflow-wrap: anywhere; }
+.section-toggle, .section-label { display: inline; text-align: left; font: inherit; }
+.section-toggle::after { content: ''; position: absolute; inset: 0; }
+.section-state { display: inline-block; width: 1em; margin-right: .25em; color: var(--secondary); font-weight: 400; }
 .section-header button:hover, .section-toggle:hover { text-decoration: none; }
 .section-header button:focus-visible, .section-toggle:focus-visible { outline: none; }
 .section-header button:focus-visible .section-heading-text, .section-toggle:focus-visible .section-heading-text { outline: 1px solid var(--focus); outline-offset: 4px; }
@@ -115,7 +118,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .folder-item { display: inline-block; max-width: 100%; }
 .bookmark-item { position: static; }
 .bookmark-title { text-decoration: none; font-weight: normal; overflow-wrap: break-word; word-break: normal; }
-.bookmark-item:hover .bookmark-text, .bookmark-item:focus-within .bookmark-text { text-decoration: underline; text-decoration-thickness: auto; text-underline-offset: .08em; }
+.bookmark-item:hover .bookmark-text, .bookmark-item:has(> :focus-visible) .bookmark-text { text-decoration: underline; text-decoration-thickness: auto; text-underline-offset: .08em; }
 /* Keep the native multiline contour out of the annotation's interline space. */
 .bookmark-title:focus-visible { outline-offset: -1px; }
 .non-navigating { cursor: default; }
@@ -123,7 +126,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .favicon-frame { display: inline-block; padding: .1em; background: var(--frame); line-height: 0; vertical-align: -.01em; margin-right: .12em; }
 .favicon { display: block; width: auto; height: .8em; vertical-align: top; filter: grayscale(1); }
 .favicon-placeholder { width: .8em; background: var(--placeholder); }
-.bookmark-item:hover .favicon, .bookmark-item:focus-within .favicon { filter: grayscale(0); }
+.bookmark-item:hover .favicon, .bookmark-item:has(> :focus-visible) .favicon { filter: grayscale(0); }
 .folder-trigger { font: inherit; line-height: inherit; letter-spacing: inherit; text-align: left; }
 .folder-trigger:hover { text-decoration: none; }
 .folder-title { font-weight: bold; font-style: italic; }
@@ -145,17 +148,17 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
   pointer-events: none; color: var(--annotation);
   text-shadow: -1px 0 var(--annotation-halo), 1px 0 var(--annotation-halo), 0 -1px var(--annotation-halo), 0 1px var(--annotation-halo);
 }
-.catalogue-item:hover > .item-annotation, .catalogue-item:focus-within > .item-annotation,
+.catalogue-item:hover > .item-annotation, .catalogue-item:has(> :focus-visible) > .item-annotation,
 .tag-match > .item-annotation { visibility: visible; }
 .all-annotations, .matched-annotations, .status-annotation { display: none; }
 .all-annotations, .matched-annotations { margin-right: 8px; }
 .catalogue-item:hover > .item-annotation > .all-annotations,
-.catalogue-item:focus-within > .item-annotation > .all-annotations,
+.catalogue-item:has(> :focus-visible) > .item-annotation > .all-annotations,
 .catalogue-item:hover > .item-annotation > .status-annotation,
-.catalogue-item:focus-within > .item-annotation > .status-annotation { display: inline; }
+.catalogue-item:has(> :focus-visible) > .item-annotation > .status-annotation { display: inline; }
 .tag-match > .item-annotation > .matched-annotations { display: inline; }
 .tag-match:hover > .item-annotation > .matched-annotations,
-.tag-match:focus-within > .item-annotation > .matched-annotations { display: none; }
+.tag-match:has(> :focus-visible) > .item-annotation > .matched-annotations { display: none; }
 .empty-folder { font: 16px/1.5 Helvetica, Arial, sans-serif; letter-spacing: 0; color: var(--secondary); }
 .empty-catalogue { padding: 32px var(--page-gutter); }
 .search-mode { padding-block: 4px 34px; }
@@ -186,30 +189,21 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 
 /* Text buttons remain siblings of the associated link/expansion control. */
 .item-edit-action { display: inline; font: 400 14px/1.4 Helvetica, Arial, sans-serif; letter-spacing: 0; vertical-align: baseline; margin-left: .7em; white-space: nowrap; text-decoration: underline; }
-.section-header h2.has-folder-editor { display: block; }
-.section-header h2.has-folder-editor > .section-toggle, .has-folder-editor > .section-label { display: inline; width: auto; min-height: 0; padding: 0; font: inherit; }
-.section-header h2.has-folder-editor { min-height: var(--header-height); padding-top: 26px; padding-bottom: 34px; font: 700 17.6px/1.25 Helvetica, Arial, sans-serif; }
-.section-header h2 > .item-edit-action { display: inline; width: auto; min-height: 0; padding: 0; font: 400 14px/1.4 Helvetica, Arial, sans-serif; }
 .section-header .item-edit-action:focus-visible { outline: 1px solid var(--focus); outline-offset: 4px; }
 .section-header .item-edit-action:hover { text-decoration: underline; }
 .section-header h2 { position: relative; }
 .section-tag-annotation { position: absolute; top: 0; left: 0; font: 10px/10px Helvetica, Arial, sans-serif; color: var(--annotation); white-space: nowrap; visibility: hidden; pointer-events: none; }
-.section-tag-item:hover .section-tag-annotation, .section-tag-item:focus-within .section-tag-annotation, .section-tag-annotation.explains-search { visibility: visible; }
+.section-tag-item:hover .section-tag-annotation, .section-tag-item:has(> :focus-visible) .section-tag-annotation, .section-tag-annotation.explains-search { visibility: visible; }
 .folder-item.is-selected .folder-title { background: var(--selected); }
 .editor-inheritance { overflow-wrap: anywhere; }
 .mode-button-size { display: inline-grid; }
 .mode-button-size > span { grid-area: 1 / 1; }
 .catalogue-navigation { position: relative; }
-.is-editing .catalogue-navigation { position: sticky; top: 0; z-index: 100; background: transparent; }
 .is-editing .catalogue-navigation::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: 2px; background: var(--edit-accent); pointer-events: none; }
 .editing-indicator { position: absolute; top: 3px; left: 0; display: flex; gap: 12px; align-items: baseline; font: 14px/16px Helvetica, Arial, sans-serif; color: var(--edit-accent); }
 .editing-badge { font-weight: bold; }
 .is-editing #catalogue-edit { color: var(--edit-accent); font-weight: bold; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
-.is-editing .section-slot { scroll-margin-top: calc(var(--editing-nav-height, 0px) + 12px); }
-.is-editing .is-open .section-header { top: var(--editing-nav-height, 0px); }
-.is-editing .catalogue-item, .is-editing .item-edit-action { scroll-margin-top: calc(var(--editing-nav-height, 0px) + var(--header-height) + 12px); }
 @media (max-width: 700px) { .editing-help { display: none; } }
-.has-folder-editor > .section-toggle::after { content: ''; position: absolute; inset: 0; }
 .section-header .item-edit-action { position: relative; z-index: 1; }
 
 /* A zero-advance sibling button occupies space reserved in the protected ending.
@@ -219,10 +213,26 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .folder-item:has(> .item-edit-action) .folder-trigger { padding-right: var(--item-edit-space); max-width: 100%; }
 .folder-item:has(> .item-edit-action) > span:first-child { padding-right: var(--item-edit-space); }
 .catalogue-item > .item-edit-action { display: inline-block; width: var(--item-edit-space); margin-left: calc(-1 * var(--item-edit-space)); padding-left: 10px; text-align: left; position: relative; }
-.is-editing .catalogue-navigation[data-stuck="true"]::after { content: ''; position: absolute; inset: 0 calc(-1 * var(--page-gutter)); z-index: -1; background: var(--surface); }
 .editing-badge { border: 1px solid currentColor; padding-inline: 4px; font-size: 12px; line-height: 12px; }
 
 .folder-trigger, .section-toggle { cursor: pointer; text-decoration: none; }
-.has-folder-editor > .section-toggle { padding-right: var(--item-edit-space) !important; }
-.has-folder-editor > .item-edit-action { display: inline-block; width: var(--item-edit-space); margin-left: calc(-1 * var(--item-edit-space)); padding-left: 10px; }
-.section-header h2.has-folder-editor > .item-edit-action { display: inline-block; width: var(--item-edit-space); padding-left: 10px; margin-left: calc(-1 * var(--item-edit-space)); }
+
+/* Real text flow determines placement in browse and search alike. */
+.section-header h2 > .item-edit-action { display: inline-block; width: auto; min-height: 0; padding: 0; margin-left: .7em; font: 400 14px/1.4 Helvetica, Arial, sans-serif; vertical-align: baseline; }
+.catalogue-chrome { position: sticky; top: 0; z-index: 100; }
+.catalogue-chrome[data-compact="true"] { background: var(--surface); }
+.catalogue-chrome[data-compact="true"]::before { content: ''; position: absolute; inset: 0 calc(-1 * var(--page-gutter)); background: var(--surface); z-index: -1; }
+.catalogue-chrome[data-compact="true"] .catalogue-navigation { padding-block: 12px; }
+.is-editing .catalogue-chrome[data-compact="true"] .catalogue-navigation { padding-top: 24px; }
+.catalogue-chrome[data-compact="true"] .editing-help { display: none; }
+.catalogue-chrome[data-compact="true"] .search-mode { padding-bottom: 12px; }
+.chrome-reservation { pointer-events: none; height: 0; }
+.section-slot { scroll-margin-top: calc(var(--navigation-height, 0px) + 12px); }
+.is-open .section-header { top: var(--navigation-height, 0px); }
+.is-open .section-header[data-stuck="true"] { background: transparent; pointer-events: none; }
+.is-open .section-header[data-stuck="true"] h2 { min-height: 0; padding-block: 6.2px 10.2px; pointer-events: auto; }
+.catalogue-item, .item-edit-action { scroll-margin-top: calc(var(--navigation-height, 0px) + var(--sticky-heading-height, var(--header-height)) + 12px); }
+.binding-notice { margin: 0 0 28px; font: 14px/1.4 Helvetica, Arial, sans-serif; color: var(--secondary); }
+.binding-notice button { text-decoration: underline; }
+
+.peek-header-measure .section-label { display: block; min-height: var(--header-height); padding-block: 26px 34px; font: 700 17.6px/1.25 Helvetica, Arial, sans-serif; }

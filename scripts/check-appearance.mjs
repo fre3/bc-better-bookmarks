@@ -1,7 +1,6 @@
 /* global window, document, getComputedStyle, localStorage, requestAnimationFrame, performance */
 // Render the real App against synthetic Favorites and a shared local-storage API
 // bridge. No native Edge/system-theme acceptance is implied by these checks.
-import { execFileSync } from 'node:child_process';
 import { chromium } from '@playwright/test';
 import { build } from 'esbuild';
 import { mkdtemp, readFile, writeFile, copyFile } from 'node:fs/promises';
@@ -16,7 +15,7 @@ const names=['Design','Reference','Career','Crypto','Personal','Development'];
 const sections=names.map((title,i)=>({id:'s'+i,parentId:i<3?'r1':'r2',title,children:[{id:'f'+i,parentId:'s'+i,title:'Nested references',children:[{id:'n'+i,parentId:'f'+i,title:'Nested illustration',url:'https://example.test/1'}]},...Array.from({length:24},(_,j)=>({id:i+'-'+j,parentId:'s'+i,title:['Transparent dark logo','White-backed icon','Color illustration','Missing icon','disaster_recovery/revised_template.pdf'][j%5],url:(j===0?'http':'https')+'://example.test/'+j}))]}));
 const tree=[{id:'0',title:'',children:[{id:'r1',parentId:'0',title:'Favorites bar',children:sections.slice(0,3)},{id:'r2',parentId:'0',title:'Workspaces',children:sections.slice(3)}]}];
 const mappings=Object.fromEntries(sections.map((s,i)=>[i+'-0',{stableId:'tag'+i}]));
-window.fixture={tree,...flattenTree(tree),schemaVersion:1,extensionId:'fixture',version:'0.1.15',errors:[],logs:[],metadata:{records:sections.map((s,i)=>({stableId:'tag'+i,tags:['reference','design']})),raw:{},tombstones:{},invalid:[],histories:{}},reconciliation:{mappings,matches:[]},local:{rootId:'*',mappings,pendingDeletions:[]},metadataHealth:{},preservation:{available:true,stableIds:[]},syncBytes:0,quotas:{bytes:102400,items:512},lastReconciliation:'fixture'};
+window.fixture={tree,...flattenTree(tree),schemaVersion:1,extensionId:'fixture',version:'0.1.19',errors:[],logs:[],metadata:{records:sections.map((s,i)=>({stableId:'tag'+i,tags:['reference','design']})),raw:{},tombstones:{},invalid:[],histories:{}},reconciliation:{mappings,matches:[]},local:{rootId:'*',mappings,pendingDeletions:[]},metadataHealth:{},preservation:{available:true,stableIds:[]},syncBytes:0,quotas:{bytes:102400,items:512},lastReconciliation:'fixture'};
 import './src/main';`,loader:'tsx',resolveDir:process.cwd()},bundle:true,jsx:'automatic',target:'es2022',outfile:join(output,'fixture.js'),loader:{'.svg':'dataurl'}});
 await copyFile('public/theme-init.js',join(output,'theme-init.js'));
 await writeFile(join(output,'index.html'),'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><script src="theme-init.js"></script><link rel="stylesheet" href="fixture.css"></head><body><div id="root"></div><script src="fixture.js"></script></body></html>');
@@ -87,10 +86,13 @@ try {
     await page.bringToFront(); await page.waitForTimeout(100);
     await page.mouse.move(1200,15);const closed=await page.screenshot({path:join(output,`${theme}-closed.png`)});
     if(theme==='light'){
-      const oldCss=execFileSync('git',['show','a90c44e:src/ui/style.css'],{encoding:'utf8'}).replace("url('./assets/shadow.svg')",`url('data:image/svg+xml;base64,${(await readFile('src/ui/assets/shadow.svg')).toString('base64')}')`);
-      const baseline=await page.addStyleTag({content:oldCss+'\n.has-top-shadow::before{mask:none;}'});
-      const old=await page.screenshot({path:join(output,'light-baseline-0.1.14.png')});
-      assert(closed.equals(old),'resting light catalogue must remain pixel-identical to 0.1.14');report.lightPixelComparison=true;await baseline.evaluate(n=>n.remove());
+      // 0.1.19 intentionally adds state chevrons and compact chrome. Compare
+      // explicit Light with System/light at the same current layout instead of
+      // asserting the superseded 0.1.14 markup is pixel-identical.
+      await change(page,'system');await page.waitForTimeout(100);
+      const systemLight=await page.screenshot({path:join(output,'system-light-closed.png')});
+      assert(closed.equals(systemLight),'explicit Light and System/light must render identically');report.lightPixelComparison=true;
+      await change(page,'light');
     }
     await section(page,0).hover();await page.waitForTimeout(250);await contrast(page,theme,['.root-provenance','.peek-summary-name','.peek-summary-prefix','.peek-summary-provenance','.catalogue-footer a']);await page.screenshot({path:join(output,`${theme}-peek.png`)});
     await section(page,0).click();await page.waitForTimeout(250);

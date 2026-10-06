@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { onDashboardChanged, sendCommand } from '../browser/client';
 import type { Command, Snapshot } from '../core/model';
+import { folderBindings } from './folder-bindings';
 import { Catalogue } from './Catalogue';
 import { LegacyManagement } from './LegacyManagement';
 import { onDashboardSearch, dashboardShortcut, openShortcutSettings } from '../browser/dashboard-launch';
@@ -16,6 +17,7 @@ import { favoriteDraft, type FavoriteDraft } from './favorite-editor';
 import { AppearanceSetting } from './AppearanceSetting';
 
 export function App() {
+  const reviewRequested = useRef(false);
   const restoreFavorite = useRef<string | null>(null);
   const archivePreference = useArchivePreference();
   const peekPreference = usePeekPreference();
@@ -79,12 +81,18 @@ export function App() {
     }
     restoreFavorite.current = null;
   }, [draft, snapshot]);
+  useLayoutEffect(() => {
+    if (!managing || !reviewRequested.current) return;
+    reviewRequested.current = false;
+    const review = document.getElementById('folder-binding-review') as HTMLDetailsElement | null;
+    if (review) { review.open = true; review.querySelector('summary')?.focus({ preventScroll: true }); review.scrollIntoView({ block: 'start', behavior: 'instant' }); }
+  }, [managing]);
   if (!snapshot) return <main><h1>Better Bookmarks</h1><p role="status">{error || 'Reading Edge Favorites…'}</p><button onClick={() => void execute({ type: 'snapshot' })}>Retry</button><MetadataSetup onReset={() => void execute({ type: 'snapshot' })} /></main>;
   return <main className={managing ? undefined : 'catalogue-page'}>
     {error && <p className="status-error" role="alert">{error}</p>}
     <p className={managing ? undefined : 'sr-only'} hidden={managing && !notice} role="status" aria-atomic="true">{notice}</p>
     {snapshot.errors.length > 0 && <details className="status-error"><summary>{snapshot.errors.length} diagnostic warnings/errors</summary><ul>{snapshot.errors.map((message, i) => <li key={i}>{message}</li>)}</ul></details>}
-    <Catalogue snapshot={snapshot} showArchived={archivePreference.enabled} selectedId={draft?.id} modalOpen={Boolean(draft)} onEdit={id => { const favorite = [...snapshot.favorites, ...snapshot.folders].find(item => item.id === id); if (favorite) { setNotice(''); setDraft(favoriteDraft(snapshot, favorite)); } }} suspended={managing} autoScrollPeek={peekPreference.enabled} searchRequest={searchRequest} onManage={() => { setManaging(true); setNotice(''); }} />
+    <Catalogue bindingReviews={folderBindings(managementSnapshot!, archivePreference.enabled)} onReviewBindings={() => { reviewRequested.current = true; setManaging(true); }} snapshot={snapshot} showArchived={archivePreference.enabled} selectedId={draft?.id} modalOpen={Boolean(draft)} onEdit={id => { const favorite = [...snapshot.favorites, ...snapshot.folders].find(item => item.id === id); if (favorite) { setNotice(''); setDraft(favoriteDraft(snapshot, favorite)); } }} suspended={managing} autoScrollPeek={peekPreference.enabled} searchRequest={searchRequest} onManage={() => { setManaging(true); setNotice(''); }} />
     {draft && <FavoriteEditor draft={draft} snapshot={snapshot} execute={async command => {
       let failure: SaveFailure | undefined;
       const saved = await execute(command, message => { failure = message; });
@@ -94,7 +102,7 @@ export function App() {
       setDraft(undefined);
       if (saved) setNotice(draft.isFolder ? 'Folder saved in this browser.' : 'Favorite saved in this browser.');
     }} />}
-    {managing && <>
+    <div hidden={!managing}>
       <div className="management-heading"><span>Management and settings</span><button onClick={() => { setManaging(false); setNotice(''); }}>Back to catalogue</button></div>
       <AppearanceSetting />
       <p><label><input type="checkbox" checked={archivePreference.enabled} disabled={!archivePreference.ready || archivePreference.saving} onChange={e => void archivePreference.update(e.target.checked)} /> Show archived</label> <small>Include archived favorites and folders in the dashboard and search.</small></p>
@@ -104,6 +112,6 @@ export function App() {
       {peekPreference.error && <p role="alert">{peekPreference.error}</p>}
       <MetadataSetup snapshot={managementSnapshot} showArchived={archivePreference.enabled} execute={execute} onReset={() => void execute({ type: 'snapshot' })} />
       <LegacyManagement s={managementSnapshot!} tagSnapshot={snapshot} busy={busy} execute={execute} />
-    </>}
+    </div>
   </main>;
 }

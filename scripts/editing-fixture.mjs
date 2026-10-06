@@ -20,7 +20,7 @@ const tree=[{id:'0',title:'',children:[{id:'r1',parentId:'0',title:'Favorites ba
 const nodes=()=>{const walk=items=>items.flatMap(n=>[n,...walk(n.children??[])]);return walk(tree)};
 const bookmarks={getTree:async()=>structuredClone(tree),update:async(id,value)=>{if(window.failSave)throw Error('Synthetic browser write failure');Object.assign(nodes().find(n=>n.id===id),value)},move:async()=>{throw Error('Unexpected move')},create:async()=>{throw Error('Unexpected create')},removeLink:async()=>{throw Error('Unexpected deletion')}};
 const local=new Storage();local.data.state={schemaVersion:1,rootId:'*',mappings:{},pendingDeletions:[]};const sync=new Storage();
-const service=new DashboardService(bookmarks,new BrowserMetadataRepository(sync,local),{extensionId:'fixture',version:'0.1.18'});
+const service=new DashboardService(bookmarks,new BrowserMetadataRepository(sync,local),{extensionId:'fixture',version:'0.1.19'});
 const listeners=new Set(),storageListeners=new Set();let queue=Promise.resolve();
 local.data['ui:show-archived']=localStorage.getItem('ui:show-archived')==='true';
 window.addEventListener('storage',e=>{if(e.key==='ui:show-archived'){local.data[e.key]=e.newValue==='true';storageListeners.forEach(f=>f({[e.key]:{newValue:e.newValue==='true'}},'local'))}});

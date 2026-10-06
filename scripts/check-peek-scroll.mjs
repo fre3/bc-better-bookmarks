@@ -97,7 +97,9 @@ try {
         await page.getByRole('textbox', { name: 'Search bookmarks' }).fill('no-matches');
         assert.equal((await read()).space, 0); await page.keyboard.press('Escape'); await page.waitForTimeout(250);
         const restored = await read(); await pointAt(17); await page.waitForTimeout(250);
-        assert.equal((await read()).scroll, restored.scroll, 'search exit must not leave a stale scroll target');
+        const afterHover = await read();
+        if (afterHover.scroll !== restored.scroll) await writeFile(join(output, 'restoration-failure.json'), JSON.stringify({ width, height, restored, afterHover, trace: await page.evaluate(() => window.trace.slice(-160)) }, null, 2));
+        assert.equal(afterHover.scroll, restored.scroll, 'search exit must not leave a stale scroll target');
         await page.mouse.move(-10, -10); await page.waitForTimeout(150);
       }
       // Ordinary upward wheel input safely releases retained space.

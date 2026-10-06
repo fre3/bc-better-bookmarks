@@ -69,6 +69,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
           <a className="section-toggle" role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }} id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}
             onFocus={e => { if (e.currentTarget.matches(':focus-visible')) setFocusPeek(peekEpoch); }} onBlur={() => setFocusPeek(-1)}
             onClick={() => { setPointerPeek(-1); setFocusPeek(-1); onToggle(); }}>
+            <span className="section-state" aria-hidden="true">{open ? '▾' : '▸'}</span>
             <span className="section-heading-text"><span className="section-title-text">{section.title || '(untitled)'}</span>{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span>
           </a>}
         {onEdit && section.folder?.renamable && <EditAction id={section.folder.id} title={section.title} folder onEdit={onEdit} />}
