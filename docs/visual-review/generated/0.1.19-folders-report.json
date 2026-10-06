@@ -1,0 +1,13 @@
+[
+  {
+    "theme": "light",
+    "passed": "folder/nested editing, source inheritance, bold/deduplicated annotations, no reflow, search, archive gate, independent descendant archive, Manage and cross-tab preference, partial recovery, draft/keyboard isolation, narrow layout, controlled reset export and native-data invariance"
+  },
+  {
+    "theme": "dark",
+    "passed": "folder/nested editing, source inheritance, bold/deduplicated annotations, no reflow, search, archive gate, independent descendant archive, Manage and cross-tab preference, partial recovery, draft/keyboard isolation, narrow layout, controlled reset export and native-data invariance"
+  },
+  {
+    "passed": "consolidated explicit folder binding; partial-save recovery preserves externally moved parent; archived section omitted from Next summaries; final visible section hover/passthrough geometry recomputed after archive preference changes"
+  }
+]

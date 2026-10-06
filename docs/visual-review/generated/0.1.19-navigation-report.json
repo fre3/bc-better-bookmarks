@@ -1,0 +1,34 @@
+[
+  {
+    "theme": "light",
+    "geometry": {
+      "nav": 58.390625,
+      "heading": 49.96875,
+      "top": 58.375,
+      "scroll": 450
+    },
+    "normalCombinedHeight": 96.359375,
+    "boundarySamples": [
+      45,
+      45,
+      45
+    ],
+    "result": "passed scope removal, binding review, pointer/keyboard tags, indicators, search Edit geometry, root scroll/query/selection/Escape, compact navigation"
+  },
+  {
+    "theme": "dark",
+    "geometry": {
+      "nav": 58.390625,
+      "heading": 49.96875,
+      "top": 58.375,
+      "scroll": 450
+    },
+    "normalCombinedHeight": 96.359375,
+    "boundarySamples": [
+      45,
+      45,
+      45
+    ],
+    "result": "passed scope removal, binding review, pointer/keyboard tags, indicators, search Edit geometry, root scroll/query/selection/Escape, compact navigation"
+  }
+]

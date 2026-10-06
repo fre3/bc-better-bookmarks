@@ -1,0 +1,14 @@
+[
+  {
+    "theme": "light",
+    "cycles": 6,
+    "escapePairs": 24,
+    "result": "intact drafts, Save, explicit discard, unchanged dismissal, repeated favorite/folder reopening, mode and background search recovery"
+  },
+  {
+    "theme": "dark",
+    "cycles": 6,
+    "escapePairs": 24,
+    "result": "intact drafts, Save, explicit discard, unchanged dismissal, repeated favorite/folder reopening, mode and background search recovery"
+  }
+]

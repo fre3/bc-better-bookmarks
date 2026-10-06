@@ -4,7 +4,7 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated MVP remains at `mvp-validated-0.1.1`, and accepted visual work at `ui-validated-0.1.15`. On `feature/bookmark-editing`, 0.1.17 adds folder/subfolder editing, direct folder metadata, computed inheritance and unified archive visibility. The user reports 0.1.16 Favorite editing and 0.1.17 tag changes/inheritance work well. The 0.1.18 UI-only follow-up adds reliable Escape handling, explicit Edit controls, tag positioning and direct archive checkboxes; native Edge review remains pending. See `development-state.md` and `metadata-setup.md`. Folder metadata changes and controlled test-data reset were explicitly authorized; no new create/move/delete UI, bulk operations, drag/drop, thumbnails or semantic search are part of this increment.
+The validated MVP remains at `mvp-validated-0.1.1`, and accepted visual work at `ui-validated-0.1.15`. On `feature/bookmark-editing`, **0.1.19 awaits Edge review**: obsolete mutation scope removed, pending folder-binding notice, section Edit layout, pointer-versus-keyboard tags, open-state indicators, explicit-root scroll reset and compact sticky navigation. Specific 0.1.18 two-device folder binding/tag/inheritance/rename/move/archive scenarios passed natively; test-subtree deletion was not confirmed. The missing tags were received metadata awaiting explicit binding, not a transport defect. Broader editing acceptance is not inferred. See development-state.md for the targeted next review.
 
 ## Future catalogue imagery and motion
 
@@ -75,4 +75,4 @@ Do not assume the development manifest key determines the production store ident
 
 ## Manage organization — deferred
 
-Reorganize and clean up Manage in a future update: separate everyday preferences, editing scope, identity review and advanced diagnostics/setup more clearly. Do not redesign it during the 0.1.17 increment beyond the requested folder review and settings. Any metadata import/recovery workflow needs an explicit, evidence-driven design; the private reset export is not a one-click restore feature.
+Reorganize and clean up Manage in a future update: separate everyday preferences, identity review and advanced diagnostics/setup more clearly. Do not redesign it during the 0.1.17 increment beyond the requested folder review and settings. Any metadata import/recovery workflow needs an explicit, evidence-driven design; the private reset export is not a one-click restore feature.

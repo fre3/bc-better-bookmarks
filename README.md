@@ -8,7 +8,7 @@ A Manifest V3 New Tab dashboard over your **real Microsoft Edge Favorites**. Fav
 
 The user accepted **0.1.15** in native Edge, including appearance, footer and peek behavior. Annotated tag `ui-validated-0.1.15` and `feature/ui-ux-redesign` preserve that checkpoint. The current **0.1.19** editing presentation review is on `feature/bookmark-editing`.
 
-All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. Manage retains existing MVP operations, settings and diagnostics. Browse/search roots filter presentation only; there is no mutation-scope setting. Folder tags, computed inheritance and archive visibility are implemented for 0.1.17 review. [Design and load instructions](docs/ui-ux-design.md). The separate validated functional baseline remains at `mvp-validated-0.1.1`.
+All bookmarks is the default browsing scope; typing on the focused page or `/` starts search, and Escape returns to browsing. Manage retains existing MVP operations, settings and diagnostics. Browse/search roots filter presentation only; there is no mutation-scope setting. Folder tags, computed inheritance and archive visibility have passed the specific 0.1.18 two-device scenarios recorded in the handoff. [Design and load instructions](docs/ui-ux-design.md). The separate validated functional baseline remains at `mvp-validated-0.1.1`.
 
 ## Keyboard search command
 
@@ -28,7 +28,7 @@ Folder tags apply to the folder and all descendants without copying metadata. Ed
 
 Cancel/Escape protects modified drafts; Escape again at the discard question means Continue editing, preserving input; Ctrl+Shift+B cannot replace a modal draft. Late save failures can leave native changes applied while tag persistence is unconfirmed. Input remains; review the displayed current values before explicitly refreshing the save baseline/retrying. No atomic transaction or recovery after closing/reloading is promised. Existing Manage operations remain available.
 
-**Upgrade every device before using folder tags.** Unbound folder metadata requires consolidated explicit confirmation in Manage; a matching path is not proven identity. Disposable test metadata may be reset only through the deliberate export/inventory/setup workflow, preserving all native Favorites and unrelated preferences. No automatic reset occurs. Read [the coordinated reset and two-device procedure](docs/metadata-setup.md) before performing a real reset. The user reports tag changes/inheritance work well. Native Edge 0.1.19 review is pending; [checklist and current evidence](docs/development-state.md).
+**Upgrade every device before using folder tags.** Unbound folder metadata requires consolidated explicit confirmation in Manage; a matching path is not proven identity. Disposable test metadata may be reset only through the deliberate export/inventory/setup workflow, preserving all native Favorites and unrelated preferences. No automatic reset occurs. Read [the coordinated reset and two-device procedure](docs/metadata-setup.md) before performing a real reset. The user confirmed folder binding, inheritance/search, two-way tag edits, parent rename/move and independent archive visibility on two 0.1.18 devices; test-subtree deletion was not confirmed. No metadata reset is needed for 0.1.19. Native Edge 0.1.19 review is pending; [checklist and current evidence](docs/development-state.md).
 
 ## Build
 
