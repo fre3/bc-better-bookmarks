@@ -31,10 +31,10 @@ describe('catalogue editor integration', () => {
       expect(draft.input.parentId).toBe('10'); expect(draft.input.title).toBe('Azure');
     }
   });
-  it('does not let browse scope grant mutation permission or managed writes', () => {
+  it('ignores old mutation preferences but rejects managed writes', () => {
     const s = snapshot(); const draft = favoriteDraft(s, s.favorites[0]);
-    s.local.rootId = null; expect(draftConflict(s, draft)).toContain('mutation scope');
-    s.local.rootId = '11'; expect(draftConflict(s, draft)).toContain('mutation scope');
+    s.local.rootId = null; expect(draftConflict(s, draft)).toBeUndefined();
+    s.local.rootId = '11'; expect(draftConflict(s, draft)).toBeUndefined();
     s.local.rootId = '1'; expect(draftConflict(s, draft)).toBeUndefined();
     s.favorites[0].unmodifiable = 'managed'; expect(draftConflict(s, draft)).toContain('managed');
   });

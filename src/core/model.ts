@@ -61,6 +61,7 @@ export interface LocalState {
   metadataEpoch?: string;
   schemaVersion: 1;
   mappings: Record<string, LocalMapping>;
+  /** Legacy mutation scope, retained for local envelope compatibility only; ignored. */
   rootId: string | null;
   // Durable deletion intent survives a sync quota failure or worker restart.
   pendingDeletions: string[];
@@ -110,7 +111,6 @@ export interface Snapshot {
 export interface LinkInput { title: string; url: string; parentId: string; tags: string[]; bookmarkletConfirmed?: boolean }
 export type Command = (
   | { type: 'snapshot' | 'reconcile' }
-  | { type: 'set-root'; rootId: string | null }
   | { type: 'create'; input: LinkInput }
   | { type: 'edit'; id: string; input: LinkInput; expected: string }
   | { type: 'delete'; id: string; expected: string }

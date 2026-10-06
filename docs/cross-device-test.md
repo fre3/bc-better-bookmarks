@@ -420,3 +420,11 @@ Historical local dependency audit after upgrading Vitest/ESLint: 0 reported vuln
 ## 0.1.17 folder metadata and clean setup — pending native evidence
 
 Folder metadata/inheritance/archive behavior is new and is not covered by the completed Favorite-only baseline above. The user authorized discarding test extension metadata through a deliberate bounded reset, not native Favorites changes. All devices must upgrade together; old clients remain disabled. Before resetting, export each device's private metadata/journal and inspect affected keys. See [metadata setup and the separate native two-device checklist](metadata-setup.md). Reset generation handling, unbound folder confirmation, copies/ambiguity, inheritance and device-local Show archived have isolated service/Chromium evidence only. No Microsoft sync or real-profile reset was performed during 0.1.17 implementation.
+
+## User-reported native 0.1.18 two-device results (recorded 2026-10-06)
+
+Both devices ran 0.1.18 under the same Edge profile. Passed: native test folder/subfolder/favorite synchronization; direct folder tags after explicit binding confirmation on B; descendant inheritance with correct sources; #tag descendant search; B → A tag edits; A parent rename/move retaining tags and updating inherited source paths on B without another binding review; A archive exclusion from browse/search/Edit while B's independent Show archived preference retained visibility; B unarchive restoring A's subtree with ordinary tags intact. Test-subtree deletion and its propagation were **not explicitly confirmed**.
+
+The initial missing-tag report was resolved in Manage by confirming a pending folder binding. Diagnostics already showed received, valid metadata; confirmation changed unresolved to local-mapping. This was an identity/setup step, not a sync-transport defect. No transport redesign or repeat of the complete passed suite is indicated by 0.1.19's UI/scope changes.
+
+Historical instructions above to enable/select a Dashboard mutation root are obsolete as of 0.1.19. Root navigation now filters browse/search only; worker mutations retain independent capability, identity, metadata and conflict checks without that MVP scope gate.

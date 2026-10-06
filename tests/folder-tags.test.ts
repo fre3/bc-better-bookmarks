@@ -17,7 +17,7 @@ async function folderSave(service: DashboardService, id: string, tags: string[],
 }
 describe('folder identity and shared save safeguards', () => {
   it('tags empty and nested folders without modifying children; retains identity through rename/move; copies never auto-bind', async () => {
-    const { service, bookmarks, sync } = setup(); await service.command({ type: 'set-root', rootId: '*' });
+    const { service, bookmarks, sync } = setup(); await service.command({ type: 'snapshot' });
     let s = await folderSave(service, '11', [' Work ', 'WORK']);
     expect(s.metadata.records[0]).toMatchObject({ schemaVersion: 2, tags: ['work'], initialLocator: { kind: 'folder', url: '' } });
     expect(bookmarks.calls).toEqual([]);
@@ -47,7 +47,7 @@ describe('folder identity and shared save safeguards', () => {
     await bookmarks.move('10', '11');
     await expect(service.command({ type: 'edit-folder', id: '10', title: 'Stale', tags: [], expected: folderEditToken(s, folder) })).rejects.toThrow('changed');
     expect(sync.data[`meta:${idA}`]).toEqual(original[`meta:${idA}`]);
-    const fresh = setup(); await fresh.service.command({ type: 'set-root', rootId: '*' }); await folderSave(fresh.service, '10', ['tag']); delete fresh.sync.data[`meta:${idA}`];
+    const fresh = setup(); await fresh.service.command({ type: 'snapshot' }); await folderSave(fresh.service, '10', ['tag']); delete fresh.sync.data[`meta:${idA}`];
     await expect(folderSave(fresh.service, '10', [], 'Blocked')).rejects.toThrow('missing synchronized metadata'); expect(fresh.bookmarks.all().find(n => n.id === '10')!.title).toBe('Dashboard');
   });
   it('reports precisely the native changes completed before a publication failure and safely retries with a reviewed token', async () => {
@@ -79,7 +79,7 @@ describe('computed inheritance and one archive gate', () => {
   it('recomputes inherited sources after a real subtree move without persisting descendant tags', async () => {
     const { bookmarks, repository, sync } = setup();
     const service = new DashboardService(bookmarks, repository, { extensionId: 'test', version: 'test' });
-    await service.command({ type: 'set-root', rootId: '*' });
+    await service.command({ type: 'snapshot' });
     await folderSave(service, '10', ['first']); await folderSave(service, '11', ['second']);
     const nested = await bookmarks.create({ parentId: '10', title: 'Subtree' });
     await bookmarks.move('20', nested.id); await folderSave(service, nested.id, ['shared']);
@@ -94,7 +94,7 @@ describe('computed inheritance and one archive gate', () => {
     expect(Object.keys(sync.data).filter(key => key.startsWith('meta:'))).toHaveLength(3);
   });
   it('keeps hidden and nosearch as ordinary tags, including effective-tag search', async () => {
-    const { service } = setup(); await service.command({ type: 'set-root', rootId: '*' });
+    const { service } = setup(); await service.command({ type: 'snapshot' });
     const s = await folderSave(service, '10', ['hidden', 'nosearch']);
     const model = buildCatalogue(s);
     expect(model.sections.some(section => section.title === 'Dashboard')).toBe(true);
@@ -132,7 +132,7 @@ describe('controlled metadata setup', () => {
 describe('older-client record protection', () => {
   it('v1 readers quarantine v2 records and cannot read a journal containing them', async () => {
     const legacy = await import('./legacy-v1-schema');
-    const { service, sync, local } = setup(); await service.command({ type: 'set-root', rootId: '*' });
+    const { service, sync, local } = setup(); await service.command({ type: 'snapshot' });
     await folderSave(service, '10', ['tag']);
     const raw=structuredClone(sync.data), parsed=legacy.parseMetadata(raw);
     expect(parsed.records).toEqual([]); expect(parsed.invalid).toHaveLength(1); expect(parsed.raw).toEqual(raw);

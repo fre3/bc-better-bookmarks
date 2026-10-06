@@ -1,7 +1,7 @@
 import type { BookmarksRepository } from '../browser/bookmarks';
 import { QUOTAS, type MetadataRepository } from '../browser/metadata';
 import { editToken, flattenTree, normalizeTags } from './logic';
-import type { Command, Favorite, LinkInput, LocalState, LogEntry, Snapshot } from './model';
+import type { Command, Favorite, LinkInput, LogEntry, Snapshot } from './model';
 import { folderNode, folderEditToken } from './node-tags';
 import { EditFailure, type EditProgress } from './edit-failure';
 import { reconcile } from './reconcile';
@@ -64,17 +64,14 @@ export class DashboardService {
     await this.metadata.saveLocal(local);
     return this.snapshot('bookmarks.removed');
   }
-  private inScope(node: { id: string; ancestorIds: string[] }, local: LocalState) {
-    return local.rootId !== null && (local.rootId === '*' || node.id === local.rootId || node.ancestorIds.includes(local.rootId));
-  }
-  private folder(snapshot: Snapshot, id: string, allowSetup = false) {
+  private folder(snapshot: Snapshot, id: string) {
     const f = snapshot.folders.find(f => f.id === id);
-    if (!f?.writable || (!allowSetup && !this.inScope(f, snapshot.local))) throw new Error('Choose a writable folder inside the configured dashboard root.');
+    if (!f?.writable) throw new Error('Choose a writable, unmanaged folder.');
     return f;
   }
   private favorite(snapshot: Snapshot, id: string, expected: string) {
     const f = snapshot.favorites.find(f => f.id === id);
-    if (!f || f.unmodifiable || !this.inScope(f, snapshot.local)) throw new Error('Favorite is missing, managed, or outside the dashboard root.');
+    if (!f || f.unmodifiable) throw new Error('Favorite is missing or managed.');
     if (editToken(f, this.tags(snapshot, id)) !== expected) throw new Error('This Favorite or its tags changed since editing began. Cancel and reopen the editor.');
     return f;
   }
@@ -117,14 +114,10 @@ export class DashboardService {
     if (command.type === 'snapshot' || command.type === 'reconcile') return this.snapshot(command.type);
     const s = await this.snapshot(`before ${command.type}`);
     if (['create', 'edit', 'edit-folder', 'attach-folder'].includes(command.type) && command.generation !== s.metadata.setup?.generation) throw new Error('Metadata was reset since this draft opened. Copy needed input, cancel and reopen.');
-    if (command.type === 'set-root') {
-      if (command.rootId !== null && command.rootId !== '*') this.folder(s, command.rootId, true);
-      await this.metadata.saveLocal({ ...s.local, rootId: command.rootId });
-    } else if (command.type === 'create-folder') {
-      this.folder(s, command.parentId, s.local.rootId === null);
+    if (command.type === 'create-folder') {
+      this.folder(s, command.parentId);
       if (!command.title.trim()) throw new Error('Folder name is required.');
-      const folder = await this.bookmarks.create({ parentId: command.parentId, title: command.title.trim() });
-      if (s.local.rootId === null) await this.metadata.saveLocal({ ...s.local, rootId: folder.id });
+      await this.bookmarks.create({ parentId: command.parentId, title: command.title.trim() });
     } else if (command.type === 'attach-folder') {
       const folder = this.folder(s, command.id);
       if (!folder.renamable || folderEditToken(s, folder) !== command.expected) throw new Error('Folder changed or is restricted. Reopen its editor.');

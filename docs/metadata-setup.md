@@ -15,7 +15,7 @@ Manage → **Folder identity review and test metadata setup** exports a private 
 | local `state.mappings`, `state.pendingDeletions` | Empty when adopting the new generation |
 | local `state.metadataEpoch` | Set to the new generation |
 | local `metadataJournal` | Remove old preservation entries |
-| local `state.rootId` | Preserve mutation scope |
+| local `state.rootId` | Retain legacy envelope field; ignored since 0.1.19 |
 | appearance, Show archived, peek preference, other unrelated keys/logs | Preserve |
 | native Edge Favorites tree | No API calls; no rename, URL change, move, reorder, recreation or deletion |
 

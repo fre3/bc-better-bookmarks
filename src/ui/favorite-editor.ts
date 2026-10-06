@@ -18,7 +18,5 @@ export function draftConflict(snapshot: Snapshot, draft: FavoriteDraft): string 
   if (!favorite) return 'This item was removed. Your draft is retained, but it cannot be saved. Copy any needed text before closing.';
   if (favoriteDraft(snapshot, favorite).expected !== draft.expected) return 'This item, its folder or its direct tags changed since editing began. Your draft is retained. Copy any needed text, then cancel and reopen to review the latest values.';
   if (favorite.unmodifiable || draft.isFolder && !(favorite as Folder).renamable) return 'This item is managed or browser-owned and cannot be edited.';
-  const root = snapshot.local.rootId;
-  if (root === null || (root !== '*' && favorite.id !== root && !favorite.ancestorIds.includes(root))) return 'Editing is disabled for this item by the mutation scope in Manage. Browse scope does not enable edits.';
   return undefined;
 }

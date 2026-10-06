@@ -65,12 +65,11 @@ try {
    await open(page,id);await title(page).fill('Recoverable draft');await page.evaluate(async({id,change})=>window.external(id,change),{id,change});
    await expect(dialog(page).getByRole('alert')).toContainText(change==='delete'?'removed':'changed');await expect(save(page)).toBeDisabled();await expect(title(page)).toHaveValue('Recoverable draft');await closeDirty(page);
   }
-  // Existing worker metadata-health and mutation-scope guards remain authoritative.
+  // Existing worker metadata-health guards and ignored legacy scope preferences remain authoritative.
   await page.evaluate(()=>{const key=Object.keys(window.sync.data).find(k=>k.startsWith('meta:'));delete window.sync.data[key];window.refresh()});await page.waitForTimeout(250);await open(page);await title(page).fill('Blocked identity update');
   await save(page).click();await expect(dialog(page).getByRole('alert')).toContainText('missing synchronized metadata');await expect(title(page)).toHaveValue('Blocked identity update');await closeDirty(page);
   assert.equal(await page.evaluate(async()=>(await window.service.snapshot('check')).favorites.find(f=>f.id==='0-0').title),'Saved title');
-  await page.evaluate(async()=>{await window.service.command({type:'set-root',rootId:null});window.refresh()});await page.waitForTimeout(220);await open(page,'0-4');await expect(save(page)).toBeDisabled();await expect(dialog(page).getByRole('alert')).toContainText('mutation scope');await cancel(page).click();
-  await page.evaluate(async()=>{await window.service.command({type:'set-root',rootId:'*'});window.refresh()});await page.waitForTimeout(220);
+  await page.evaluate(()=>{window.local.data.state.rootId=null;window.refresh()});await page.waitForTimeout(220);await open(page,'0-4');await expect(save(page)).toBeEnabled();await cancel(page).click();
   // Search edits remove results only after save; query/scope and original Escape
   // snapshot survive, with an accessible nearby focus fallback.
   await page.getByRole('button',{name:'Favorites bar',exact:true}).click();await section(page,0).click();await page.locator('#folder-f0').click();
@@ -82,7 +81,7 @@ try {
   await page.setViewportSize({width:390,height:700});await expect(title(page)).toBeFocused();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true);assert.equal(await dialog(page).evaluate(d=>d.scrollWidth<=d.clientWidth),true);await page.screenshot({path:join(output,`${theme}-narrow.png`)});await cancel(page).click();
   await page.getByRole('button',{name:'Done',exact:true}).click();await expect(bookmark(page,'n0')).toHaveAttribute('href');
   await page.reload();await expect(page.getByRole('button',{name:'Edit',exact:true})).toHaveAttribute('aria-pressed','false');
-  assert.deepEqual(uncaught,[]);report.push({theme,checks:'activation, focus trap/restoration, modal isolation, validation, failed/duplicate/success saves, dirty protection, external conflicts, metadata/scope guards, search removal/Escape, narrow layout, transient mode'});await context.close();
+  assert.deepEqual(uncaught,[]);report.push({theme,checks:'activation, focus trap/restoration, modal isolation, validation, failed/duplicate/success saves, dirty protection, external conflicts, metadata guards and ignored legacy scope, search removal/Escape, narrow layout, transient mode'});await context.close();
  }
  await writeFile(join(output,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({output,report},null,2));
 } finally {await browser.close();await new Promise(resolve=>server.close(resolve))}
