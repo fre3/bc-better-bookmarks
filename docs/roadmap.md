@@ -4,7 +4,7 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated MVP remains at `mvp-validated-0.1.1`, and accepted visual work at `ui-validated-0.1.15`. On `feature/bookmark-editing`, 0.1.17 adds folder/subfolder editing, direct folder metadata, computed inheritance and unified archive visibility. The user reports 0.1.16 Favorite editing works; comprehensive Edge acceptance of new behavior remains pending. See `development-state.md` and `metadata-setup.md`. Folder metadata changes and controlled test-data reset were explicitly authorized; no new create/move/delete UI, bulk operations, drag/drop, thumbnails or semantic search are part of this increment.
+The validated MVP remains at `mvp-validated-0.1.1`, and accepted visual work at `ui-validated-0.1.15`. On `feature/bookmark-editing`, 0.1.17 adds folder/subfolder editing, direct folder metadata, computed inheritance and unified archive visibility. The user reports 0.1.16 Favorite editing and 0.1.17 tag changes/inheritance work well. The 0.1.18 UI-only follow-up adds reliable Escape handling, explicit Edit controls, tag positioning and direct archive checkboxes; native Edge review remains pending. See `development-state.md` and `metadata-setup.md`. Folder metadata changes and controlled test-data reset were explicitly authorized; no new create/move/delete UI, bulk operations, drag/drop, thumbnails or semantic search are part of this increment.
 
 ## Future catalogue imagery and motion
 

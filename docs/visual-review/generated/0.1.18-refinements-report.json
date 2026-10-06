@@ -1,0 +1,10 @@
+[
+  {
+    "theme": "light",
+    "result": "explicit controls, unchanged navigation geometry, native modifier navigation, first-text-fragment section/folder tag anchors, sticky Done and unobstructed header targets, narrow and forced-colors rendering"
+  },
+  {
+    "theme": "dark",
+    "result": "explicit controls, unchanged navigation geometry, native modifier navigation, first-text-fragment section/folder tag anchors, sticky Done and unobstructed header targets, narrow and forced-colors rendering"
+  }
+]

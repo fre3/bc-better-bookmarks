@@ -1,6 +1,6 @@
 # Typographic catalogue — browsing/search checkpoint
 
-Status: **0.1.15 accepted in native Edge**, preserved at `ui-validated-0.1.15`. The user reports Favorite editing works in 0.1.16; untested cases are not marked accepted. **0.1.17 folder editing/inheritance/archive review is pending.** Prior checkpoint notes below describe the accepted catalogue behavior; current additions are in the final section. Validated MVP references remain unchanged.
+Status: **0.1.15 accepted in native Edge**, preserved at `ui-validated-0.1.15`. The user reports Favorite editing works in 0.1.16; untested cases are not marked accepted. The user reports 0.1.17 tag changes/inheritance work well; **0.1.18 editing presentation review is pending.** Prior checkpoint notes below describe the accepted catalogue behavior; current additions are in the final section. Validated MVP references remain unchanged.
 
 ## Implemented presentation
 
@@ -310,3 +310,16 @@ Effective `#archived` excludes nodes/subtrees consistently from browse/search/Ed
 Existing modal draft/keyboard protections apply to folders and Favorites. Late failures list completed native fields and unconfirmed tag persistence, retain input and require explicit current-value review before retry. No transaction or reload recovery is promised. Manage stays available, with a consolidated identity review and deliberate export/reset setup rather than repeated folder prompts. [Setup and limits](metadata-setup.md).
 
 No changes to light/dark geometry, 1,000ms auto-scroll delay, peek/open timing, footer safe-space cleanup, final-surface hover, shortcuts or Escape snapshot semantics were intended. Synthetic Chromium captures and regressions accompany 0.1.17; they do not establish Edge or Microsoft sync acceptance.
+
+
+## Editing follow-up — 0.1.18
+
+This section supersedes earlier title-to-edit activation, dotted edit underlines and permanent Archived indicators. Only small, contextual **Edit** buttons open a modal; ordinary Favorite links keep native navigation, and folder/section titles keep expansion. Section actions are beside the heading/provenance, at its baseline. Edit is a sibling real button. Inline expansion targets use button semantics and Enter/Space; the full section header remains a click target. A reserved ending and zero-advance sibling button keep Edit beside the last fragment without inserting characters into title text. Peek copies remain inert.
+
+The Editing badge, prominent Done and viewport-top accent line use `#855216` in light / `#e9ba7a` in dark; forced colors uses Highlight. The exact help is “Click Edit beside a favorite or folder to make changes.” It is omitted at narrow widths. Existing navigation becomes sticky only while editing; its original flow geometry stays, and its measured height offsets sticky section headers/scroll targets. One Done control serves both resting/scrolling states. Modal background inertness includes it. Its background spans the gutters only when stuck so it does not mask the resting first-card shadow. No card tint/dashed treatment.
+
+Tags are measured from their actual positioning parent, anchored to the first rendered title text fragment (including section names), with the same optical gap as Favorite tags. Counts, Edit, provenance and container line boxes are excluded. This corrects the double offset caused by flow-relative coordinates on relative folder wrappers. Resize, font/content changes and CSS zoom are handled without reflow or leading/header-height changes. Existing bold inheritance/source and reveal semantics remain.
+
+Archive is presented as a checkbox for direct assignment, backed only by the synchronized archived tag. Other direct tags occupy the Tags input. Typed archived converts on blur/Save; partial typing/caret is not rewritten. Existing archived initializes the checkbox. Inherited archive remains separately explained with responsible source paths; unchecking direct status cannot negate those sources. The concise help is “Hidden from the dashboard and search unless Show archived is enabled.” Permanent catalogue/Manage Archived labels and their spacing are removed; #archived uses the existing hover/focus/search tag display. Show archived and recursive exclusion are unchanged.
+
+Escape is consumed at keydown capture before native dialog cancellation: unchanged closes; dirty asks; Escape while asking means Continue editing. Only explicit Discard changes discards a dirty draft. The repeated native cancel path can become non-cancelable and had closed the DOM while leaving React's modal state/scroll lock intact. Real-keyboard Chromium reproductions and regressions are documented in the handoff; native Edge acceptance remains pending.
