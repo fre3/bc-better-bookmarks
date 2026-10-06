@@ -1,4 +1,6 @@
+import { TagText } from './TagAnnotation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { matchingTags } from './catalogue-model';
 import type { CatalogueSection } from './catalogue-model';
 import { CatalogueItems } from './CatalogueItems';
 import { useCatalogueAnnotations } from './useCatalogueAnnotations';
@@ -54,18 +56,22 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
   const flow = useCatalogueAnnotations();
   const showingPeek = peek;
   usePeekScroll(autoScrollPeek && mouseHover && pointerPeek === peekEpoch && showingPeek && query === null, flow);
+  const explainsTags = query !== null && section.folder && matchingTags({ title: section.title, url: '', folderPath: section.folder.path, systemLabels: [] }, section.tagInfo?.effective ?? [], query).length > 0;
   const contentId = `section-content-${section.id}`;
   return <section ref={slot} id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${showingPeek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
     style={{ zIndex: showingPeek ? stackSize + 1 : preview ? stackSize : stackIndex }}>
     <div className="section-sheet has-top-shadow">
       <div className="section-header" onPointerEnter={e => { if (blocked) return; hover.remember(e); setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={e => { if (!hover.retainOnLeave(e)) endMousePeek(); }}>
-        <h2 className="section-inner">
+        <h2 className={`section-inner${onEdit && section.folder?.renamable ? ' has-folder-editor' : ''}`}>
         {query !== null ? <span className="section-label"><span className="section-heading-text">{section.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
           <button id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}
             onFocus={e => { if (e.currentTarget.matches(':focus-visible')) setFocusPeek(peekEpoch); }} onBlur={() => setFocusPeek(-1)}
             onClick={() => { setPointerPeek(-1); setFocusPeek(-1); onToggle(); }}>
             <span className="section-heading-text">{section.title || '(untitled)'}{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span>
           </button>}
+        {onEdit && section.folder?.renamable && <button className="folder-edit-action" id={`edit-folder-${section.folder.id}`} aria-label={`Edit folder ${section.title}`} aria-haspopup="dialog" onClick={() => onEdit(section.folder!.id)}>Edit</button>}
+        {section.tagInfo?.archived && <span className="archive-indicator">Archived</span>}
+        {Boolean(section.tagInfo?.effective.length) && <span className={`section-tag-annotation${explainsTags ? ' explains-search' : ''}`}><TagText tags={section.tagInfo!.effective} info={section.tagInfo} folder /></span>}
         </h2>
       </div>
       <div className="section-reveal">

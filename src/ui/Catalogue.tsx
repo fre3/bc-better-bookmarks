@@ -13,12 +13,13 @@ import { catalogueHandoff } from './catalogue-handoff';
 // Nested expansions always remain inline.
 const EXPANSION_END: 'inline' | 'break' = 'inline';
 
-export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek = true, modalOpen = false, selectedId, onEdit, onManage }: { snapshot: Snapshot; suspended: boolean; searchRequest?: SearchIntent; autoScrollPeek?: boolean; onManage: () => void; modalOpen?: boolean; selectedId?: string; onEdit?: (id: string) => void }) {
+export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek = true, showArchived = false, modalOpen = false, selectedId, onEdit, onManage }: { snapshot: Snapshot; suspended: boolean; searchRequest?: SearchIntent; autoScrollPeek?: boolean; onManage: () => void; modalOpen?: boolean; showArchived?: boolean; selectedId?: string; onEdit?: (id: string) => void }) {
   const [handoff] = useState(() => typeof location === 'undefined' ? undefined : catalogueHandoff(takeSearchHandoff()));
   const [state, dispatch] = useReducer(catalogueReducer, handoff?.state ?? initialCatalogueState);
   const [editing, setEditing] = useState(false);
   const [launchError, setLaunchError] = useState('');
   const peekFooter = usePeekFooter(state.peekEpoch, suspended);
+  const lastFocused = useRef<HTMLElement | null>(null);
   const input = useRef<HTMLInputElement>(null);
   const searchButton = useRef<HTMLButtonElement>(null);
   const scrollToSection = useRef<string | null>(null);
@@ -26,12 +27,17 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
   const consumedSearchRequest = useRef(handoff?.requestId ?? '');
   const selectRequested = useRef(Boolean(handoff));
   const restoreScroll = useRef(handoff?.scroll);
-  const model = useMemo(() => buildCatalogue(snapshot), [snapshot]);
+  const model = useMemo(() => buildCatalogue(snapshot, showArchived), [snapshot, showArchived]);
   // A removed browser root must not leave an invisible, stale scope selected.
   const scope = model.roots.some(root => root.id === state.scope) ? state.scope : '*';
   const searching = state.query !== null;
   const visible = useMemo(() => filterCatalogue(model, snapshot.favorites, scope, state.query ?? '', searching), [model, snapshot.favorites, scope, state.query, searching]);
 
+  useLayoutEffect(() => {
+    if (!modalOpen && !suspended && lastFocused.current && !lastFocused.current.isConnected && document.activeElement === document.body) {
+      (input.current ?? searchButton.current)?.focus({ preventScroll: true });
+    }
+  }, [visible, modalOpen, suspended]);
   const roots = [{ id: '*', title: 'All bookmarks' }, ...model.roots];
   function switchScope(id: string) {
     dispatch({ type: 'scope', id });
@@ -114,7 +120,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     return () => window.removeEventListener('keydown', onKey);
   });
 
-  return <div className={`catalogue${editing ? ' is-editing' : ''}`} data-expansion-end={EXPANSION_END} hidden={suspended}>
+  return <div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-expansion-end={EXPANSION_END} hidden={suspended}>
     <header className="catalogue-navigation">
       <nav aria-label="Bookmark roots">
         {roots.map((root, index) => <button key={root.id} aria-current={scope === root.id ? 'page' : undefined}

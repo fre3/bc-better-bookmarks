@@ -26,6 +26,7 @@ describe('folder identity and shared save safeguards', () => {
     expect(s.metadata.histories[idA].locators).toHaveLength(3);
     await bookmarks.create({ parentId: '10', title: 'Renamed' }); s = await service.snapshot('copy');
     expect(s.reconciliation.mappings['101']).toBeUndefined(); expect(nodeTags(s).get('101')?.direct).toEqual([]);
+    await expect(folderSave(service, '101', ['copy-only'])).rejects.toThrow('Review the existing folder metadata');
     // A second device has different native IDs and must explicitly bind even a
     // unique path; a matching folder is not proven to be the original.
     const b = new MemoryBookmarks(); b.data = structuredClone(bookmarks.data); b.all().forEach(n => { n.id = 'b'+n.id; if (n.parentId) n.parentId = 'b'+n.parentId; });

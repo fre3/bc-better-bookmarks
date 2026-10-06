@@ -4,7 +4,7 @@ function firstTextFragment(link: Element) {
   const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
   while (walker.nextNode()) {
     const text = walker.currentNode as Text;
-    if (!text.parentElement?.closest('.bookmark-text')) continue;
+    if (!text.parentElement?.closest('.bookmark-text, .folder-title')) continue;
     const start = text.data.search(/\S/u);
     if (start < 0) continue;
     const range = document.createRange();
@@ -27,9 +27,9 @@ export function useCatalogueAnnotations() {
     const update = () => {
       if (!connected) return;
       const origin = container.getBoundingClientRect();
-      for (const item of container.querySelectorAll('.bookmark-item:hover, .bookmark-item:focus-within, .bookmark-item.tag-match')) {
+      for (const item of container.querySelectorAll('.catalogue-item:hover, .catalogue-item:focus-within, .catalogue-item.tag-match')) {
         const annotation = item.querySelector<HTMLElement>('.item-annotation');
-        const link = item.querySelector('.bookmark-title');
+        const link = item.querySelector('.bookmark-title, .folder-title');
         if (!annotation || !link) continue;
         const fragment = firstTextFragment(link);
         if (!fragment) continue;

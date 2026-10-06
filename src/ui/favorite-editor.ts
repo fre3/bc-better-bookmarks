@@ -1,22 +1,24 @@
 import { editToken } from '../core/logic';
-import type { Favorite, LinkInput, Snapshot } from '../core/model';
+import { directTags, folderNode } from '../core/node-tags';
+import type { Favorite, Folder, LinkInput, Snapshot } from '../core/model';
 
-export function favoriteTags(snapshot: Snapshot, id: string): string[] {
-  return snapshot.metadata.records.find(record => record.stableId === snapshot.reconciliation.mappings[id]?.stableId)?.tags ?? [];
-}
-export function favoriteDraft(snapshot: Snapshot, favorite: Favorite) {
-  const tags = favoriteTags(snapshot, favorite.id);
-  return { id: favorite.id, expected: editToken(favorite, tags), folder: favorite.folderPath.join(' / '),
-    input: { title: favorite.title, url: favorite.url, tags, parentId: favorite.parentId! } satisfies LinkInput };
+export const favoriteTags = directTags;
+export function favoriteDraft(snapshot: Snapshot, favorite: Favorite | Folder) {
+  const isFolder = favorite.url === undefined;
+  const node = isFolder ? folderNode(favorite as Folder, snapshot.folders) : favorite as Favorite;
+  const tags = directTags(snapshot, node.id);
+  return { generation: snapshot.metadata.setup?.generation, id: node.id, isFolder, expected: editToken(node, tags), folder: node.folderPath.join(' / '),
+    input: { title: node.title, url: node.url, tags, parentId: node.parentId! } satisfies LinkInput };
 }
 export type FavoriteDraft = ReturnType<typeof favoriteDraft>;
 /** Early feedback only. The service repeats its full identity/health preflight. */
 export function draftConflict(snapshot: Snapshot, draft: FavoriteDraft): string | undefined {
-  const favorite = snapshot.favorites.find(item => item.id === draft.id);
-  if (!favorite) return 'This Favorite was removed. Your draft is retained, but it cannot be saved. Copy any needed text before closing.';
-  if (editToken(favorite, favoriteTags(snapshot, favorite.id)) !== draft.expected) return 'This Favorite, its folder or its tags changed since editing began. Your draft is retained. Copy any needed text, then cancel and reopen to review the latest values.';
-  if (favorite.unmodifiable) return 'This Favorite is managed and cannot be edited.';
+  if (snapshot.metadata.setup?.generation !== draft.generation) return 'Metadata was reset since editing began. Copy needed input, then cancel and reopen.';
+  const favorite = draft.isFolder ? snapshot.folders.find(item => item.id === draft.id) : snapshot.favorites.find(item => item.id === draft.id);
+  if (!favorite) return 'This item was removed. Your draft is retained, but it cannot be saved. Copy any needed text before closing.';
+  if (favoriteDraft(snapshot, favorite).expected !== draft.expected) return 'This item, its folder or its direct tags changed since editing began. Your draft is retained. Copy any needed text, then cancel and reopen to review the latest values.';
+  if (favorite.unmodifiable || draft.isFolder && !(favorite as Folder).renamable) return 'This item is managed or browser-owned and cannot be edited.';
   const root = snapshot.local.rootId;
-  if (root === null || (root !== '*' && !favorite.ancestorIds.includes(root))) return 'Editing is disabled for this Favorite by the mutation scope in Manage. Browse scope does not enable edits.';
+  if (root === null || (root !== '*' && favorite.id !== root && !favorite.ancestorIds.includes(root))) return 'Editing is disabled for this item by the mutation scope in Manage. Browse scope does not enable edits.';
   return undefined;
 }

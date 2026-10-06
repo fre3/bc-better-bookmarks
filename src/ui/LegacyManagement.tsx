@@ -1,17 +1,19 @@
+import { nodeTags } from '../core/node-tags';
 import { favoriteTags as tagsFor } from './favorite-editor';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { diagnosticExport } from '../core/export';
 import { confirmLinkInput, editToken, isBookmarklet, safeHref, searchFavorites } from '../core/logic';
 import type { Command, Favorite, LinkInput, Snapshot } from '../core/model';
 
-type Editor = { id?: string; expected?: string; input: LinkInput };
+type Editor = { generation?: string; id?: string; expected?: string; input: LinkInput };
 interface Props {
   s: Snapshot;
+  tagSnapshot?: Snapshot;
   busy: boolean;
   execute: (command: Command) => Promise<boolean>;
 }
 // Temporary access to the validated MVP controls until the editing checkpoint.
-export function LegacyManagement({ s, busy, execute }: Props) {
+export function LegacyManagement({ s, tagSnapshot = s, busy, execute }: Props) {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('');
   const [diagnostics, setDiagnostics] = useState(false);
@@ -19,16 +21,17 @@ export function LegacyManagement({ s, busy, execute }: Props) {
   const [folderName, setFolderName] = useState('Dashboard Test');
   const [parentId, setParentId] = useState('');
 
+  const effective = useMemo(() => nodeTags(tagSnapshot), [tagSnapshot]);
   const rootId = s.local.rootId;
   const inScope = (f: { id: string; ancestorIds: string[] }) => !rootId || rootId === '*' || f.id === rootId || f.ancestorIds.includes(rootId);
   const displayFolders = s.folders.filter(f => f.parentId !== undefined && inScope(f));
   const folders = displayFolders.filter(f => f.writable);
   const writable = rootId !== null && (rootId === '*' || folders.some(f => f.id === rootId));
   const favorites = s.favorites.filter(inScope);
-  const results = searchFavorites(favorites.filter(f => !category || f.ancestorIds.includes(category)), query, id => tagsFor(s, id));
+  const results = searchFavorites(favorites.filter(f => !category || f.ancestorIds.includes(category)), query, id => effective.get(id)?.effective ?? []);
   const selectedParent = folders.some(f => f.id === parentId) ? parentId : folders[0]?.id ?? '';
   function edit(f: Favorite) {
-    setEditor({ id: f.id, expected: editToken(f, tagsFor(s!, f.id)), input: { title: f.title, url: f.url, parentId: f.parentId!, tags: tagsFor(s!, f.id) } });
+    setEditor({ generation: s.metadata.setup?.generation, id: f.id, expected: editToken(f, tagsFor(s!, f.id)), input: { title: f.title, url: f.url, parentId: f.parentId!, tags: tagsFor(s!, f.id) } });
   }
   function exportJson() {
     const url = URL.createObjectURL(new Blob([JSON.stringify(diagnosticExport(s!), null, 2)], { type: 'application/json' }));
@@ -41,13 +44,13 @@ export function LegacyManagement({ s, busy, execute }: Props) {
       <select value={rootId ?? ''} disabled={busy} onChange={e => { setCategory(''); setEditor(undefined); void execute({ type: 'set-root', rootId: e.target.value || null }); }}>
         <option value="">All Favorites — read only / setup</option><option value="*">All Favorites — enable edits</option>
         {s.folders.filter(f => f.writable).map(f => <option key={f.id} value={f.id}>{f.path.join(' / ')} [ID {f.id}]</option>)}
-        {rootId && rootId !== '*' && !s.folders.some(f => f.id === rootId) && <option value={rootId}>Root missing — choose another</option>}
+        {rootId && rootId !== '*' && !s.folders.some(f => f.id === rootId) && <option value={rootId}>Root hidden or missing — choose another</option>}
       </select></label><p>{writable ? 'Changes in this scope modify your real Edge Favorites.' : 'Select a root to enable edits, or create a dedicated test folder below.'}</p>
     </section>
     <div className="toolbar"><input type="search" aria-label="Search Favorites" placeholder="Search links, or use #tag and @category" title="Plain text searches everything; # targets user tags; @ targets category. All terms must match. Lone # and @ are ignored." value={query} onChange={e => setQuery(e.target.value)} />
-      <button disabled={!writable || busy || !selectedParent} onClick={() => setEditor({ input: { title: '', url: 'https://', parentId: selectedParent, tags: [] } })}>Add link</button></div>
+      <button disabled={!writable || busy || !selectedParent} onClick={() => setEditor({ generation: s.metadata.setup?.generation, input: { title: '', url: 'https://', parentId: selectedParent, tags: [] } })}>Add link</button></div>
     {editor && <section className="editor"><h2>{editor.id ? 'Edit Favorite' : 'Add real Edge Favorite'}</h2>
-      <form onSubmit={e => { e.preventDefault(); const input = confirmLinkInput(editor.input, message => window.confirm(message)); if (!input) return; const command: Command = editor.id ? { type: 'edit', id: editor.id, expected: editor.expected!, input } : { type: 'create', input }; void execute(command).then(saved => { if (saved) setEditor(undefined); }); }}>
+      <form onSubmit={e => { e.preventDefault(); const input = confirmLinkInput(editor.input, message => window.confirm(message)); if (!input) return; const command: Command = editor.id ? { type: 'edit', id: editor.id, expected: editor.expected!, input } : { type: 'create', input }; void execute({ ...command, generation: editor.generation }).then(saved => { if (saved) setEditor(undefined); }); }}>
         <label>Title<input required value={editor.input.title} onChange={e => setEditor({ ...editor, input: { ...editor.input, title: e.target.value } })} /></label>
         <label>URL (HTTP, HTTPS, or bookmarklet)<textarea required rows={3} spellCheck={false} value={editor.input.url} onChange={e => setEditor({ ...editor, input: { ...editor.input, url: e.target.value } })} /></label>
         <label>Category<select value={editor.input.parentId} onChange={e => setEditor({ ...editor, input: { ...editor.input, parentId: e.target.value } })}>{folders.map(f => <option key={f.id} value={f.id}>{f.path.join(' / ')} [ID {f.id}]</option>)}</select></label>
@@ -58,16 +61,16 @@ export function LegacyManagement({ s, busy, execute }: Props) {
       {displayFolders.map(f => <button key={f.id} className={category === f.id ? 'selected' : ''} onClick={() => setCategory(f.id)}>{f.path.join(' / ')} <small>({favorites.filter(b => b.ancestorIds.includes(f.id)).length})</small></button>)}
     </nav><section aria-label="Favorites"><p>{results.length} Favorites · browser folder order</p>
       {!results.length && <p>No matching Favorites. Add a test link or adjust the search/category.</p>}
-      {displayFolders.filter(folder => results.some(f => f.parentId === folder.id)).map(folder => <section key={folder.id} className="group"><h2>{folder.path.join(' / ')}</h2>
+      {displayFolders.filter(folder => results.some(f => f.parentId === folder.id)).map(folder => <section key={folder.id} className="group"><h2>{effective.get(folder.id)?.archived && 'Archived · '}{folder.path.join(' / ')}</h2>
         {results.filter(f => f.parentId === folder.id).map(f => <article key={f.id}>
-          <div className="link"><a href={safeHref(f.url)}>{f.title || '(untitled)'}</a><span className="url">{f.url}</span><small>{f.folderPath.join(' / ')}</small>
+          <div className="link">{effective.get(f.id)?.archived && <small>Archived</small>}<a href={safeHref(f.url)}>{f.title || '(untitled)'}</a><span className="url">{f.url}</span><small>{f.folderPath.join(' / ')}</small>
             <div>{f.systemLabels.map(label => <span className="tag system-label" title="System label derived from URL (read only)" key={`system-${label}`}>{label}</span>)}{tagsFor(s, f.id).map(tag => <span className="tag" key={tag}>{tag}</span>)}{s.reconciliation.matches.some(m => m.status === 'ambiguous' && m.candidateIds.includes(f.id)) && <span className="warning">Ambiguous metadata — inspect diagnostics</span>}</div>
             {!safeHref(f.url) && <small>{isBookmarklet(f.url) ? 'Run this bookmarklet through Edge Favorites.' : "Open this non-HTTP(S) Favorite using Edge's Favorites UI."}</small>}
           </div><div className="actions"><button disabled={!writable || busy || Boolean(f.unmodifiable)} onClick={() => edit(f)}>Edit</button><button disabled={!writable || busy || Boolean(f.unmodifiable)} onClick={() => { if (window.confirm(`Delete the real Edge Favorite “${f.title}”? This also affects synchronized devices.`)) void execute({ type: 'delete', id: f.id, expected: editToken(f, tagsFor(s, f.id)) }); }}>Delete</button></div>
         </article>)}
       </section>)}
       {/* Defensive fallback for unexpected nodes outside any reported folder. */}
-      {results.filter(f => !displayFolders.some(folder => folder.id === f.parentId)).map(f => <article key={f.id}><div className="link"><a href={safeHref(f.url)}>{f.title}</a><span className="url">{f.url}</span><small>{f.folderPath.join(' / ')}</small><div>{f.systemLabels.map(label => <span className="tag system-label" title="System label derived from URL (read only)" key={`system-${label}`}>{label}</span>)}{tagsFor(s, f.id).map(t => <span className="tag" key={t}>{t}</span>)}</div>{!safeHref(f.url) && <small>{isBookmarklet(f.url) ? 'Run this bookmarklet through Edge Favorites.' : "Open this Favorite using Edge's Favorites UI."}</small>}</div><span>Read only</span></article>)}
+      {results.filter(f => !displayFolders.some(folder => folder.id === f.parentId)).map(f => <article key={f.id}><div className="link">{effective.get(f.id)?.archived && <small>Archived</small>}<a href={safeHref(f.url)}>{f.title}</a><span className="url">{f.url}</span><small>{f.folderPath.join(' / ')}</small><div>{f.systemLabels.map(label => <span className="tag system-label" title="System label derived from URL (read only)" key={`system-${label}`}>{label}</span>)}{tagsFor(s, f.id).map(t => <span className="tag" key={t}>{t}</span>)}</div>{!safeHref(f.url) && <small>{isBookmarklet(f.url) ? 'Run this bookmarklet through Edge Favorites.' : "Open this Favorite using Edge's Favorites UI."}</small>}</div><span>Read only</span></article>)}
     </section></div>
     <details className="settings" open={!writable}><summary>Category management / test folder setup</summary>
       <form onSubmit={e => { e.preventDefault(); void execute({ type: 'create-folder', parentId: selectedParent, title: folderName }); }}>

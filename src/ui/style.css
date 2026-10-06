@@ -145,14 +145,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
   pointer-events: none; color: var(--annotation);
   text-shadow: -1px 0 var(--annotation-halo), 1px 0 var(--annotation-halo), 0 -1px var(--annotation-halo), 0 1px var(--annotation-halo);
 }
-.bookmark-item:hover > .item-annotation, .bookmark-item:focus-within > .item-annotation,
+.catalogue-item:hover > .item-annotation, .catalogue-item:focus-within > .item-annotation,
 .tag-match > .item-annotation { visibility: visible; }
 .all-annotations, .matched-annotations, .status-annotation { display: none; }
 .all-annotations, .matched-annotations { margin-right: 8px; }
-.bookmark-item:hover > .item-annotation > .all-annotations,
-.bookmark-item:focus-within > .item-annotation > .all-annotations,
-.bookmark-item:hover > .item-annotation > .status-annotation,
-.bookmark-item:focus-within > .item-annotation > .status-annotation { display: inline; }
+.catalogue-item:hover > .item-annotation > .all-annotations,
+.catalogue-item:focus-within > .item-annotation > .all-annotations,
+.catalogue-item:hover > .item-annotation > .status-annotation,
+.catalogue-item:focus-within > .item-annotation > .status-annotation { display: inline; }
 .tag-match > .item-annotation > .matched-annotations { display: inline; }
 .tag-match:hover > .item-annotation > .matched-annotations,
 .tag-match:focus-within > .item-annotation > .matched-annotations { display: none; }
@@ -183,3 +183,15 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px
 .catalogue-footer a:focus-visible { outline-color: var(--footer-text); }
 @media (prefers-color-scheme: dark) { :root:not([data-appearance="light"]) button:disabled { opacity: 1; color: var(--disabled); } }
 :root[data-appearance="dark"] button:disabled { opacity: 1; color: var(--disabled); }
+
+/* Edit controls are siblings of expansion controls, never nested buttons. */
+.folder-edit-action { font: 400 14px/1.4 Helvetica, Arial, sans-serif; vertical-align: top; margin-left: .7em; text-decoration: underline; }
+.section-header h2.has-folder-editor { display: flex; align-items: center; gap: 16px; }
+.section-header h2.has-folder-editor > button:first-child { flex: 1; min-width: 0; }
+.section-header h2 > .folder-edit-action { width: auto; min-height: 0; flex: none; padding: 4px 0; font-size: 14px; font-weight: 400; }
+.archive-indicator { font: 400 12px/1 Helvetica, Arial, sans-serif; color: var(--secondary); margin-left: .5em; vertical-align: top; }
+.section-header h2 { position: relative; }
+.section-tag-annotation { position: absolute; bottom: 9px; left: var(--page-gutter); font: 10px/10px Helvetica, Arial, sans-serif; color: var(--annotation); white-space: nowrap; visibility: hidden; pointer-events: none; }
+.section-header:hover .section-tag-annotation, .section-header:focus-within .section-tag-annotation, .section-tag-annotation.explains-search { visibility: visible; }
+.folder-item.is-selected .folder-title { background: var(--selected); }
+.editor-inheritance { overflow-wrap: anywhere; }
