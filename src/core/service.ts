@@ -6,6 +6,7 @@ import { folderNode, folderEditToken } from './node-tags';
 import { EditFailure, type EditProgress } from './edit-failure';
 import { reconcile } from './reconcile';
 import { validateLinkInput } from './link-input';
+import { destinationToken, nativeToken, nodeById } from './operations';
 import { metadataHealth } from './metadata-diagnostics';
 
 export class DashboardService {
@@ -110,14 +111,55 @@ export class DashboardService {
     local.mappings[favorite.id] = { stableId, lastLocator: favorite.locator, dateAdded: favorite.dateAdded, method: mapping?.method ?? 'explicit' };
     await this.metadata.write({ [`meta:${stableId}`]: record }, local);
   }
+  private async createItem(s: Snapshot, command: Extract<Command, {type:'create'|'create-folder'}>): Promise<Snapshot> {
+    const isFolder=command.type==='create-folder';
+    const input=isFolder?this.validate({title:command.title,url:'https://folder.invalid/',parentId:command.parentId,tags:command.tags??[]}):this.validate(command.input);
+    const parent=this.folder(s,input.parentId);
+    const requestId=command.requestId??crypto.randomUUID();
+    if(!/^[\w-]{8,80}$/.test(requestId))throw Error('Invalid creation request.');
+    const request=JSON.stringify([isFolder,input.title,input.url,input.parentId,input.tags]);
+    let receipt=await this.metadata.readCreation(requestId);
+    if(receipt && (receipt.request!==request || receipt.generation!==s.metadata.setup?.generation))throw Error('This creation request has different input or belongs to an older metadata setup. No item was added.');
+    if(receipt?.complete) return {...s,mutation:{id:receipt.id!,parentId:input.parentId}};
+    if(!receipt && command.destinationExpected!==undefined && destinationToken(s,parent.id)!==command.destinationExpected)throw Error('Destination changed. Review and select it again before creating.');
+    if(s.metadata.invalid.length || !s.preservation.available)throw Error('Metadata integrity prevents creation. Review Manage diagnostics.');
+    if(!receipt){
+      receipt={request,generation:s.metadata.setup?.generation,stableId:this.uuid()};
+      await this.metadata.saveCreation(requestId,receipt); // durable intent before native creation
+      try {
+        const node=await this.bookmarks.create({parentId:parent.id,title:input.title,...(isFolder?{}:{url:input.url})});
+        receipt.id=node.id;receipt.native=nativeToken(node);
+        await this.metadata.saveCreation(requestId,receipt);
+      } catch(error){throw Error(`Creation may have reached Edge. Retry only this request; never repeat Add. ${String(error)}`, {cause:error});}
+    }
+    if(!receipt.id)throw Error('Creation outcome is uncertain. No second item will be created. Inspect Edge Favorites before starting a new Add.');
+    try {
+      const current=await this.snapshot('complete creation');
+      const n=nodeById(current,receipt.id);
+      if(!n || nativeToken(n)!==receipt.native)throw Error('Created item changed or disappeared. Review that item in Edge; it will not be recreated or overwritten.');
+      if(input.tags.length){
+        const f=n.url===undefined?folderNode(n as Snapshot['folders'][number],current.folders):n as Favorite;
+        receipt.record??={schemaVersion:2,stableId:receipt.stableId,...(receipt.generation?{generation:receipt.generation}:{}),initialLocator:f.locator,tags:input.tags,updatedAt:this.now()};
+        await this.metadata.saveCreation(requestId,receipt);
+        const existing=current.metadata.records.find(r=>r.stableId===receipt!.stableId);
+        if(current.metadata.tombstones[receipt.stableId] || existing && JSON.stringify(existing)!==JSON.stringify(receipt.record))throw Error('Created metadata changed externally. Review the item instead of overwriting it.');
+        const local=await this.metadata.readLocal();
+        const assigned=local.mappings[n.id];
+        if(assigned && assigned.stableId!==receipt.stableId)throw Error('Created item has a conflicting identity. Review diagnostics.');
+        local.mappings[n.id]={stableId:receipt.stableId,lastLocator:f.locator,dateAdded:n.dateAdded,method:'explicit'};
+        await this.metadata.write({[`meta:${receipt.stableId}`]:receipt.record},local);
+        await this.metadata.saveLocal(local);
+      }
+      receipt.complete=true;await this.metadata.saveCreation(requestId,receipt);
+      return {...await this.snapshot('created item'),mutation:{id:receipt.id,parentId:input.parentId}};
+    } catch(error){throw Error(`Item ${receipt.id} was CREATED in ${parent.path.join(' / ')}. Metadata completion is not confirmed. Retry completion for this item; it will not create another. ${String(error)}`, {cause:error});}
+  }
   async command(command: Command): Promise<Snapshot> {
     if (command.type === 'snapshot' || command.type === 'reconcile') return this.snapshot(command.type);
     const s = await this.snapshot(`before ${command.type}`);
-    if (['create', 'edit', 'edit-folder', 'attach-folder'].includes(command.type) && command.generation !== s.metadata.setup?.generation) throw new Error('Metadata was reset since this draft opened. Copy needed input, cancel and reopen.');
-    if (command.type === 'create-folder') {
-      this.folder(s, command.parentId);
-      if (!command.title.trim()) throw new Error('Folder name is required.');
-      await this.bookmarks.create({ parentId: command.parentId, title: command.title.trim() });
+    if (['create', 'create-folder', 'move', 'edit', 'edit-folder', 'attach-folder'].includes(command.type) && command.generation !== s.metadata.setup?.generation) throw new Error('Metadata was reset since this draft opened. Copy needed input, cancel and reopen.');
+    if (command.type === 'create-folder' || command.type === 'create') {
+      return this.createItem(s, command);
     } else if (command.type === 'attach-folder') {
       const folder = this.folder(s, command.id);
       if (!folder.renamable || folderEditToken(s, folder) !== command.expected) throw new Error('Folder changed or is restricted. Reopen its editor.');
@@ -155,15 +197,6 @@ export class DashboardService {
       this.favorite(s, command.id, command.expected);
       await this.bookmarks.removeLink(command.id);
       await this.removed([command.id]);
-    } else if (command.type === 'create') {
-      const input = this.validate(command.input);
-      this.folder(s, input.parentId);
-      const node = await this.bookmarks.create({ parentId: input.parentId, title: input.title, url: input.url });
-      try {
-        const fresh = flattenTree(await this.bookmarks.getTree()).favorites.find(f => f.id === node.id);
-        if (!fresh) throw new Error('Created Favorite is no longer present.');
-        await this.setTags(fresh, input.tags);
-      } catch (error) { throw new Error(`Favorite ${node.id} was CREATED, but tags could not be saved. Edit that Favorite; do not repeat Add. ${String(error)}`, { cause: error }); }
     } else if (command.type === 'edit') {
       const f = this.favorite(s, command.id, command.expected);
       const input = this.validate(command.input);

@@ -89,7 +89,9 @@ export interface Reconciliation {
   warnings: string[];
 }
 export interface LogEntry { time: string; message: string }
+export interface CreationReceipt { request: string; generation?: string; id?: string; native?: string; stableId: string; record?: BookmarkMetadata; complete?: boolean }
 export interface Snapshot {
+  mutation?: { id: string; parentId: string };
   schemaVersion: 1;
   extensionId: string;
   version: string;
@@ -111,10 +113,11 @@ export interface Snapshot {
 export interface LinkInput { title: string; url: string; parentId: string; tags: string[]; bookmarkletConfirmed?: boolean }
 export type Command = (
   | { type: 'snapshot' | 'reconcile' }
-  | { type: 'create'; input: LinkInput }
+  | { type: 'create'; input: LinkInput; requestId?: string; destinationExpected?: string }
   | { type: 'edit'; id: string; input: LinkInput; expected: string }
   | { type: 'delete'; id: string; expected: string }
-  | { type: 'create-folder'; parentId: string; title: string }
+  | { type: 'create-folder'; parentId: string; title: string; tags?: string[]; requestId?: string; destinationExpected?: string }
+  | { type: 'move'; id: string; expected: string; placement: import('./operations').Placement; destinationExpected: string }
   | { type: 'edit-folder'; id: string; title: string; tags: string[]; expected: string }
   | { type: 'attach-folder'; id: string; stableId: string; expected: string }
   | { type: 'rename-folder'; id: string; title: string; expectedTitle: string }) & { generation?: string };

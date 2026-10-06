@@ -1,3 +1,4 @@
+import { destinationToken } from '../src/core/operations';
 import { describe, expect, it } from 'vitest';
 import { BrowserMetadataRepository, checkQuota, type StorageArea } from '../src/browser/metadata';
 import type { BookmarksRepository } from '../src/browser/bookmarks';
@@ -242,4 +243,17 @@ describe('two profile simulation (not Microsoft transport validation)', () => {
     const s = await service.snapshot('two independent changes');
     expect(s.metadata.records[0].tags).toEqual(['remote-tag']); expect(s.metadata.histories[idA].locators).toHaveLength(2);
   });
+});
+describe('creation receipts',()=>{
+ it('completes a partially created folder after worker restart without a duplicate',async()=>{
+  const {service,bookmarks,sync,repository}=setup();const s=await service.snapshot('start');
+  const command={type:'create-folder' as const,parentId:'1',title:'New folder',tags:['parent'],requestId:'request-12345',destinationExpected:destinationToken(s,'1')};
+  sync.fail=true;await expect(service.command(command)).rejects.toThrow('was CREATED');expect(bookmarks.calls).toEqual(['create']);
+  sync.fail=false;const restarted=new DashboardService(bookmarks,repository,{extensionId:'test',version:'test'});const result=await restarted.command(command);expect(result.mutation?.id).toBe('101');expect(result.metadata.records[0].tags).toEqual(['parent']);
+  await restarted.command(command);expect(bookmarks.calls).toEqual(['create']);
+ });
+ it('rejects a changed destination before creating and a changed created item during retry',async()=>{
+  const {service,bookmarks,sync}=setup();let s=await service.snapshot('start');const command={type:'create' as const,requestId:'request-12345',destinationExpected:destinationToken(s,'10'),input:{title:'New',url:'https://example.test/',parentId:'10',tags:['tag']}};
+  await bookmarks.update('10',{title:'Changed'});await expect(service.command(command)).rejects.toThrow('Destination changed');expect(bookmarks.calls).toEqual(['update']);s=await service.snapshot('refresh');command.destinationExpected=destinationToken(s,'10');sync.fail=true;await expect(service.command(command)).rejects.toThrow('was CREATED');sync.fail=false;await bookmarks.update('101',{title:'External'});await expect(service.command(command)).rejects.toThrow('changed or disappeared');expect(bookmarks.calls.filter(x=>x==='create')).toHaveLength(1);
+ });
 });

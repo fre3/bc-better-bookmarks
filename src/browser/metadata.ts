@@ -1,5 +1,5 @@
 import { alignMetadataEpoch, setupEpoch, SETUP_KEY } from './metadata-setup';
-import type { LocalState, LogEntry, MetadataJournal, MetadataState } from '../core/model';
+import type { CreationReceipt, LocalState, LogEntry, MetadataJournal, MetadataState } from '../core/model';
 import { parseJournal, parseMetadata } from '../core/schema';
 export interface StorageArea {
   remove?(keys: string | string[]): Promise<void>;
@@ -8,6 +8,8 @@ export interface StorageArea {
   getBytesInUse(keys?: string | string[] | null): Promise<number>;
 }
 export interface MetadataRepository {
+  readCreation(id: string): Promise<CreationReceipt | undefined>;
+  saveCreation(id: string, receipt: CreationReceipt): Promise<void>;
   read(): Promise<MetadataState>;
   write(changes: Record<string, unknown>, authoredLocalState?: LocalState): Promise<void>;
   readLocal(): Promise<LocalState>;
@@ -34,6 +36,8 @@ export function checkQuota(raw: Record<string, unknown>, patch: Record<string, u
 export class BrowserMetadataRepository implements MetadataRepository {
   constructor(private readonly sync: StorageArea = chrome.storage.sync, private readonly local: StorageArea = chrome.storage.local,
     private readonly journalLimits = JOURNAL_LIMITS, private readonly now: () => string = () => new Date().toISOString()) {}
+  async readCreation(id: string) { return (await this.local.get(`creation:${id}`))[`creation:${id}`] as CreationReceipt | undefined; }
+  async saveCreation(id: string, receipt: CreationReceipt) { await this.local.set({ [`creation:${id}`]: receipt }); }
   async read() { return parseMetadata(await this.sync.get(null)); }
   async write(changes: Record<string, unknown>, authoredLocalState?: LocalState) {
     const raw = await this.sync.get(null);

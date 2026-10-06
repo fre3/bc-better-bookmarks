@@ -9,6 +9,7 @@ export interface CatalogueState {
 }
 export const initialCatalogueState: CatalogueState = { scope: '*', query: null, openSection: null, expanded: [], peekEpoch: 0 };
 export type CatalogueAction =
+  | { type: 'view'; openSection: string | null; expanded: string[] }
   | { type: 'scope'; id: string }
   | { type: 'query'; value: string; allBookmarks?: boolean }
   | { type: 'section'; id: string }
@@ -17,6 +18,7 @@ export type CatalogueAction =
 
 export function catalogueReducer(state: CatalogueState, action: CatalogueAction): CatalogueState {
   switch (action.type) {
+    case 'view': return {...state,openSection:action.openSection,expanded:action.expanded,peekEpoch:state.peekEpoch+1};
     case 'scope': return { ...state, scope: action.id, openSection: null, expanded: [], peekEpoch: state.peekEpoch + 1 };
     case 'query': return {
       ...state, query: action.value, scope: action.allBookmarks ? '*' : state.scope,

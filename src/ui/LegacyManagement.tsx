@@ -1,11 +1,11 @@
 import { nodeTags } from '../core/node-tags';
 import { favoriteTags as tagsFor } from './favorite-editor';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { diagnosticExport } from '../core/export';
 import { confirmLinkInput, editToken, isBookmarklet, safeHref, searchFavorites } from '../core/logic';
 import type { Command, Favorite, LinkInput, Snapshot } from '../core/model';
 
-type Editor = { generation?: string; id?: string; expected?: string; input: LinkInput };
+type Editor = { requestId?: string; generation?: string; id?: string; expected?: string; input: LinkInput };
 interface Props {
   s: Snapshot;
   tagSnapshot?: Snapshot;
@@ -18,6 +18,7 @@ export function LegacyManagement({ s, tagSnapshot = s, busy, execute }: Props) {
   const [category, setCategory] = useState('');
   const [diagnostics, setDiagnostics] = useState(false);
   const [editor, setEditor] = useState<Editor>();
+  const folderRequest=useRef(crypto.randomUUID());
   const [folderName, setFolderName] = useState('Dashboard Test');
   const [parentId, setParentId] = useState('');
 
@@ -39,9 +40,9 @@ export function LegacyManagement({ s, tagSnapshot = s, busy, execute }: Props) {
     <header><div><h1>Better Bookmarks <small>Technical MVP</small></h1><p>Real Edge Favorites · experimental synchronized tags</p></div><button onClick={() => setDiagnostics(!diagnostics)}>{diagnostics ? 'Close diagnostics' : 'Diagnostics'}</button></header>
     <p>Changes modify your real Edge Favorites.</p>
     <div className="toolbar"><input type="search" aria-label="Search Favorites" placeholder="Search links, or use #tag and @category" title="Plain text searches everything; # targets user tags; @ targets category. All terms must match. Lone # and @ are ignored." value={query} onChange={e => setQuery(e.target.value)} />
-      <button disabled={busy || !selectedParent} onClick={() => setEditor({ generation: s.metadata.setup?.generation, input: { title: '', url: 'https://', parentId: selectedParent, tags: [] } })}>Add link</button></div>
+      <button disabled={busy || !selectedParent} onClick={() => setEditor({ requestId:crypto.randomUUID(), generation: s.metadata.setup?.generation, input: { title: '', url: 'https://', parentId: selectedParent, tags: [] } })}>Add link</button></div>
     {editor && <section className="editor"><h2>{editor.id ? 'Edit Favorite' : 'Add real Edge Favorite'}</h2>
-      <form onSubmit={e => { e.preventDefault(); const input = confirmLinkInput(editor.input, message => window.confirm(message)); if (!input) return; const command: Command = editor.id ? { type: 'edit', id: editor.id, expected: editor.expected!, input } : { type: 'create', input }; void execute({ ...command, generation: editor.generation }).then(saved => { if (saved) setEditor(undefined); }); }}>
+      <form onSubmit={e => { e.preventDefault(); const input = confirmLinkInput(editor.input, message => window.confirm(message)); if (!input) return; const command: Command = editor.id ? { type: 'edit', id: editor.id, expected: editor.expected!, input } : { type: 'create', input, requestId: editor.requestId }; void execute({ ...command, generation: editor.generation }).then(saved => { if (saved) setEditor(undefined); }); }}>
         <label>Title<input required value={editor.input.title} onChange={e => setEditor({ ...editor, input: { ...editor.input, title: e.target.value } })} /></label>
         <label>URL (HTTP, HTTPS, or bookmarklet)<textarea required rows={3} spellCheck={false} value={editor.input.url} onChange={e => setEditor({ ...editor, input: { ...editor.input, url: e.target.value } })} /></label>
         <label>Category<select value={editor.input.parentId} onChange={e => setEditor({ ...editor, input: { ...editor.input, parentId: e.target.value } })}>{folders.map(f => <option key={f.id} value={f.id}>{f.path.join(' / ')} [ID {f.id}]</option>)}</select></label>
@@ -64,7 +65,7 @@ export function LegacyManagement({ s, tagSnapshot = s, busy, execute }: Props) {
       {results.filter(f => !displayFolders.some(folder => folder.id === f.parentId)).map(f => <article key={f.id}><div className="link"><a href={safeHref(f.url)}>{f.title}</a><span className="url">{f.url}</span><small>{f.folderPath.join(' / ')}</small><div>{f.systemLabels.map(label => <span className="tag system-label" title="System label derived from URL (read only)" key={`system-${label}`}>{label}</span>)}{tagsFor(s, f.id).map(t => <span className="tag" key={t}>{t}</span>)}</div>{!safeHref(f.url) && <small>{isBookmarklet(f.url) ? 'Run this bookmarklet through Edge Favorites.' : "Open this Favorite using Edge's Favorites UI."}</small>}</div><span>Read only</span></article>)}
     </section></div>
     <details className="settings"><summary>Category management / test folder setup</summary>
-      <form onSubmit={e => { e.preventDefault(); void execute({ type: 'create-folder', parentId: selectedParent, title: folderName }); }}>
+      <form onSubmit={e => { e.preventDefault(); void execute({ type: 'create-folder', parentId: selectedParent, title: folderName, requestId:folderRequest.current,generation:s.metadata.setup?.generation }).then(saved=>{if(saved)folderRequest.current=crypto.randomUUID();}); }}>
         <label>Parent folder<select value={selectedParent} onChange={e => setParentId(e.target.value)}>{folders.map(f => <option key={f.id} value={f.id}>{f.path.join(' / ')} [ID {f.id}]</option>)}</select></label>
         <label>New folder name<input required value={folderName} onChange={e => setFolderName(e.target.value)} /></label>
         <button disabled={busy || !selectedParent}>Create folder</button>
