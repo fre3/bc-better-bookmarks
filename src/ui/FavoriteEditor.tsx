@@ -23,6 +23,7 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose }: Props) {
   const [discard, setDiscard] = useState(false);
   const [saving, setSaving] = useState(false);
   const submitting = useRef(false);
+  const focusFrame = useRef(0);
   const dialog = useRef<HTMLDialogElement>(null);
   const title = useRef<HTMLInputElement>(null);
   const continueEditing = useRef<HTMLButtonElement>(null);
@@ -43,12 +44,13 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose }: Props) {
     const previous = { overflow: root.style.overflow, gutter: root.style.scrollbarGutter };
     if (window.innerWidth > root.clientWidth) root.style.scrollbarGutter = 'stable';
     root.style.overflow = 'hidden';
-    return () => { root.style.overflow = previous.overflow; root.style.scrollbarGutter = previous.gutter; element.close(); };
+    return () => { cancelAnimationFrame(focusFrame.current); root.style.overflow = previous.overflow; root.style.scrollbarGutter = previous.gutter; element.close(); };
   }, []);
   useEffect(() => { if (discard) continueEditing.current?.focus(); }, [discard]);
   function resumeEditing() {
     setDiscard(false);
-    requestAnimationFrame(() => title.current?.focus({ preventScroll: true }));
+    cancelAnimationFrame(focusFrame.current);
+    focusFrame.current = requestAnimationFrame(() => title.current?.focus({ preventScroll: true }));
   }
   function requestClose() {
     if (submitting.current) return;
@@ -74,14 +76,22 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose }: Props) {
     } catch (error) { setFailure({ error: String(error) }); }
     finally { submitting.current = false; setSaving(false); }
   }
-  return <dialog ref={dialog} className="favorite-editor" aria-labelledby="favorite-editor-heading" aria-describedby="favorite-edit-folder" onKeyDown={event => {
+  return <dialog ref={dialog} className="favorite-editor" aria-labelledby="favorite-editor-heading" aria-describedby="favorite-edit-folder" onKeyDownCapture={event => {
+      // Repeated native close requests may become non-cancelable. Consume the
+      // keyboard default before CloseWatcher can close only the DOM dialog and
+      // strand React's draft/scroll lock. One key handles exactly one layer.
+      if (event.key === 'Escape') {
+        event.preventDefault(); event.stopPropagation();
+        if (!event.repeat) { if (discard) resumeEditing(); else requestClose(); }
+        return;
+      }
       if (event.key !== 'Tab') return;
       const stops = [...event.currentTarget.querySelectorAll<HTMLElement>('input, textarea, button:not(:disabled)')];
       const first = stops[0], last = stops.at(-1);
       if (!stops.includes(document.activeElement as HTMLElement)) { event.preventDefault(); (event.shiftKey ? last : first)?.focus(); }
       else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
-    }} onCancel={event => { event.preventDefault(); if (discard) resumeEditing(); else requestClose(); }}>
+    }} onCancel={event => { event.preventDefault(); event.stopPropagation(); if (discard) resumeEditing(); else requestClose(); }}>
     <h2 id="favorite-editor-heading">{draft.isFolder ? 'Edit Folder' : 'Edit Favorite'}</h2>
     <p id="favorite-edit-folder" className="editor-context">{draft.isFolder ? 'Parent' : 'Folder'}: {folderContext || '(root)'}</p>
     <form noValidate onSubmit={event => { event.preventDefault(); void save(); }} aria-busy={saving}>
