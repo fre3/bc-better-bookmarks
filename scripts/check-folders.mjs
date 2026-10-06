@@ -57,8 +57,8 @@ try {
  await editFolder(p,'s0',null,'source');await editFolder(p,'s1',null,'second');
  await p.evaluate(async()=>{window.local.data.state.mappings={};window.local.data.metadataJournal={schemaVersion:1,entries:{}};window.refresh()});
  await manage(p).click();await p.getByText('Folder identity review and test metadata setup',{exact:true}).click();
- const review=p.locator('.metadata-setup');await expect(review.getByText('candidate:',{exact:false})).toHaveCount(2);
- for (const checkbox of await review.locator('li input[type=checkbox]').all()) await checkbox.check();await p.getByRole('button',{name:'Confirm selected original folders'}).click();await expect(review.getByText('candidate:',{exact:false})).toHaveCount(0);
+ const review=p.locator('.metadata-setup');await expect(review.locator('.binding-records > li')).toHaveCount(2);
+ for (const checkbox of await review.locator('li input[type=checkbox]').all()) await checkbox.check();await p.getByRole('button',{name:'Confirm binding'}).click();await expect(review.locator('.binding-records > li')).toHaveCount(0);
  await back(p).click();
  await section(p,0).click();await p.locator('#edit-bookmark-0-0').click();await tags(p).fill('baseline');await save(p).click();await expect(modal(p)).toHaveCount(0);await p.locator('#edit-bookmark-0-0').click();await p.getByLabel('Title',{exact:true}).fill('Native saved then moved');await tags(p).fill('remaining');await p.evaluate(()=>window.failTagWrite=true);await save(p).click();await expect(modal(p)).toContainText('Completed native changes: title');
  await p.evaluate(()=>window.external('0-0',{parentId:'s2'}));await expect(modal(p).getByRole('alert').first()).toContainText('changed');await p.getByRole('button',{name:'Review current values for recovery'}).click();await expect(modal(p)).toContainText('Parent: Favorites bar / Career 2');await p.evaluate(()=>window.failTagWrite=false);await p.getByRole('button',{name:'Keep my input and use these values as the save baseline'}).click();await save(p).click();await expect(modal(p)).toHaveCount(0);

@@ -20,7 +20,9 @@ const tree=[{id:'0',title:'',children:[{id:'r1',parentId:'0',title:'Favorites ba
 const nodes=()=>{const walk=items=>items.flatMap(n=>[n,...walk(n.children??[])]);return walk(tree)};
 const bookmarks={getTree:async()=>structuredClone(tree),update:async(id,value)=>{if(window.failSave)throw Error('Synthetic browser write failure');Object.assign(nodes().find(n=>n.id===id),value)},move:async()=>{throw Error('Unexpected move')},create:async()=>{throw Error('Unexpected create')},removeLink:async()=>{throw Error('Unexpected deletion')}};
 const local=new Storage();local.data.state={schemaVersion:1,rootId:'*',mappings:{},pendingDeletions:[]};const sync=new Storage();
-const service=new DashboardService(bookmarks,new BrowserMetadataRepository(sync,local),{extensionId:'fixture',version:'0.1.19'});
+const restored=sessionStorage.getItem('binding-fixture');if(restored){const saved=JSON.parse(restored);local.data=saved.local;sync.data=saved.sync;}
+window.persistFixture=()=>sessionStorage.setItem('binding-fixture',JSON.stringify({local:local.data,sync:sync.data}));
+const service=new DashboardService(bookmarks,new BrowserMetadataRepository(sync,local),{extensionId:'fixture',version:'0.1.20'});
 const listeners=new Set(),storageListeners=new Set();let queue=Promise.resolve();
 local.data['ui:show-archived']=localStorage.getItem('ui:show-archived')==='true';
 window.addEventListener('storage',e=>{if(e.key==='ui:show-archived'){local.data[e.key]=e.newValue==='true';storageListeners.forEach(f=>f({[e.key]:{newValue:e.newValue==='true'}},'local'))}});
@@ -30,7 +32,7 @@ window.local=local;window.sync=sync;window.service=service;
 window.requestSearch=()=>{let result;listeners.forEach(f=>f({event:'dashboard-search',tabId:1,id:crypto.randomUUID(),allBookmarks:true},{id:'fixture'},r=>{result=r}));return result};
 window.refresh=()=>listeners.forEach(f=>f({event:'dashboard-changed'},{id:'fixture'},()=>{}));
 window.chrome={runtime:{id:'fixture',getURL:path=>location.origin+'/'+path.replace(/^\\//,''),onMessage:{addListener:f=>listeners.add(f),removeListener:f=>listeners.delete(f)},sendMessage:async message=>{
- if(message.command){window.commands.push(message.command);const result=queue.then(async()=>{if(message.command.type==='edit'&&window.holdSave)await new Promise(r=>window.releaseSave=r);return service.command(message.command)});queue=result.catch(()=>{});try{return {ok:true,snapshot:await result}}catch(e){return {ok:false,error:String(e),progress:e.progress}}}
+ if(message.command){window.commands.push(message.command);const result=queue.then(async()=>{if(message.command.type==='attach-folder'&&window.failBinding)throw Error('Error: Synthetic binding failure');if(message.command.type==='edit'&&window.holdSave)await new Promise(r=>window.releaseSave=r);return service.command(message.command)});queue=result.catch(()=>{});try{return {ok:true,snapshot:await result}}catch(e){return {ok:false,error:String(e),progress:e.progress}}}
  if(message.event==='prepare-metadata-reset')return {ok:true,backup:await prepareMetadataReset(sync,local)};
  if(message.event==='reset-metadata'){try{await resetMetadata(sync,local,message.expected);window.refresh();return {ok:true}}catch(e){return {ok:false,error:String(e)}}}
  if(message.event==='set-archive-preference'){const key='ui:show-archived',oldValue=local.data[key];local.data[key]=message.enabled;localStorage.setItem(key,JSON.stringify(message.enabled));storageListeners.forEach(f=>f({[key]:{oldValue,newValue:message.enabled}},'local'))}

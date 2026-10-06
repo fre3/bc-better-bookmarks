@@ -149,6 +149,11 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       </div>
     </header>
 
+    {bindingReviews.length > 0 && <div className="binding-notice">
+      <span role="status" aria-atomic="true">Folder tags need review ({bindingReviews.length})</span>{' — '}
+      <button id="catalogue-review" onClick={onReviewBindings} aria-describedby="binding-notice-help">Review</button>
+      <span id="binding-notice-help" className="sr-only">Received folder metadata needs confirmation before it can be applied on this device.</span>
+    </div>}
     {searching && <section className="search-mode" aria-label="Search catalogue">
       <input ref={input} type="text" aria-label="Search bookmarks" aria-describedby="search-syntax" value={state.query ?? ''} onChange={e => dispatch({ type: 'query', value: e.target.value })} autoComplete="off" spellCheck={false} placeholder="Search bookmarks" />
       <div className="search-caption"><span role="status">{visible.count} {visible.count === 1 ? 'result' : 'results'}</span><span id="search-syntax">plain text · #tag · @folder</span><button onClick={exitSearch}>Close search · Esc</button></div>
@@ -156,12 +161,6 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     </div>
     <div ref={reservation} className="chrome-reservation" aria-hidden="true" />
     {launchError && <p role="alert">{launchError}</p>}
-    {bindingReviews.some(review => review.available || review.ambiguous) && <p className="binding-notice" role="status">
-      Folder tags received; folder confirmation is needed before they can apply.
-      {' '}{bindingReviews.filter(review => review.available).length} pending confirmation;
-      {' '}{bindingReviews.filter(review => review.ambiguous).length} ambiguous (requires review).
-      {' '}<button onClick={onReviewBindings}>Review folders in Manage</button>
-    </p>}
     <div className="section-stack" aria-label="Bookmark catalogue">
       {visible.sections.map((section, index) => <SectionCard key={section.id} blocked={modalOpen} selectedId={selectedId} onEdit={editing ? onEdit : undefined} section={section} nextSection={visible.sections[index + 1]} sections={visible.sections} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended} onToggle={() => {
         if (state.openSection && state.openSection !== section.id) scrollToSection.current = section.id;

@@ -15,3 +15,12 @@
 
 .favorite-editor .archive-choice { display: flex; align-items: baseline; gap: 8px; }
 .favorite-editor .archive-choice input { display: inline; width: auto; padding: 0; accent-color: var(--edit-accent); }
+
+.binding-dialog { width: min(740px, calc(100% - 32px)); }
+.binding-records { padding-left: 22px; }
+.binding-records li { margin-block: 20px; overflow-wrap: anywhere; }
+.binding-records p { margin-block: 6px; }
+.binding-records label { display: block; }
+.favorite-editor .binding-records input { display: inline; width: auto; }
+.binding-relevant { border-inline-start: 2px solid var(--edit-accent); padding-inline-start: 12px; }
+.folder-binding-workflow > button { text-decoration: underline; margin-top: 12px; }
