@@ -4,7 +4,7 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated functional baseline is preserved at `mvp-validated-0.1.1`. The user accepted the 0.1.15 visual checkpoint in native Edge. Visual work is closed at annotated `ui-validated-0.1.15`; `feature/bookmark-editing` starts there. Its first title/URL/tags modal increment is implemented in 0.1.16 and awaits native Edge review. The first authorized increment is transient catalogue Edit mode and a title/URL/tags modal, reusing existing Manage validation, identity and mutation safeguards. Folder editing, move/delete UI, bulk operations, drag/drop and thumbnails remain deferred. Folder tags require separate metadata-model authorization. See `development-state.md` for current implementation status.
+The validated MVP remains at `mvp-validated-0.1.1`, and accepted visual work at `ui-validated-0.1.15`. On `feature/bookmark-editing`, 0.1.17 adds folder/subfolder editing, direct folder metadata, computed inheritance and unified archive visibility. The user reports 0.1.16 Favorite editing works; comprehensive Edge acceptance of new behavior remains pending. See `development-state.md` and `metadata-setup.md`. Folder metadata changes and controlled test-data reset were explicitly authorized; no new create/move/delete UI, bulk operations, drag/drop, thumbnails or semantic search are part of this increment.
 
 ## Future catalogue imagery and motion
 
@@ -71,3 +71,8 @@ Before production publication through Edge Add-ons:
 - design an explicit migration only if development and production namespaces differ and migration is actually required.
 
 Do not assume the development manifest key determines the production store identity.
+
+
+## Manage organization — deferred
+
+Reorganize and clean up Manage in a future update: separate everyday preferences, editing scope, identity review and advanced diagnostics/setup more clearly. Do not redesign it during the 0.1.17 increment beyond the requested folder review and settings. Any metadata import/recovery workflow needs an explicit, evidence-driven design; the private reset export is not a one-click restore feature.

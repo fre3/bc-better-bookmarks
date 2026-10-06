@@ -415,3 +415,8 @@ For Edge Add-ons distribution, the store provides installation/update and store 
 Official references and uncertainty classification: [technical spike](technical-spike.md). Sideloading follows [Microsoft's instructions](https://learn.microsoft.com/en-us/microsoft-edge/extensions/getting-started/extension-sideloading); sync setup follows [Microsoft's sync settings guidance](https://support.microsoft.com/en-us/edge/change-and-customize-sync-settings-in-microsoft-edge).
 
 Historical local dependency audit after upgrading Vitest/ESLint: 0 reported vulnerabilities (2026-09-24; not a fresh audit). Build checks are not browser execution evidence. Manual baseline results came from the user; this development iteration uses no live Edge automation.
+
+
+## 0.1.17 folder metadata and clean setup — pending native evidence
+
+Folder metadata/inheritance/archive behavior is new and is not covered by the completed Favorite-only baseline above. The user authorized discarding test extension metadata through a deliberate bounded reset, not native Favorites changes. All devices must upgrade together; old clients remain disabled. Before resetting, export each device's private metadata/journal and inspect affected keys. See [metadata setup and the separate native two-device checklist](metadata-setup.md). Reset generation handling, unbound folder confirmation, copies/ambiguity, inheritance and device-local Show archived have isolated service/Chromium evidence only. No Microsoft sync or real-profile reset was performed during 0.1.17 implementation.
