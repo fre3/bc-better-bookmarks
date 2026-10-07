@@ -1,7 +1,7 @@
 # Development State
 
 Last updated: 2026-10-07
-Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.24**.
+Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.25** (verification in progress).
 Validated MVP: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated `mvp-validated-0.1.1`.
 Accepted visual checkpoint: `ui-validated-0.1.15` and `feature/ui-ux-redesign` remain at `0e6a596210b2be2d273eab4a19d2268d9a1407a1`. No push; supplied media and Windows clone untouched.
 
@@ -11,15 +11,13 @@ The user reports the other requested **0.1.23** tests pass; Workspace compatibil
 
 The duplicate-bookmark binding defect fixed in 0.1.23 remains fixed. The historical native-title-change report remains unexplained. Native duplicate titles were established, but a title overwrite during dragging was neither established nor ruled out. No reset, merge, guessed repair, rename, delete, recreation or Workspace mutation was performed on live data. See [identity investigation](move-identity-0.1.23.md) for retained evidence and minimal read-only diagnostics.
 
-## Workspace safeguards
+## Workspace safeguards — 0.1.25 in progress
 
-Visually inspected all five supplied 0.1.23 references; none missing. The user also supplied read-only native root/immediate-folder properties. Favorites bar and Other favorites expose documented ordinary `folderType` values; the Workspaces root and both direct folders expose no type/protection discriminator. Names, IDs and matching property sets do not prove which direct child is an actual Workspace.
+0.1.24 was judged too restrictive. The user accepts immediate folders beneath the established Workspaces root as protected containers, including ordinary folders accidentally created there. Native operations inside either active or inactive containers were reported working previously. Direct-root folder recognition by Edge remains a hypothesis; silent cross-Workspace movement is under investigation.
 
-[Evidence, shared policy and read-only follow-up](workspace-capabilities.md): documented ordinary domains retain native operations. Unclassified roots/types and their descendants remain visible/searchable, but native create, rename, URL change, move/reorder and delete are blocked. Managed restrictions remain independent. UI actions, destinations, drag planning, Manage and fresh worker preflight share that boundary, including protected descendants and insertion anchors. Browser rejection never falls back to copy/delete/recreation.
+[Current policy and exact root assumption](workspace-capabilities.md): a typed bar + other plus one untyped non-managed root matches the supplied structure. No names/IDs are hard-coded. Containers stay native-protected but their contents regain creation/edit/delete and within-container moves. Cross-boundary moves remain temporarily blocked, not declared prohibited by Edge. Loose direct-root entries disappear from browse only; search/full paths, Manage and administrative review retain access. 0.1.24 highlighting remains intact. No live mutation/reset or new permissions.
 
-**Limitation:** native operations on ordinary-looking content inside the unclassified Workspace branch are also restricted. A safe distinction is not exposed by the supplied data; do not infer one by depth, title or local ID. Use Edge for those native changes until a supported signal or separately reviewed explicit association workflow exists. This does not assert that all cross-Workspace moves are prohibited by Edge. Browsers lacking ordinary root types will likewise be conservative.
-
-Tags/archive metadata remain separately editable for real non-managed nodes below roots when identity and metadata health permit. Native names/URLs are read-only in those editors; unchanged fields cause no native update/move. Root/synthetic metadata remains prohibited. Existing bindings remain reconciliation participants; no synchronization schema/transport/permission change, automatic identity repair or metadata reset.
+Next: finish native move-outcome verification and isolated regressions, regenerate 0.1.25, then stop for Edge review. Previous verification below remains 0.1.24 evidence until replaced by final results.
 
 ## Active-editor highlighting
 

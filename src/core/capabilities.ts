@@ -1,8 +1,6 @@
 import type { FavoriteNode, Folder } from './model';
 
-/** Only documented browser folder types establish an ordinary bookmark domain.
- * Unknown roots/types are NOT identified as Workspaces by their display names.
- * Edge exposes no documented Workspace-container signal in bookmarks API. */
+/** Derived policy, not an Edge-provided Workspace discriminator. */
 export const ORDINARY_ROOT_TYPES = new Set(['bookmarks-bar', 'other', 'mobile']);
 export const UNKNOWN_LOCATION = 'Native changes are unavailable in this unclassified browser location. Manage Workspace names and lifecycle in Edge.';
 export function metadataEditable(node: FavoriteNode | undefined): boolean {
@@ -15,4 +13,23 @@ export function nativeIssue(node: FavoriteNode | undefined): string | undefined 
 }
 export function assertNative(node: FavoriteNode | undefined) {
   const issue = nativeIssue(node); if (issue) throw Error(issue);
+}
+
+export const WORKSPACE_ROOT = 'Create and manage Workspaces through Edge. The Workspaces root cannot receive ordinary folders or moved items.';
+export const WORKSPACE_CONTAINER = 'Workspace naming and lifecycle are managed in Edge. Only extension tags may be edited on this container.';
+export const WORKSPACE_BOUNDARY = 'Moving across a Workspace boundary is temporarily unavailable in this dashboard: extension API support is unverified. Use Edge Favorites to move it, then refresh. No copy or automatic retry is performed.';
+/** Observed profile shape: documented bar + other, exactly one additional bare
+ * root, no other unknown types. No labels, IDs, active tabs or per-folder setup.
+ * A different browser root with this same shape is indistinguishable: see docs. */
+export function workspaceRoot(tree: FavoriteNode[]): string | undefined {
+  const roots = tree.flatMap(n => n.children ?? []).filter(n => n.url === undefined);
+  if (!roots.some(n => n.folderType === 'bookmarks-bar') || !roots.some(n => n.folderType === 'other')) return;
+  const unknown = roots.filter(n => !n.unmodifiable && n.folderType !== 'managed' && !ORDINARY_ROOT_TYPES.has(n.folderType ?? ''));
+  return unknown.length === 1 && !unknown[0].folderType ? unknown[0].id : undefined;
+}
+export function destinationIssue(folder: Folder | undefined): string | undefined {
+  if (!folder?.writable) return nativeIssue(folder) ?? 'Choose a writable destination.';
+}
+export function moveBoundaryIssue(source: FavoriteNode | undefined, destination: FavoriteNode | undefined): string | undefined {
+  if (source?.workspaceId !== destination?.workspaceId && (source?.workspaceId || destination?.workspaceId)) return WORKSPACE_BOUNDARY;
 }

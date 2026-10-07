@@ -1,4 +1,4 @@
-import { assertNative, metadataEditable } from './capabilities';
+import { assertNative, metadataEditable, moveBoundaryIssue } from './capabilities';
 import { itemMetadataIssue } from './item-metadata-health';
 import type { BookmarksRepository } from '../browser/bookmarks';
 import { QUOTAS, type MetadataRepository } from '../browser/metadata';
@@ -250,11 +250,11 @@ export class DashboardService {
         input.title = f.title; input.url = f.url; // metadata-only saves preserve exact native values
       }
       if (f.title !== input.title || f.url !== input.url || f.parentId !== input.parentId) assertNative(f);
-      if (f.parentId !== input.parentId) this.folder(s, input.parentId);
+      if (f.parentId !== input.parentId) { const parent=this.folder(s, input.parentId); const issue=moveBoundaryIssue(f,parent); if(issue)throw Error(issue); }
       this.preflightTags(s, f, input.tags);
       const progress: EditProgress = { title: false, url: false, location: false, tags: 'not-confirmed' };
       try {
-        if (f.title !== input.title || f.url !== input.url || f.parentId !== input.parentId) { const tree = await this.bookmarks.getTree(); const fresh = {...s,tree,...flattenTree(tree)}; assertNative(fresh.favorites.find(n=>n.id===f.id)); if(f.parentId !== input.parentId) this.folder(fresh,input.parentId); }
+        if (f.title !== input.title || f.url !== input.url || f.parentId !== input.parentId) { const tree = await this.bookmarks.getTree(); const fresh = {...s,tree,...flattenTree(tree)}; assertNative(fresh.favorites.find(n=>n.id===f.id)); if(f.parentId !== input.parentId) {const parent=this.folder(fresh,input.parentId);const issue=moveBoundaryIssue(fresh.favorites.find(n=>n.id===f.id),parent);if(issue)throw Error(issue);} }
         if (f.title !== input.title || f.url !== input.url) { await this.bookmarks.update(f.id, { title: input.title, url: input.url }); progress.title = f.title !== input.title; progress.url = f.url !== input.url; }
         if (f.parentId !== input.parentId) { await this.bookmarks.move(f.id, input.parentId); progress.location = true; }
         const fresh = flattenTree(await this.bookmarks.getTree()).favorites.find(n => n.id === f.id);

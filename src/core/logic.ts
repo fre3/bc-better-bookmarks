@@ -1,4 +1,4 @@
-import { ORDINARY_ROOT_TYPES, UNKNOWN_LOCATION } from './capabilities';
+import { ORDINARY_ROOT_TYPES, UNKNOWN_LOCATION, workspaceRoot, WORKSPACE_ROOT, WORKSPACE_CONTAINER } from './capabilities';
 import type { Favorite, FavoriteNode, Folder, FolderPart, LinkInput, Locator, SystemLabel } from './model';
 
 // Inspect only the scheme; bookmarklet code is opaque and never parsed or rewritten.
@@ -27,22 +27,26 @@ export function fingerprint(locator: Locator): string {
 export function flattenTree(tree: FavoriteNode[]): { favorites: Favorite[]; folders: Folder[] } {
   const favorites: Favorite[] = [];
   const folders: Folder[] = [];
-  const walk = (node: FavoriteNode, path: string[], parts: FolderPart[], ids: string[], managed: boolean, inheritedRestriction?: string) => {
+  const workspaceRootId = workspaceRoot(tree);
+  const walk = (node: FavoriteNode, path: string[], parts: FolderPart[], ids: string[], managed: boolean, inheritedRestriction?: string, parentWorkspaceId?: string) => {
     const blocked = managed || Boolean(node.unmodifiable) || node.folderType === 'managed';
     const unknownRoot = ids.length === 1 && !ORDINARY_ROOT_TYPES.has(node.folderType ?? '');
     const unknownType = Boolean(node.folderType && !ORDINARY_ROOT_TYPES.has(node.folderType) && node.folderType !== 'managed');
-    const restriction = inheritedRestriction || (unknownRoot || unknownType ? UNKNOWN_LOCATION : undefined);
+    const workspaceRole = node.id === workspaceRootId ? 'root' : workspaceRootId && node.parentId === workspaceRootId ? node.url === undefined ? 'container' : 'loose' : parentWorkspaceId ? 'content' : undefined;
+    const workspaceId = workspaceRole === 'container' ? node.id : parentWorkspaceId;
+    const domainRestriction = inheritedRestriction || (unknownType || unknownRoot && workspaceRole !== 'root' ? UNKNOWN_LOCATION : undefined);
+    const restriction = domainRestriction || (workspaceRole === 'root' || workspaceRole === 'loose' ? WORKSPACE_ROOT : workspaceRole === 'container' ? WORKSPACE_CONTAINER : undefined);
     if (node.url !== undefined) {
-      favorites.push({ ...node, nativeRestriction: restriction, unmodifiable: blocked ? 'managed' : undefined, url: node.url, systemLabels: systemLabelsFor(node.url), folderPath: path, ancestorIds: ids,
+      favorites.push({ ...node, nativeRestriction: restriction, workspaceRole, workspaceId, unmodifiable: blocked ? 'managed' : undefined, url: node.url, systemLabels: systemLabelsFor(node.url), folderPath: path, ancestorIds: ids,
         locator: { url: node.url, title: node.title, folderPath: parts } });
       return;
     }
     const isRoot = node.parentId === undefined;
     const nextPath = isRoot ? path : [...path, node.title];
     const nextParts = isRoot ? parts : [...parts, { kind: node.folderType ? 'browser' as const : 'title' as const, value: node.folderType ?? node.title }];
-    folders.push({ ...node, nativeRestriction: restriction, unmodifiable: blocked ? 'managed' : node.unmodifiable, path: nextPath, ancestorIds: ids, writable: !blocked && !isRoot && !restriction,
+    folders.push({ ...node, nativeRestriction: restriction, workspaceRole, workspaceId, unmodifiable: blocked ? 'managed' : node.unmodifiable, path: nextPath, ancestorIds: ids, writable: !blocked && !isRoot && (!restriction || workspaceRole === 'container' && !domainRestriction),
       renamable: !blocked && !restriction && !isRoot && ids.length > 1 && !node.folderType });
-    for (const child of node.children ?? []) walk(child, nextPath, nextParts, [...ids, node.id], blocked, restriction);
+    for (const child of node.children ?? []) walk(child, nextPath, nextParts, [...ids, node.id], blocked, domainRestriction, workspaceId);
   };
   for (const root of tree) walk(root, [], [], [], false);
   return { favorites, folders };

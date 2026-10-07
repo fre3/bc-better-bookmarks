@@ -153,7 +153,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
         {editing && <span className="editing-badge">Editing</span>}
         <button ref={searchButton} onClick={() => searching ? input.current?.focus() : startSearch()}>Search /</button>
         {onEdit && <button id="catalogue-edit" aria-pressed={editing} onClick={() => setEditing(!editing)}><span className="mode-button-size"><span aria-hidden={editing} style={{ visibility: editing ? 'hidden' : 'visible' }}>Edit</span><span aria-hidden={!editing} style={{ visibility: editing ? 'visible' : 'hidden' }}>Done</span></span></button>}
-        {editing && <AddMenu parentId={scope === '*' ? '' : scope} />}
+        {editing && snapshot.folders.find(f=>f.id===scope)?.workspaceRole!=='root' && <AddMenu parentId={scope === '*' ? '' : scope} />}
         {!editing && <button onClick={onManage}>Manage</button>}
       </div>
     </header>

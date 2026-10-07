@@ -1,4 +1,4 @@
-import { assertNative } from './capabilities';
+import { assertNative, destinationIssue, moveBoundaryIssue } from './capabilities';
 import type { FavoriteNode, Snapshot } from './model';
 import { directTags, folderNode } from './node-tags';
 import { editToken } from './logic';
@@ -19,7 +19,8 @@ export function placementToken(s:Snapshot,p:Placement) { return JSON.stringify([
 export function planMove(s:Snapshot,id:string,p:Placement) {
  if(!['start','before','after','end'].includes(p.side))throw Error('Unsupported placement.');
  const n=nodeById(s,id),parent=s.folders.find(f=>f.id===p.parentId);
- assertNative(n); assertNative(parent);
+ assertNative(n);
+ const destinationProblem=destinationIssue(parent) || moveBoundaryIssue(n,parent);if(destinationProblem)throw Error(destinationProblem);
  if(!n || n.unmodifiable || n.url===undefined && !(n as Snapshot['folders'][number]).renamable)throw Error('This item is missing, managed or browser-owned.');
  if(!parent?.writable)throw Error('Choose a writable destination.');
  for(const child of [...s.folders,...s.favorites].filter(child=>child.ancestorIds.includes(id))) { assertNative(child); if(child.url===undefined&&!s.folders.find(f=>f.id===child.id)?.renamable)throw Error('This subtree contains a browser-owned folder and cannot be moved.'); }

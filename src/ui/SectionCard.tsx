@@ -76,7 +76,8 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
             <span className="section-heading-text"><span className="section-title-text" data-editing={Boolean(selectedId && section.folder && selectedId === section.folder.id) || undefined}>{section.title || '(untitled)'}</span>{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span>
           </a>}
         {onEdit && metadataEditable(section.folder) && <EditAction id={section.folder!.id} title={section.title} folder onEdit={onEdit} />}
-        {onEdit && !section.folder && <AddMenu parentId={section.parentId} />}
+        {onEdit && !section.folder && !section.browseHidden && <AddMenu parentId={section.parentId} />}
+        {query !== null && section.folder && <span className="search-item-path">{section.folder.path.join(' / ')}</span>}
         {Boolean(section.tagInfo?.effective.length) && <span className={`section-tag-annotation${explainsTags ? ' explains-search' : ''}`}><TagText tags={section.tagInfo!.effective} info={section.tagInfo} folder /></span>}
         </h2>
       </div>

@@ -1,4 +1,4 @@
-# Browser-location capabilities — 0.1.24
+# Browser-location capabilities — 0.1.25
 
 ## Evidence and limits
 
@@ -10,19 +10,40 @@ The user supplied a read-only `getTree` property inventory during implementation
 
 [Chromium's bookmarks contract](https://developer.chrome.com/docs/extensions/reference/api/bookmarks) documents browser-owned folder types (`bookmarks-bar`, `other`, `mobile`, `managed`) and managed-node restrictions. [Microsoft's API support list](https://learn.microsoft.com/en-us/microsoft-edge/extensions/developer-guide/api-support) lists bookmarks support. Neither establishes a public Workspace-container discriminator. [Microsoft's Workspace guide](https://learn.microsoft.com/en-us/deployedge/microsoft-edge-workspaces) documents the product, not a bookmarks extension capability contract. These documents do not certify that modifying a native Favorites tree entry updates Workspace lifecycle state.
 
-## Conservative application policy
+## Accepted application policy — supersedes 0.1.24 blanket restriction
 
-`core/capabilities.ts` and `flattenTree` separate native writes from extension metadata:
+The user reports creation/editing inside real Workspaces worked, including editing Personal while Development was active. 0.1.24's blanket native restriction was rejected as too restrictive. Whether dashboard-created direct folders were recognized by Edge as actual Workspaces remains a hypothesis. The reported silent boundary move and native Favorites UI support do not establish the extension API's behavior.
 
-- A documented ordinary root type establishes the ordinary bookmark domain. Root nodes themselves cannot be renamed/moved/deleted. Managed flags/types propagate restrictions to descendants.
-- A top-level folder without a documented ordinary type, or an unknown browser folder type at any depth, marks that domain **unclassified**. It and its descendants stay browsable/searchable. Native creation, rename/URL changes, move/reorder and deletion are blocked there. This is a conservative application policy, **not a claim that each child is a Workspace container**.
-- Names, positions, native IDs, `syncing`, timestamps and missing protection flags do not establish Workspace identity. An ordinary user folder named Workspaces under a typed ordinary root remains ordinary.
-- No active-Workspace filtering, guessed special type strings, probing mutations, fallback copy/delete, identity repair, or reversal of prior changes.
-- Current limitation: ordinary folders/favorites beneath an unclassified Workspace domain also have native fields read-only. Their supported native capabilities cannot yet be distinguished safely. Use Edge for native changes there. If Edge instead projects a Workspace container as an indistinguishable ordinary child beneath a documented ordinary root, these fields cannot identify it; this is not a universal Workspace detector. A browser that omits type information even for ordinary roots will conservatively restrict those domains too; it needs read-only evidence, not a guessed allowlist.
+Root identification uses the strongest supplied **structural assumption**: under the virtual root, documented `bookmarks-bar` and `other` roots coexist with exactly one additional non-managed, untyped root. Other unknown types or multiple unknown roots prevent identification. This matches the supplied native inventory. It uses no root/container names, fixed IDs, ordering or active tab state. A different browser-specific root with the same structure is indistinguishable; this is not a universal Edge-provided identifier. Unmatched shapes retain conservative unclassified restrictions. No manual classification/setup is added.
 
-The UI uses derived writable/renamable/native-restriction state for menus, destinations and drag surfaces; `planMove` shares source/destination checks with the worker. Worker command preflight and fresh native-tree checks enforce the policy independently. API rejection surfaces without fallback writes. A durable receipt for an already-created native item may complete its metadata even if its location later becomes restricted; this never issues another native create. Edge remains the final authority, and a race between the final read and API call is not an atomic transaction.
+Once that root is established, **every immediate folder is treated as a Workspace container by user-accepted application policy**, including an accidentally created ordinary folder. No claim of an API-provided child discriminator is made.
 
-Tags/archive are separate: non-managed real folders below roots and favorites remain eligible for metadata editing and conservative identity binding, even when native fields are protected. Names/URLs are read-only in those editors. Saving unchanged native fields issues no `bookmarks.update` or move. Browser roots and synthetic groups do not receive metadata. Existing folder identities remain reconciliation participants after native restrictions are applied; no schema/reset/transport change or automatic UUID allocation is introduced.
+- Root: browse/search, no native mutation, ordinary creation or receiving moves. Create new Workspaces in Edge.
+- Immediate containers: protected native name/order/parent/deletion; extension tags/archive and explicit conservative metadata binding remain available. Their contents are writable.
+- Descendant favorites and nested folders: ordinary native CRUD and within-container moving/reordering, with unchanged independent managed/identity/staleness/integrity checks. No active/inactive distinction.
+- Crossing into/out of/between Workspace containers: temporarily blocked by application policy because extension-API support is unverified. Use native Edge Favorites. No claim that Edge prohibits it; no copy/delete fallback or automatic retry.
+- Missing/unknown browser domains and managed subtrees remain protected. Source, destination, protected descendants and anchors are checked in the shared planner and again against the worker's current tree. Metadata-only container saves never update the native name.
+
+Browsing hides direct loose favorites and their synthetic Bookmarks group under Workspaces, including All bookmarks. Search still includes eligible loose items with full paths. Manage listings expose them with an explanation; archive filtering still applies normally. Binding review and diagnostics remain complete. No hidden entry or its metadata is mutated by this projection. Root New is absent in Workspace scope; container New remains available.
+
+The existing durable creation receipt may complete metadata for an already-created item without another native create, even if later policy restricts its location. No schema, transport, permissions, stable identity algorithm or live data reset changes.
+
+## Active Workspace — deferred
+
+The public [tabs type](https://developer.chrome.com/docs/extensions/reference/api/tabs#type-Tab) exposes tab/window/group identifiers, not a documented Workspace identity. [Window types](https://developer.chrome.com/docs/extensions/reference/api/windows#type-WindowType) distinguish browser window kinds, not Workspaces. Existing dashboard launching uses tab/window identity for routing only. The supplied bookmark diagnostics expose no active signal. All containers remain visible; no inferred active filter or new selector.
+
+Optional read-only comparison in dashboard DevTools in each Workspace (only IDs/types/key names; no browsing URLs/titles):
+
+```js
+Promise.all([chrome.tabs.getCurrent(), chrome.windows.getCurrent()]).then(([t, w]) =>
+  console.log(JSON.stringify({
+    tab: t && { id: t.id, windowId: t.windowId, groupId: t.groupId, keys: Object.keys(t) },
+    window: { id: w.id, type: w.type, keys: Object.keys(w) }
+  }, null, 2))
+);
+```
+
+Different window/group IDs alone do not prove Workspace identity. No private API, profile-file access or new permission is used. Automatic current-Workspace filtering remains deferred.
 
 ## Focused read-only follow-up
 
@@ -41,6 +62,6 @@ chrome.bookmarks.getTree().then(tree => console.log(JSON.stringify(tree.map(root
 })), null, 2)));
 ```
 
-Keep diagnostics private; inspect locally before sharing. Manage's existing browser-folder diagnostic view now also shows the derived restriction, writable and renamable fields. No native capability was probed by mutation. Before relaxing Workspace restrictions, obtain a supported discriminator or a separately reviewed device-local association workflow with explicit evidence; matching display names/paths is insufficient. Never repair existing Workspace entries by guessing.
+Keep diagnostics private; inspect locally before sharing. Manage's existing browser-folder diagnostic view now also shows the derived restriction, writable and renamable fields. No native capability was probed by mutation. The accepted immediate-child policy replaces per-container proof; stronger root identification still requires supported evidence. Matching display names/paths is insufficient. Never repair existing Workspace entries by guessing.
 
 Native review uses disposable ordinary content in an Edge-created Workspace; Workspace creation/rename/deletion stays in Edge. Simulated Chromium fixtures do not establish native Workspace compatibility.

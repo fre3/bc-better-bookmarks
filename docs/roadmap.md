@@ -80,3 +80,7 @@ Reorganize and clean up Manage in a future update: separate everyday preferences
 ## Local creation receipt housekeeping
 
 A future explicit recovery/housekeeping view may expose local creation receipts and safely compact completed entries. Do not automatically prune uncertain requests or recreate their items. This is separate from synced metadata restoration and must not promise durable UI draft recovery.
+
+## Current Workspace filtering — deferred
+
+No supported active-Workspace identity is established in public tab/window/bookmark fields. Keep all containers visible. Revisit only with a supported signal; no manual selector, private API or profile-file access. Cross-Workspace extension moves require separate native API outcome evidence before removing the temporary boundary restriction.

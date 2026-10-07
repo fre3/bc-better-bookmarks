@@ -6,29 +6,29 @@ import {join} from 'node:path';
 import assert from 'node:assert/strict';
 const fixture=await editingFixture({workspace:true}),browser=await chromium.launch(),report=[];
 try {for(const theme of ['light','dark']) {
- const context=await browser.newContext({viewport:{width:1200,height:950},colorScheme:theme}),page=await context.newPage();
- await page.goto(fixture.url);await page.locator('#catalogue-edit').click();
- await expect(page.locator('[data-drag-title="ws-container"]')).toHaveCount(0);
- await page.locator('#edit-folder-ws-container').click();
- await expect(page.locator('#favorite-edit-title')).toHaveAttribute('readonly','');
- await expect(page.locator('dialog')).toContainText('unclassified browser location');
- await expect(page.locator('#favorite-edit-tags')).toBeEditable();
- await page.locator('#favorite-edit-tags').fill('workspace-tag');await page.getByRole('button',{name:'Save',exact:true}).click();
- await expect(page.locator('dialog')).toHaveCount(0);
- const evidence=await page.evaluate(async()=>{const s=await window.service.snapshot('read-only metadata evidence');return {writes:window.nativeWrites,tags:window.tagEvidence(s)['ws-container'],name:s.folders.find(n=>n.id==='ws-container').title};});
- assert.equal(evidence.name,'Projet');assert.equal(evidence.writes.length,0);assert.deepEqual(evidence.tags.direct,['workspace-tag']);
- await page.getByRole('button',{name:'More actions for Projet',exact:true}).click();
- await expect(page.locator('[popover]:popover-open')).toContainText('Native changes are unavailable');
- await expect(page.locator('[popover]:popover-open button')).toHaveCount(0);await page.keyboard.press('Escape');
- // Supported source must never produce a valid destination cue over unknown root.
- const source=page.locator('[data-drag-title="s0"]');await source.scrollIntoViewIfNeeded();const r=await source.boundingBox();
- await page.mouse.move(r.x+55,r.y+r.height/2);await page.mouse.down();await page.mouse.move(r.x+70,r.y+r.height/2,{steps:3});
- await expect(page.locator('.drag-preview')).toBeVisible();
- const root=page.locator('[data-root-id="ws"]');const t=await root.boundingBox();await page.mouse.move(t.x+t.width/2,t.y+t.height/2,{steps:10});
- await expect(page.locator('.drag-status')).toContainText('Cannot move');await page.keyboard.press('Escape');await page.mouse.up();
- await page.getByRole('button',{name:'New',exact:true}).first().click();await page.getByRole('menuitem',{name:'New favorite',exact:true}).click();
- await expect(page.locator('#create-parent option[value="ws"]')).toHaveCount(0);await expect(page.locator('#create-parent option[value="ws-folder"]')).toHaveCount(0);await expect(page.locator('#create-parent option[value="r1"]')).toHaveCount(1);
- await page.getByRole('button',{name:'Cancel',exact:true}).click();
- await page.locator('#edit-folder-ws-container').click();await expect(page.locator('.is-peeking,.is-leaving')).toHaveCount(0);await page.screenshot({path:join(fixture.output,`${theme}-workspace-metadata.png`)});await page.keyboard.press('Escape');
- report.push({theme,...evidence});await context.close();
+ const context=await browser.newContext({viewport:{width:1200,height:950},colorScheme:theme}),p=await context.newPage();await p.goto(fixture.url);
+ await p.locator('#catalogue-edit').click();await p.getByRole('button',{name:'Espaces de travail',exact:true}).click();
+ await expect(p.locator('[data-section-id="loose:ws"]')).toHaveCount(0);await expect(p.getByRole('button',{name:'New',exact:true})).toHaveCount(0);
+ await expect(p.locator('[data-drag-title="ws-container"]')).toHaveCount(0);
+ await p.locator('#edit-folder-ws-container').click();await expect(p.locator('#favorite-edit-title')).toHaveAttribute('readonly','');await expect(p.locator('dialog')).toContainText('managed in Edge');
+ await p.locator('#favorite-edit-tags').fill('workspace-tag');await p.getByRole('button',{name:'Save',exact:true}).click();await expect(p.locator('dialog')).toHaveCount(0);
+ assert.equal(await p.evaluate(()=>window.nativeWrites.length),0);
+ await p.getByRole('button',{name:'More actions for Projet',exact:true}).click();await expect(p.getByRole('menuitem',{name:'Move…'})).toBeHidden();await expect(p.getByRole('menuitem',{name:'Delete…'})).toBeHidden();
+ await p.getByRole('menuitem',{name:'New folder',exact:true}).click();await expect(p.locator('#create-parent')).toHaveValue('ws-container');await expect(p.locator('#create-parent option[value="ws"]')).toHaveCount(0);
+ await p.locator('#create-title').fill('Disposable subfolder');await p.getByRole('button',{name:'Create',exact:true}).click();await expect(p.locator('dialog')).toHaveCount(0);
+ let created=await p.evaluate(async()=>{const s=await window.service.snapshot('created folder');return s.folders.find(n=>n.title==='Disposable subfolder').id;});
+ await p.locator(`#edit-folder-${created}`).click();await expect(p.locator('#favorite-edit-title')).toBeEditable();await p.locator('#favorite-edit-title').fill('Changed subfolder');await p.getByRole('button',{name:'Save',exact:true}).click();
+ await p.getByRole('button',{name:'More actions for Changed subfolder',exact:true}).click();await p.getByRole('menuitem',{name:'New favorite',exact:true}).click();await p.locator('#create-title').fill('Disposable favorite');await p.locator('#create-url').fill('https://example.test/new');await p.getByRole('button',{name:'Create',exact:true}).click();await expect(p.locator('dialog')).toHaveCount(0);
+ const link=await p.evaluate(async()=>{const s=await window.service.snapshot('created favorite');return s.favorites.find(n=>n.title==='Disposable favorite').id;});
+ await p.locator(`#edit-bookmark-${link}`).click();await expect(p.locator('#favorite-edit-url')).toBeEditable();await p.locator('#favorite-edit-title').fill('Changed favorite');await p.getByRole('button',{name:'Save',exact:true}).click();
+ // Same-container keyboard Move works; cross-container/ordinary-root destinations are excluded.
+ await p.getByRole('button',{name:'More actions for Changed favorite',exact:true}).click();await p.getByRole('menuitem',{name:'Move…',exact:true}).click();await expect(p.locator('#move-parent option[value="ws-second"]')).toHaveCount(0);await expect(p.locator('#move-parent option[value="r1"]')).toHaveCount(0);await p.locator('#move-parent').selectOption('ws-container');await p.getByRole('button',{name:'Move',exact:true}).click();await expect(p.locator('dialog')).toHaveCount(0);
+ // Pointer move into the original nested folder. Container itself is never a drag source.
+ const source=p.locator(`#bookmark-${link}`);await source.scrollIntoViewIfNeeded();const a=await source.evaluate(n=>{const r=n.getClientRects()[0];return {x:r.left+8,y:r.top+r.height/2};});await p.mouse.move(a.x,a.y);await p.mouse.down();await p.mouse.move(a.x+12,a.y,{steps:3});await expect(p.locator('.drag-preview')).toContainText('Moving Changed favorite');const target=p.locator('#folder-ws-folder');const r=await target.boundingBox();await p.mouse.move(r.x+r.width/2,r.y+r.height/2,{steps:12});await expect(p.locator('.drag-status')).toContainText('Move inside');await p.mouse.up();await expect.poll(()=>p.evaluate(async id=>(await window.service.snapshot('moved')).favorites.find(n=>n.id===id)?.parentId,link)).toBe('ws-folder');
+ // Content in another container is just as writable; no active-Workspace signal enters policy.
+ await p.getByRole('button',{name:'More actions for Personal',exact:true}).click();await p.getByRole('menuitem',{name:'New folder',exact:true}).click();await expect(p.locator('#create-parent')).toHaveValue('ws-second');await p.locator('#create-title').fill('Other container child');await p.getByRole('button',{name:'Create',exact:true}).click();await expect(p.locator('dialog')).toHaveCount(0);
+ await p.getByRole('button',{name:'Search /',exact:true}).click();await p.getByRole('textbox',{name:'Search bookmarks'}).fill('Loose item');await expect(p.locator('[data-section-id="loose:ws"]')).toHaveCount(1);await expect(p.locator('.search-item-path')).toContainText('Espaces de travail');await p.screenshot({path:join(fixture.output,`${theme}-loose-search.png`)});await p.keyboard.press('Escape');await expect(p.locator('[data-section-id="loose:ws"]')).toHaveCount(0);
+ await p.locator('#edit-folder-ws-container').click();await expect(p.locator('.is-peeking,.is-leaving')).toHaveCount(0);await p.screenshot({path:join(fixture.output,`${theme}-container-editor.png`)});await p.keyboard.press('Escape');
+ await p.getByRole('button',{name:'Done',exact:true}).click();await p.getByRole('button',{name:'Manage',exact:true}).click();await expect(p.getByText('Outside Workspace containers: shown in Manage and search, not catalogue browsing.')).toBeVisible();
+ report.push({theme,result:'protected containers/root; descendant creation/edit; same-container keyboard and actual pointer moving; second-container creation; loose search and Manage visibility; metadata-only container save'});await context.close();
 }await writeFile(join(fixture.output,'workspace-report.json'),JSON.stringify(report,null,2));console.log(fixture.output);}finally{await browser.close();fixture.server.close();}

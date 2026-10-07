@@ -16,6 +16,7 @@ export interface CatalogueSection {
   children: CatalogueItem[];
   folder?: Folder;
   tagInfo?: NodeTags;
+  browseHidden?: boolean;
 }
 export interface CatalogueModel {
   roots: FavoriteNode[];
@@ -50,7 +51,7 @@ export function buildCatalogue(s: Snapshot, showArchived = false): CatalogueMode
       if (!allowed(node.id)) continue;
       if (node.url !== undefined) {
         if (!loose) {
-          loose = { id: `loose:${root.id}`, title: 'Bookmarks', rootId: root.id, rootTitle: root.title, parentId: root.id, children: [] };
+          loose = { id: `loose:${root.id}`, title: 'Bookmarks', browseHidden: folders.get(root.id)?.workspaceRole === 'root', rootId: root.id, rootTitle: root.title, parentId: root.id, children: [] };
           result.push(loose);
         }
         loose.children.push(...project([node]));
@@ -64,7 +65,7 @@ export function buildCatalogue(s: Snapshot, showArchived = false): CatalogueMode
 }
 
 export function filterCatalogue(model: CatalogueModel, favorites: Favorite[], scope: string, query: string, searching: boolean) {
-  const sections = model.sections.filter(section => scope === '*' || section.rootId === scope);
+  const sections = model.sections.filter(section => (searching || !section.browseHidden) && (scope === '*' || section.rootId === scope));
   const visibleIds = new Set<string>();
   const collect = (items: CatalogueItem[]) => items.forEach(item => { if (item.kind === 'bookmark') visibleIds.add(item.favorite.id); else collect(item.children); });
   sections.forEach(section => collect(section.children));

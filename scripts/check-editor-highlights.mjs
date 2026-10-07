@@ -8,7 +8,7 @@ const fixture=await editingFixture({workspace:true,deep:true}),browser=await chr
 const selected='.section-title-text[data-editing],.catalogue-item.is-selected';
 try {for(const theme of ['light','dark']) {
  const context=await browser.newContext({viewport:{width:1250,height:950},colorScheme:theme}),p=await context.newPage();await p.goto(fixture.url);
- await expect(p.locator('[data-section-id^="loose:"]')).toHaveCount(3);await expect(p.locator('[data-moving]')).toHaveCount(0);await expect(p.locator(selected)).toHaveCount(0);
+ await expect(p.locator('[data-section-id^="loose:"]')).toHaveCount(2);await expect(p.locator('[data-moving]')).toHaveCount(0);await expect(p.locator(selected)).toHaveCount(0);
  await p.locator('#catalogue-edit').click();await expect(p.locator('[data-moving]')).toHaveCount(0);
  const section=p.locator('[data-section-id="folder:s0"]'),title=section.locator('.section-title-text').first();
  const before=await title.boundingBox();await p.locator('#edit-folder-s0').click();
@@ -31,5 +31,5 @@ try {for(const theme of ['light','dark']) {
  await p.setViewportSize({width:1250,height:950});await p.locator('#edit-bookmark-n0').click();await p.evaluate(()=>window.external('n0','delete'));await expect(p.locator('dialog')).toContainText('This item was removed');await expect(p.locator(selected)).toHaveCount(0);await p.keyboard.press('Escape');
  await expect(p.locator('[data-moving]')).toHaveCount(0);
  await p.locator('[id="section-folder:s0"]').click();await p.mouse.move(1240,5);await expect(p.locator('.is-peeking,.is-leaving')).toHaveCount(0);await expect(p.locator('.is-peeking,.is-leaving')).toHaveCount(0);await p.screenshot({path:join(fixture.output,`${theme}-clean-synthetic.png`),fullPage:true});
- report.push({theme,checks:'three synthetic groups; title-only section highlight; no geometry shift; dirty Escape twice; failed/successful Save; Cancel/discard; favorites/nested/wrapped folders; duplicate titles/search; source removal cleanup'});await context.close();
+ report.push({theme,checks:'two ordinary synthetic groups; Workspace loose group excluded; title-only section highlight; no geometry shift; dirty Escape twice; failed/successful Save; Cancel/discard; favorites/nested/wrapped folders; duplicate titles/search; source removal cleanup'});await context.close();
 }await writeFile(join(fixture.output,'highlights-report.json'),JSON.stringify(report,null,2));console.log(fixture.output);}finally{await browser.close();fixture.server.close();}
