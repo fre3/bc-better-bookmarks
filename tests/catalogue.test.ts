@@ -26,7 +26,7 @@ function fixture() {
   ] }];
   const meta = record(favorite(), 'identity'); meta.tags = ['ai', 'reference'];
   // Only fields consumed by the UI projection are needed for this fixture.
-  const snapshot = { tree, ...flattenTree(tree), metadata: { records: [meta] }, reconciliation: { mappings: { a: { stableId: 'identity' } }, matches: [{ status: 'ambiguous', candidateIds: ['b'] }] } } as unknown as Snapshot;
+  const snapshot = { tree, ...flattenTree(tree), metadata: { records: [meta], invalid: [], tombstones: {} }, local: { mappings: {}, pendingDeletions: [] }, reconciliation: { mappings: { a: { stableId: 'identity' } }, matches: [{ status: 'ambiguous', candidateIds: ['b'] }] } } as unknown as Snapshot;
   return { snapshot, model: buildCatalogue(snapshot) };
 }
 

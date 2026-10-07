@@ -1,3 +1,4 @@
+import { itemIdentityDetails, itemMetadataIssue } from '../core/item-metadata-health';
 import { singleLineUrlPaste } from './url-entry';
 import { dialogKeyboard } from './dialog-keyboard';
 import { folderNeedsReview } from './folder-bindings';
@@ -40,12 +41,14 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose, onReviewBind
   const cancel = useRef<HTMLButtonElement>(null);
   const submitted = { ...input, tags: editorTags(input.tags, archived) };
   const dirty = JSON.stringify(submitted) !== JSON.stringify({ ...draft.input, tags: normalizeTags(draft.input.tags) });
+  const metadataIssue = itemMetadataIssue(snapshot, draft.id);
   const unresolved = draft.isFolder && folderNeedsReview(snapshot, draft.id);
+  const initiallyBlocked = useRef(Boolean(unresolved || metadataIssue));
   // Latch the interruption even if a background confirmation subsequently
   // resolves it. Only explicit review can rebase a retained draft.
   const [identityInterrupted, setIdentityInterrupted] = useState(false);
-  useLayoutEffect(() => { if (unresolved) setIdentityInterrupted(true); }, [unresolved]);
-  const identityBlocked = unresolved || identityInterrupted;
+  useLayoutEffect(() => { if (unresolved || metadataIssue) setIdentityInterrupted(true); }, [unresolved, metadataIssue]);
+  const identityBlocked = Boolean(metadataIssue) || unresolved || identityInterrupted;
   const conflict = draftConflict(snapshot, { ...draft, expected });
   const tags = useMemo(() => nodeTags(snapshot).get(draft.id), [snapshot, draft.id]);
   const current = draft.isFolder ? snapshot.folders.find(f => f.id === draft.id) : snapshot.favorites.find(f => f.id === draft.id);
@@ -99,7 +102,7 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose, onReviewBind
   return <dialog ref={dialog} className="favorite-editor" aria-labelledby="favorite-editor-heading" aria-describedby="favorite-edit-folder" onKeyDownCapture={event => {
       dialogKeyboard(event, () => { if(discard)resumeEditing();else requestClose(); });
       if (event.key !== 'Tab') return;
-      const stops = [...event.currentTarget.querySelectorAll<HTMLElement>('input:not(:disabled), textarea:not(:disabled), button:not(:disabled)')].filter(n=>!n.closest('[inert]'));
+      const stops = [...event.currentTarget.querySelectorAll<HTMLElement>('input:not(:disabled), textarea:not(:disabled), button:not(:disabled), summary')].filter(n=>!n.closest('[inert]'));
       const first = stops[0], last = stops.at(-1);
       if (!stops.includes(document.activeElement as HTMLElement)) { event.preventDefault(); (event.shiftKey ? last : first)?.focus(); }
       else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
@@ -107,8 +110,12 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose, onReviewBind
     }} onCancel={event => { event.preventDefault(); event.stopPropagation(); if (discard) resumeEditing(); else requestClose(); }}>
     <h2 id="favorite-editor-heading">{draft.isFolder ? 'Edit Folder' : 'Edit Favorite'}</h2>
     <p id="favorite-edit-folder" className="editor-context">{draft.isFolder ? 'Parent' : 'Folder'}: {folderContext || '(root)'}</p>
+    <p className="editor-context">Native item ID: {draft.id}</p>
     <form noValidate onSubmit={event => { event.preventDefault(); void save(); }} aria-busy={saving}>
-      <div inert={discard}><label htmlFor="favorite-edit-title">{draft.isFolder ? 'Name' : 'Title'}</label>
+      <div inert={discard}>
+      {metadataIssue && <div className="editor-error" role="alert" id="favorite-metadata-status"><strong>Metadata unavailable for safe editing</strong><p>{metadataIssue}</p><p>Direct tags are unresolved, not an empty assignment. Fields and Save are blocked; any existing draft is retained. Do not copy this diagnostic into tags.</p></div>}
+      {(identityBlocked || metadataIssue) && <details className="identity-details"><summary>Inspect metadata diagnostics for this item</summary><pre>{JSON.stringify(itemIdentityDetails(snapshot, draft.id), null, 2)}</pre><p>This is read-only evidence. For the full export, cancel safely and open Manage → Export diagnostics. Do not reset metadata or guess a matching duplicate.</p></details>}
+      <label htmlFor="favorite-edit-title">{draft.isFolder ? 'Name' : 'Title'}</label>
       <input ref={title} id="favorite-edit-title" value={input.title} readOnly={saving || identityBlocked} required aria-invalid={Boolean(errors.title)} aria-describedby={errors.title ? 'favorite-title-error' : undefined} onChange={e => setInput({ ...input, title: e.target.value })} />
       {errors.title && <p id="favorite-title-error" className="editor-error">{errors.title}</p>}
       {!draft.isFolder && <><label htmlFor="favorite-edit-url">URL (HTTP, HTTPS, or bookmarklet)</label>
@@ -116,7 +123,7 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose, onReviewBind
       {/[\r\n]/.test(input.url)&&<p>Existing multiline bookmarklet code is retained unchanged unless you edit the URL. This single-line field does not display its line breaks.</p>}
       {errors.url && <p id="favorite-url-error" className="editor-error">{errors.url}</p>}</>}
       <label htmlFor="favorite-edit-tags">Tags (comma separated; stored lowercase)</label>
-      <input id="favorite-edit-tags" value={input.tags.join(',')} readOnly={saving || identityBlocked} aria-invalid={Boolean(errors.tags)} aria-describedby={errors.tags ? 'favorite-tags-error' : undefined} onBlur={finishTagEntry} onChange={e => setInput({ ...input, tags: e.target.value.split(',') })} />
+      <input id="favorite-edit-tags" value={input.tags.join(',')} readOnly={saving || identityBlocked} aria-invalid={Boolean(errors.tags)} aria-describedby={metadataIssue ? 'favorite-metadata-status' : errors.tags ? 'favorite-tags-error' : undefined} onBlur={finishTagEntry} onChange={e => setInput({ ...input, tags: e.target.value.split(',') })} />
       {errors.tags && <p id="favorite-tags-error" className="editor-error">{errors.tags}</p>}
       <p className="editor-context">Enter direct tags without #.</p>
       {tags && tags.sources.length > 0 && <div className="editor-inheritance"><p>Inherited tags (read only). Change these at their source:</p><ul>{tags.sources.map(source => <li key={source.id}><strong>{source.tags.map(tag => `#${tag}`).join(' · ')}</strong> — {source.path.join(' / ')} [folder {source.id}]</li>)}</ul><p>Removing a direct tag leaves any inherited assignment in effect.</p></div>}
@@ -124,8 +131,8 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose, onReviewBind
       <p id="archive-help" className="editor-context">Hidden from the dashboard and search unless Show archived is enabled.</p>
       <p id="archive-inheritance" hidden={!archiveSources.length}>{archived ? 'Unchecking here does not remove inherited archiving.' : 'This item is archived by its source folders; restore them to restore visibility.'} Sources: {archiveSources.map(source => `${source.path.join(' / ')} [folder ${source.id}]`).join('; ')}. Any remaining ancestor assignment can keep this item archived.</p>
       {draft.isFolder && <p className="editor-context">Folder tags require version 0.1.17 or later on every device.</p>}
-      {identityBlocked && <div role="alert"><p>Folder identity needs review. Your draft is retained and saving is blocked; no input will be saved automatically.</p>
-        {unresolved ? <button type="button" onClick={onReviewBinding}>Review folder binding</button> : current && <><p>Binding refreshed. Current name: {current.title}. Current direct tags: {tags?.direct.map(tag => `#${tag}`).join(' · ') || '(none)'}. Review these values before keeping your unsaved input.</p><button type="button" onClick={() => { const fresh = favoriteDraft(snapshot, current); setExpected(fresh.expected); setFolderContext(fresh.folder); setInput(value => ({ ...value, parentId: fresh.input.parentId })); setIdentityInterrupted(false); }}>Keep my input and use the reviewed binding</button></>}
+      {identityBlocked && <div role="alert"><p>Item identity needs review. Your draft is retained and saving is blocked; no input will be saved automatically.</p>
+        {unresolved ? <button type="button" onClick={onReviewBinding}>Review folder binding</button> : !metadataIssue && current && (initiallyBlocked.current ? <p>Identity is available again. Close and reopen the editor to load its confirmed direct tags before editing.</p> : <><p>Identity refreshed. Current name: {current.title}. Current direct tags: {tags?.direct.map(tag => `#${tag}`).join(' · ') || '(none)'}. Review these values before keeping your unsaved input.</p><button type="button" onClick={() => { const fresh = favoriteDraft(snapshot, current); setExpected(fresh.expected); setFolderContext(fresh.folder); setInput(value => ({ ...value, parentId: fresh.input.parentId })); setIdentityInterrupted(false); }}>Keep my input and use the reviewed binding</button></>)}
       </div>}
       {conflict && <p className="editor-error" role="alert">{conflict}</p>}
       {failure && <div role="alert"><p className="editor-error">{errorText(failure.error)}</p>{failure.progress && <><p>Completed native changes: {[failure.progress.title && (draft.isFolder ? 'name' : 'title'), failure.progress.url && 'URL', failure.progress.location && 'location'].filter(Boolean).join(', ') || 'none confirmed'}. Tag persistence was not confirmed. Your input is retained.</p>

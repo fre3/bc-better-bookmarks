@@ -68,8 +68,7 @@ try {
    await expect(dialog(page).getByRole('alert')).toContainText(change==='delete'?'removed':'changed');await expect(save(page)).toBeDisabled();await expect(title(page)).toHaveValue('Recoverable draft');await closeDirty(page);
   }
   // Existing worker metadata-health guards and ignored legacy scope preferences remain authoritative.
-  await page.evaluate(()=>{const key=Object.keys(window.sync.data).find(k=>k.startsWith('meta:'));delete window.sync.data[key];window.refresh()});await page.waitForTimeout(250);await open(page);await title(page).fill('Blocked identity update');
-  await save(page).click();await expect(dialog(page).getByRole('alert')).toContainText('missing synchronized metadata');await expect(title(page)).toHaveValue('Blocked identity update');await closeDirty(page);
+  await page.evaluate(()=>{const key=Object.keys(window.sync.data).find(k=>k.startsWith('meta:'));delete window.sync.data[key];window.refresh()});await page.waitForTimeout(250);await open(page);await expect(title(page)).not.toBeEditable();await expect(save(page)).toBeDisabled();await expect(page.locator('#favorite-metadata-status')).toContainText('missing synchronized metadata');await expect(title(page)).toHaveValue('Saved title');await cancel(page).click();
   assert.equal(await page.evaluate(async()=>(await window.service.snapshot('check')).favorites.find(f=>f.id==='0-0').title),'Saved title');
   await page.evaluate(()=>{window.local.data.state.rootId=null;window.refresh()});await page.waitForTimeout(220);await open(page,'0-4');await expect(save(page)).toBeEnabled();await cancel(page).click();
   // Search edits remove results only after save; query/scope and original Escape

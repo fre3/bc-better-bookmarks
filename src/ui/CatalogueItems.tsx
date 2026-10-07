@@ -37,14 +37,14 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0, on
         {open && depth === 0 && <br className="expansion-break" />}{' '}
       </Fragment>;
     }
-    const { favorite, tags, tagInfo, ambiguous } = item;
+    const { favorite, tags, tagInfo, ambiguous, metadataIssue } = item;
     const href = safeHref(favorite.url);
     const icon = faviconUrl(favorite.url);
     const revealed = query !== null ? matchingTags(favorite, tags, query) : [];
     const explanation = !href ? (isBookmarklet(favorite.url) ? 'Run this bookmarklet through Edge Favorites.' : "Open this Favorite using Edge's Favorites UI.") : '';
     // URL status is derived from the Favorite, not a user tag. It uses the same
     // item-local reveal rules rather than a permanently visible annotation path.
-    const statusText = [...favorite.systemLabels, explanation, ambiguous ? 'Ambiguous metadata — inspect diagnostics in Manage' : ''].filter(Boolean).join(' · ');
+    const statusText = [...favorite.systemLabels, explanation, metadataIssue || (ambiguous ? 'Ambiguous metadata — inspect diagnostics in Manage' : '')].filter(Boolean).join(' · ');
     const annotations = tags.length > 0 || Boolean(statusText);
     const label = <BookmarkLabel title={favorite.title} icon={icon} />;
     return <Fragment key={favorite.id}><span className={`catalogue-item bookmark-item${revealed.length ? ' tag-match' : ''}${ambiguous ? ' ambiguous' : ''}${selectedId === favorite.id ? ' is-selected' : ''}`} data-item-id={favorite.id}>

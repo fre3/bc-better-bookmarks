@@ -16,7 +16,7 @@ import {Catalogue} from './src/ui/Catalogue'; import {flattenTree} from './src/c
 import './src/ui/style.css';
 const sections = Array.from({length:new URLSearchParams(location.search).has('single')?1:18},(_,i)=>({id:'s'+i,parentId:'r',title:'Section '+i,children:Array.from({length:30},(_,j)=>({id:i+'-'+j,parentId:'s'+i,title:'Catalogue reference '+i+' '+j,url:'https://example.com/'+i+'/'+j}))}));
 const tree=[{id:'0',title:'',children:[{id:'r',parentId:'0',title:'Favorites bar',children:sections.slice(0,9)}, {id:'r2',parentId:'0',title:'Other favorites',children:sections.slice(9).map(n=>({...n,parentId:'r2'}))}]}];
-const snapshot={tree,...flattenTree(tree),metadata:{records:[]},reconciliation:{mappings:{},matches:[]}};
+const snapshot={tree,...flattenTree(tree),metadata:{records:[],invalid:[],tombstones:{}},local:{mappings:{},pendingDeletions:[]},reconciliation:{mappings:{},matches:[]}};
 createRoot(document.getElementById('root')).render(<Catalogue snapshot={snapshot} suspended={false} onManage={()=>{}}/>);
 `, loader: 'tsx', resolveDir: process.cwd() }, bundle: true, jsx: 'automatic', target: 'es2022', outfile: join(output, 'fixture.js'), loader: { '.svg': 'dataurl' } });
 await writeFile(join(output, 'index.html'), '<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="fixture.css"></head><body><main id="root" class="catalogue-page"></main><script src="fixture.js"></script></body></html>');

@@ -1,9 +1,10 @@
+import { itemMetadataIssue } from '../core/item-metadata-health';
 import { nodeTags, folderNode, type NodeTags } from '../core/node-tags';
 import { parseSearch, searchFavorites } from '../core/logic';
 import type { Favorite, FavoriteNode, Folder, Snapshot } from '../core/model';
 
 export type CatalogueItem =
-  | { kind: 'bookmark'; favorite: Favorite; tags: string[]; tagInfo?: NodeTags; ambiguous: boolean }
+  | { kind: 'bookmark'; favorite: Favorite; tags: string[]; tagInfo?: NodeTags; ambiguous: boolean; metadataIssue?: string }
   | { kind: 'folder'; folder: Folder; tagInfo?: NodeTags; children: CatalogueItem[] };
 export interface CatalogueSection {
   id: string;
@@ -29,12 +30,11 @@ export function buildCatalogue(s: Snapshot, showArchived = false): CatalogueMode
   const info = nodeTags(s);
   const tags = new Map([...info].map(([id, value]) => [id, value.effective]));
   const allowed = (id: string) => showArchived || !info.get(id)?.archived;
-  const ambiguous = new Set(s.reconciliation.matches.filter(m => m.status === 'ambiguous').flatMap(m => m.candidateIds));
   const project = (nodes: FavoriteNode[]): CatalogueItem[] => nodes.flatMap((node): CatalogueItem[] => {
     if (!allowed(node.id)) return [];
     if (node.url !== undefined) {
       const favorite = favorites.get(node.id);
-      return favorite ? [{ kind: 'bookmark', favorite, tagInfo: info.get(node.id), tags: tags.get(node.id) ?? [], ambiguous: ambiguous.has(node.id) }] : [];
+      return favorite ? [{ kind: 'bookmark', favorite, tagInfo: info.get(node.id), tags: tags.get(node.id) ?? [], ambiguous: itemMetadataIssue(s, node.id)?.startsWith('Ambiguous') ?? false, metadataIssue: itemMetadataIssue(s, node.id) }] : [];
     }
     const folder = folders.get(node.id);
     return folder ? [{ kind: 'folder', folder, tagInfo: info.get(node.id), children: project(node.children ?? []) }] : [];

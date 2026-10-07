@@ -81,6 +81,7 @@ export interface Match {
   status: MatchStatus;
   bookmarkId?: string;
   candidateIds: string[];
+  reason?: string;
 }
 export interface Reconciliation {
   mappings: Record<string, LocalMapping>;

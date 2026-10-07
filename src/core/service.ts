@@ -1,3 +1,4 @@
+import { itemMetadataIssue } from './item-metadata-health';
 import type { BookmarksRepository } from '../browser/bookmarks';
 import { QUOTAS, type MetadataRepository } from '../browser/metadata';
 import { editToken, flattenTree, normalizeTags } from './logic';
@@ -84,17 +85,10 @@ export class DashboardService {
     return validateLinkInput(input);
   }
   private preflightTags(state: Snapshot, favorite: Favorite, tags: string[]) {
-    if (state.metadata.invalid.length) throw new Error('Unsupported synchronized data is present. Tag writes are blocked until reviewed in diagnostics.');
-    if (state.reconciliation.matches.some(m => m.status === 'ambiguous' && m.candidateIds.includes(favorite.id))) throw new Error('Ambiguous metadata match. Tags were not written.');
-    const previousId = state.local.mappings[favorite.id]?.stableId;
-    if (previousId && (state.metadata.tombstones[previousId] || state.local.pendingDeletions.includes(previousId))) throw new Error('Deletion evidence exists for this Favorite. Editing its metadata is blocked; inspect diagnostics.');
+    const issue = itemMetadataIssue(state, favorite.id);
+    if (issue) throw new Error(issue);
     const mapping = state.reconciliation.mappings[favorite.id];
     const existing = state.metadata.records.find(r => r.stableId === mapping?.stableId);
-    if (previousId && mapping && mapping.stableId !== previousId) throw new Error('Conflicting local identity. Editing is blocked; inspect diagnostics.');
-    if (!existing && previousId) {
-      if (state.metadataHealth[previousId]?.rawMeta === 'absent') throw new Error('Known identity has missing synchronized metadata. Identity retained; automatic recovery is disabled. Inspect diagnostics and local preservation status.');
-      throw new Error('Existing local identity has no usable metadata. Editing is blocked; inspect diagnostics.');
-    }
     const willWrite = existing ? JSON.stringify(existing.tags) !== JSON.stringify(tags) : tags.length > 0;
     if (willWrite && !state.preservation.available) throw new Error('Local metadata journal is unavailable. Metadata publication is blocked; inspect diagnostics.');
     return existing;
