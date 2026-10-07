@@ -25,7 +25,7 @@ export class MemoryBookmarks implements BookmarksRepository {
     this.all().find(n => n.id === input.parentId)!.children!.push(node); return node;
   }
   async update(id: string, changes: { title?: string; url?: string }) { this.calls.push('update'); Object.assign(this.all().find(n => n.id === id)!, changes); }
-  async move(id: string, parentId: string) {
+  async move(id: string, parentId: string): Promise<FavoriteNode | void> {
     this.calls.push('move'); const node = this.all().find(n => n.id === id)!;
     const oldParent = this.all().find(n => n.id === node.parentId)!;
     oldParent.children = oldParent.children!.filter(n => n.id !== id);

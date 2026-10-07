@@ -28,6 +28,16 @@ Browsing hides direct loose favorites and their synthetic Bookmarks group under 
 
 The existing durable creation receipt may complete metadata for an already-created item without another native create, even if later policy restricts its location. No schema, transport, permissions, stable identity algorithm or live data reset changes.
 
+## Native move outcome verification
+
+Confirmed source gap in 0.1.24: the browser adapter discarded the result of `bookmarks.move`, and the worker refreshed without verifying the resulting parent/order before reporting success. An isolated resolved-no-op fixture demonstrates that path. This is a reporting defect; it does not prove the cause of the reported live cross-Workspace failure or establish an Edge extension API prohibition.
+
+0.1.25 retains the returned native node and reads a fresh native tree after the API attempt. The shared outcome checker compares source ID/parent/title/URL/creation stamp, complete destination order and (for cross-parent moves) source-parent order. Same-parent forward insertion accounts for source removal. API response IDs/parent/index must agree with the tree. A final reconciled snapshot is checked again before returning successful Move state. Manage's older edit-and-move path uses the same native outcome verification and preserves its partial-save reporting.
+
+A resolved unchanged result, unexpected parent/order, conflicting response or rejected API call produces an explicit error and refreshed observed state where readable. Rejection after an observed move is not described as an ordinary success. Read failure remains unverified. No automatic retry, copy/delete fallback, recreation or metadata reassignment occurs. Concurrent external order changes can deliberately produce an uncertain-result error; the user must inspect actual state before retrying. This is not a transaction with browser sync or a guarantee against changes after the final read.
+
+Within-container CRUD/reorder/movement passes simulated worker and real pointer/keyboard UI checks. Native Edge verification remains pending. Cross-boundary operations are blocked before the native call until separately established, including Workspace ↔ ordinary root and container ↔ container. Direct-root receiving is always prohibited by this checkpoint's policy.
+
 ## Active Workspace — deferred
 
 The public [tabs type](https://developer.chrome.com/docs/extensions/reference/api/tabs#type-Tab) exposes tab/window/group identifiers, not a documented Workspace identity. [Window types](https://developer.chrome.com/docs/extensions/reference/api/windows#type-WindowType) distinguish browser window kinds, not Workspaces. Existing dashboard launching uses tab/window identity for routing only. The supplied bookmark diagnostics expose no active signal. All containers remain visible; no inferred active filter or new selector.

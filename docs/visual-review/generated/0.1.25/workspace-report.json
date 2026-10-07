@@ -1,0 +1,10 @@
+[
+  {
+    "theme": "light",
+    "result": "protected containers/root; descendant creation/edit/delete; resolved no-op rejection; same-container native reordering, keyboard and actual pointer moving with identity/direct tags retained; second-container creation; loose search and Manage visibility; metadata-only container save"
+  },
+  {
+    "theme": "dark",
+    "result": "protected containers/root; descendant creation/edit/delete; resolved no-op rejection; same-container native reordering, keyboard and actual pointer moving with identity/direct tags retained; second-container creation; loose search and Manage visibility; metadata-only container save"
+  }
+]

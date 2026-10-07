@@ -1,0 +1,10 @@
+[
+  {
+    "theme": "light",
+    "checks": "two ordinary synthetic groups; Workspace loose group excluded; title-only section highlight; no geometry shift; dirty Escape twice; failed/successful Save; Cancel/discard; favorites/nested/wrapped folders; duplicate titles/search; source removal cleanup"
+  },
+  {
+    "theme": "dark",
+    "checks": "two ordinary synthetic groups; Workspace loose group excluded; title-only section highlight; no geometry shift; dirty Escape twice; failed/successful Save; Cancel/discard; favorites/nested/wrapped folders; duplicate titles/search; source removal cleanup"
+  }
+]

@@ -1,3 +1,4 @@
+import { moveOutcome } from './move-outcome';
 import { assertNative, metadataEditable, moveBoundaryIssue } from './capabilities';
 import { itemMetadataIssue } from './item-metadata-health';
 import type { BookmarksRepository } from '../browser/bookmarks';
@@ -153,6 +154,20 @@ export class DashboardService {
       return {...await this.snapshot('created item'),mutation:{id:receipt.id,parentId:input.parentId}};
     } catch(error){throw Error(`Item ${receipt.id} was CREATED in ${parent.path.join(' / ')}. Metadata completion is not confirmed. Retry completion for this item; it will not create another. ${String(error)}`, {cause:error});}
   }
+  private async moveNative(before: Snapshot, id: string, parentId: string, index: number) {
+    let reply: Awaited<ReturnType<BookmarksRepository['move']>> = undefined;
+    let rejected: unknown; let failed=false;
+    try { reply = await this.bookmarks.move(id, parentId, index); } catch (error) { rejected = error; failed=true; }
+    let after: Snapshot;
+    try { const tree = await this.bookmarks.getTree(); after = {...before, tree, ...flattenTree(tree)}; }
+    catch (error) { throw Error(`Move outcome is unverified: native state could not be read. No automatic retry; inspect Edge Favorites before another attempt. ${String(rejected ?? error)}`, {cause:error}); }
+    const issue=moveOutcome(before,after,id,parentId,index,reply);
+    if(issue || failed) {
+      // Refresh/reconcile the observed state, without issuing a second move.
+      try { await this.snapshot('move outcome not confirmed'); } catch { /* retain the native outcome error */ }
+      throw Error(`${issue ?? 'The requested native position was observed, but Edge returned an error.'} No automatic retry; inspect Edge Favorites before another attempt.${failed ? ` Edge reported: ${String(rejected)}` : ''}`);
+    }
+  }
   async command(command: Command): Promise<Snapshot> {
     if (command.type === 'snapshot' || command.type === 'reconcile') return this.snapshot(command.type);
     const s = await this.snapshot(`before ${command.type}`);
@@ -169,8 +184,12 @@ export class DashboardService {
       const fresh={...s,tree:freshTree,...flattenTree(freshTree)};
       if(sourceToken(fresh,command.id)!==command.expected || placementToken(fresh,command.placement)!==command.destinationExpected)throw Error('Native source or destination changed before the move. Nothing was moved.');
       planMove(fresh,command.id,command.placement);
-      await this.bookmarks.move(command.id,target.parentId,target.index);
-      try { return {...await this.snapshot('after move'),mutation:{id:command.id,parentId:target.parentId}}; } catch(error) {throw Error(`Item ${command.id} was MOVED, but refreshing metadata did not complete. Inspect its current location before retrying. ${String(error)}`,{cause:error});}
+      await this.moveNative(fresh,command.id,target.parentId,target.index);
+      let result: Snapshot;
+      try { result=await this.snapshot('after move'); } catch(error) {throw Error(`Item ${command.id} reached the requested native position, but refreshing metadata did not complete. Inspect its current location before retrying. ${String(error)}`,{cause:error});}
+      const issue=moveOutcome(fresh,result,command.id,target.parentId,target.index);
+      if(issue)throw Error(`${issue} State changed during refresh. No automatic retry.`);
+      return {...result,mutation:{id:command.id,parentId:target.parentId}};
     } else if (command.type === 'attach-folder') {
       const folder = s.folders.find(f => f.id === command.id);
       if (!folder || !metadataEditable(folder)) throw Error('Browser-owned, managed or missing folder cannot be edited.');
@@ -256,7 +275,7 @@ export class DashboardService {
       try {
         if (f.title !== input.title || f.url !== input.url || f.parentId !== input.parentId) { const tree = await this.bookmarks.getTree(); const fresh = {...s,tree,...flattenTree(tree)}; assertNative(fresh.favorites.find(n=>n.id===f.id)); if(f.parentId !== input.parentId) {const parent=this.folder(fresh,input.parentId);const issue=moveBoundaryIssue(fresh.favorites.find(n=>n.id===f.id),parent);if(issue)throw Error(issue);} }
         if (f.title !== input.title || f.url !== input.url) { await this.bookmarks.update(f.id, { title: input.title, url: input.url }); progress.title = f.title !== input.title; progress.url = f.url !== input.url; }
-        if (f.parentId !== input.parentId) { await this.bookmarks.move(f.id, input.parentId); progress.location = true; }
+        if (f.parentId !== input.parentId) { const tree=await this.bookmarks.getTree(); const beforeMove={...s,tree,...flattenTree(tree)}; const target=planMove(beforeMove,f.id,{parentId:input.parentId,side:'end'}); await this.moveNative(beforeMove,f.id,target.parentId,target.index); progress.location = true; }
         const fresh = flattenTree(await this.bookmarks.getTree()).favorites.find(n => n.id === f.id);
         if (!fresh) throw new Error('Favorite disappeared during edit.');
         await this.setTags(fresh, input.tags);

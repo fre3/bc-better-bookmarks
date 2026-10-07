@@ -388,3 +388,11 @@ Unresolved metadata is a diagnostic status, never a user tag. Catalogue/editor/w
 Editor highlight is explicit native-item ID state. Favorites and nested folders keep their existing selected treatment; real section titles now use the same theme selection color and cloned inline background. Provenance, chevron and controls are excluded. Save/Cancel/discard clear the state, nested confirmation and failed saves retain it, and source removal removes its rendered indication. No auto-scroll or expansion to reveal a source. Synthetic groups cannot acquire drag or editor state from undefined-ID equality; their keyboard focus styling remains intact.
 
 User reports the other 0.1.23 checks passed; historical native-title-change causation is still unresolved. Native Workspace acceptance remains pending. Evidence and manual checks: [0.1.24 review](visual-review/generated/0.1.24-review.md).
+
+## 0.1.25 — useful Workspace contents, protected containers
+
+The accepted immediate-child policy replaces 0.1.24's blanket native restriction beneath the identified Workspaces root. Containers retain metadata-only editors and New favorite/New folder actions for their contents; root-scoped New is absent. Ordinary descendants regain native editing, deletion and within-container moving with existing identity safeguards. No presumed active-container filter is added.
+
+Direct loose favorites beneath Workspaces and their synthetic group are omitted from browsing (also in All bookmarks). They remain searchable with a visible full path and inspectable in Manage with an explanation that they are outside displayed containers. This is not an archive or search exclusion. Binding review remains complete. No synthetic group, native entry or metadata is rewritten.
+
+Cross-boundary move destinations are temporarily unavailable with an explanation. A native move that leaves order unchanged or has an unexpected result now remains an error in the dialog and refreshes observed state, without automatic retry. Container read-only naming, tags/archive, source highlighting, section geometry, search restoration and footer lifecycle remain unchanged. [0.1.25 captures and checks](visual-review/generated/0.1.25-review.md) are Chromium evidence, pending Edge acceptance.
