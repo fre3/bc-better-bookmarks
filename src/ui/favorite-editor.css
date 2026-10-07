@@ -53,3 +53,8 @@
 .is-editing [data-drag-title] { user-select: none; -webkit-user-drag: none; touch-action: none; }
 
 .identity-details pre { max-height: 13rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.4 monospace; }
+.drag-preview { position: fixed; z-index: 160; pointer-events: none; width: min(300px, calc(100vw - 16px)); box-sizing: border-box; padding: 8px 10px; background: var(--surface); color: var(--text); border: 1px solid var(--edit-accent); font: 14px/1.4 Helvetica, Arial, sans-serif; }
+.drag-preview strong, .drag-preview span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.drag-preview span { color: var(--secondary); }
+.catalogue-item[data-moving] > .bookmark-title, .catalogue-item[data-moving] > .folder-trigger .folder-title, .section-header[data-moving] .section-title-text { background: var(--selected); outline: 1px solid var(--edit-accent); box-decoration-break: clone; }
+@media (forced-colors: active) { .drag-preview { border-color: Highlight; } [data-moving] { outline-color: Highlight; } }

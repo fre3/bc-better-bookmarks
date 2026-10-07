@@ -25,12 +25,13 @@ interface Props {
   autoScrollPeek?: boolean;
   blocked?: boolean;
   selectedId?: string;
+  movingId?: string;
   onEdit?: (id: string) => void;
   onToggle: () => void;
   onFolder: (id: string) => void;
 }
 
-export function SectionCard({ section, nextSection, sections, stackIndex, stackSize, allRoots, open, query, expanded, peekEpoch, autoScrollPeek = true, blocked = false, selectedId, onEdit, onToggle, onFolder }: Props) {
+export function SectionCard({ section, nextSection, sections, stackIndex, stackSize, allRoots, open, query, expanded, peekEpoch, autoScrollPeek = true, blocked = false, selectedId, movingId, onEdit, onToggle, onFolder }: Props) {
   const [mouseHover, setMouseHover] = useState(false);
   const [pointerPeek, setPointerPeek] = useState(-1);
   const [focusPeek, setFocusPeek] = useState(-1);
@@ -64,7 +65,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
   return <section ref={slot} id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${showingPeek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
     style={{ zIndex: showingPeek ? stackSize + 1 : preview ? stackSize : stackIndex }}>
     <div className="section-sheet has-top-shadow">
-      <div ref={headingTags} className="section-header" onPointerEnter={e => { if (blocked) return; hover.remember(e); setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={e => { if (!hover.retainOnLeave(e)) endMousePeek(); }}>
+      <div ref={headingTags} className="section-header" data-moving={movingId === section.folder?.id || undefined} onPointerEnter={e => { if (blocked) return; hover.remember(e); setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={e => { if (!hover.retainOnLeave(e)) endMousePeek(); }}>
         <h2 className={`section-inner section-tag-item${onEdit && section.folder?.renamable ? ' has-folder-editor' : ''}`}>
         {query !== null ? <span className="section-label"><span className="section-heading-text"><span className="section-title-text">{section.title || '(untitled)'}</span>{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
           <a data-drag-title={onEdit&&section.folder?.renamable?section.folder.id:undefined} className="section-toggle" role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }} id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}
@@ -81,7 +82,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
       <div className="section-reveal">
       <div id={contentId} className="section-content" inert={!open} aria-hidden={!open}>
         {(open || preview) && <div ref={flow} className="section-inner catalogue-flow">
-          {section.children.length ? <CatalogueItems items={section.children} onEdit={open ? onEdit : undefined} selectedId={selectedId} expanded={expanded} onToggle={onFolder} query={query} /> : <span className="empty-folder">Empty folder</span>}
+          {section.children.length ? <CatalogueItems items={section.children} onEdit={open ? onEdit : undefined} selectedId={selectedId} movingId={movingId} expanded={expanded} onToggle={onFolder} query={query} /> : <span className="empty-folder">Empty folder</span>}
         </div>}
       </div>
       {preview && nextSection && <div className={`peek-successor${nextSection ? ' has-top-shadow' : ''}`} data-sheet-owner={nextSection?.id} aria-hidden="true" inert>

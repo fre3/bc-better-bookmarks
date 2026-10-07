@@ -147,7 +147,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
   return <ActionsContext.Provider value={editing && onCreate && onMove ? {create:onCreate,move:onMove,remove:onDelete,searching} : undefined}><div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-dragging={drag.active} data-expansion-end={EXPANSION_END} hidden={suspended}>
     <div ref={chrome} className="catalogue-chrome">
     <header className="catalogue-navigation">
-      {editing && <div className="editing-help">Click Edit beside a favorite or folder to make changes.</div>}
+      {editing && <div className="editing-help">Click a favorite to edit it, or use Edit beside a folder. Drag titles to move.</div>}
       <RootNavigation roots={roots} scope={scope} onChange={switchScope} />
       <div className="navigation-actions">
         {editing && <span className="editing-badge">Editing</span>}
@@ -170,9 +170,10 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     </div>
     <div className="chrome-rest-space" aria-hidden="true" />
     {launchError && <p role="alert">{launchError}</p>}
+    {drag.preview && <div className="drag-preview" aria-hidden="true" style={{left:drag.preview.x,top:drag.preview.y}}><strong>Moving {drag.preview.title}</strong><span>{drag.feedback?.invalid ? 'Not allowed' : drag.feedback ? drag.feedback.label : 'Choose a destination'}</span></div>}
     {drag.feedback && <><div aria-hidden="true" className={`drag-cue${drag.feedback.invalid?' invalid':''}`} style={drag.feedback.rect}/><p className="drag-status" role="status">{drag.feedback.label}</p></>}
     <div className="section-stack" aria-label="Bookmark catalogue">
-      {visible.sections.map((section, index) => <SectionCard key={section.id} blocked={modalOpen || drag.active} selectedId={selectedId} onEdit={editing ? onEdit : undefined} section={section} nextSection={visible.sections[index + 1]} sections={visible.sections} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended && !drag.active} onToggle={() => {
+      {visible.sections.map((section, index) => <SectionCard key={section.id} blocked={modalOpen || drag.active} selectedId={selectedId} movingId={drag.preview?.id} onEdit={editing ? onEdit : undefined} section={section} nextSection={visible.sections[index + 1]} sections={visible.sections} stackIndex={index} stackSize={visible.sections.length} allRoots={scope === '*'} open={searching || state.openSection === section.id} query={state.query} expanded={state.expanded} peekEpoch={state.peekEpoch} autoScrollPeek={autoScrollPeek && !suspended && !drag.active} onToggle={() => {
         if (state.openSection && state.openSection !== section.id) scrollToSection.current = section.id;
         dispatch({ type: 'section', id: section.id });
       }} onFolder={id => {
