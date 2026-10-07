@@ -1,5 +1,11 @@
 # 0.1.23 move identity investigation
 
+## Closure — 2026-10-08
+
+The user accepts Indexfold 0.1.27 in native Edge and reports no recurrence of the historical title-change behavior across several subsequent releases. The **title-change investigation is closed**, removed from active issues and review checklists. The original cause remains **unconfirmed**; closure does not establish a title-overwrite fix. The independently reproduced duplicate-bookmark binding defect and its 0.1.23 fix remain distinct.
+
+The evidence, diagnostic procedure and original review checklist below are retained as a **historical record**, not current testing or diagnostic requests. No live bookmark repair or data mutation accompanies closure.
+
 ## Evidence and limits
 
 All supplied images were visually inspected: `0.1.22_duplicate_1.png` through `0.1.22_duplicate_4.png`, and `0.1.22_moving-design-section.png`. The fourth image establishes two separate native Edge favorites with the same displayed title in Workspaces / BB Sync 20260930 / Separate. It does not establish their URLs, previous titles/parents, or which write produced that condition. The editor image has no native ID, so it cannot conclusively identify which duplicate was opened.

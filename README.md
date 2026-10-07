@@ -6,7 +6,7 @@ A typography-first bookmark dashboard with instant search and keyboard navigatio
 
 Indexfold is a Manifest V3 New Tab extension, currently **pre-release 0.1.27**. Native browser bookmarks own titles, URLs, hierarchy and order. The extension stores direct tags and conservative identity/reconciliation metadata; inheritance is computed. There is no backend or separate bookmark database.
 
-The user accepted the 0.1.25 Edge checks, including changes and tag synchronization between PC A and PC B, and reported successful Chrome use. That does not establish a full Chrome regression or cross-browser synchronization test. The user also confirms 0.1.26 cross-Workspace movement and synchronization between PCs passed. The focused 0.1.27 Manage dismissal correction awaits review; see [the handoff](docs/development-state.md).
+The user accepted the 0.1.25 Edge checks, including changes and tag synchronization between PC A and PC B, and reported successful Chrome use. That does not establish a full Chrome regression or cross-browser synchronization test. The user also confirms 0.1.26 cross-Workspace movement and synchronization between PCs passed. Indexfold 0.1.27 is accepted in native Edge and checkpointed as `editing-validated-0.1.27`; see [the handoff](docs/development-state.md).
 
 ## Browse and search
 

@@ -1,15 +1,15 @@
 # Development State
 
-Last updated: 2026-10-07
-Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.27**, ready for focused Manage dismissal review.
+Last updated: 2026-10-08
+Current branch: `feature/bookmark-editing`. **0.1.27 accepted in native Edge**; documentation checkpoint: `editing-validated-0.1.27`.
 Validated MVP: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated `mvp-validated-0.1.1`.
 Accepted visual checkpoint: `ui-validated-0.1.15` and `feature/ui-ux-redesign` remain at `0e6a596210b2be2d273eab4a19d2268d9a1407a1`. No push; supplied media and Windows clone untouched.
 
 ## Review status
 
-The user accepted **0.1.25 Edge tests**, including changes and tag synchronization between PC A and PC B. Successful Chrome use was also reported; no full Chrome regression or cross-browser synchronization is inferred. The user now confirms **0.1.26 native cross-Workspace moves and synchronization between PCs passed**. This is specific native evidence; no additional scenarios or full-release acceptance are inferred. The remaining reported Manage unchanged-editor dismissal defect is corrected in 0.1.27, pending native review.
+The user accepted **0.1.25 Edge tests**, including changes and tag synchronization between PC A and PC B. Successful Chrome use was also reported; no full Chrome regression or cross-browser synchronization is inferred. The user now confirms **0.1.26 native cross-Workspace moves and synchronization between PCs passed**. This is specific native evidence; no additional scenarios or full-release acceptance are inferred. The user has now accepted **Indexfold 0.1.27 in native Edge**, including the focused Manage dismissal correction.
 
-The 0.1.23 duplicate-bookmark binding fix remains preserved. The historical native-title-change report remains unexplained; this checkpoint neither claims its cause nor repairs live data. No live reset, guessed identity repair, merge, recreation or live bookmark mutation was performed. Supplied screenshots `0.1.25_readonly-fields.png`, `0.1.25_context-menu-items.png` and `0.1.25_management.png` were all opened with the image viewer before implementation.
+The 0.1.23 duplicate-bookmark binding fix remains preserved. The historical native-title-change investigation is **closed** on 2026-10-08 because the user reports no recurrence across several subsequent releases. Its original cause remains unconfirmed; this is not evidence of a proven title-overwrite fix. It is no longer an active issue or review requirement. [Historical evidence and closure](move-identity-0.1.23.md) remain available, separately from the demonstrated duplicate-binding fix. No live reset, guessed identity repair, merge, recreation or live bookmark mutation was performed. Supplied screenshots `0.1.25_readonly-fields.png`, `0.1.25_context-menu-items.png` and `0.1.25_management.png` were all opened with the image viewer before implementation.
 
 ## Current behavior — Indexfold 0.1.27
 
@@ -24,6 +24,8 @@ The 0.1.23 duplicate-bookmark binding fix remains preserved. The historical nati
 
 ## Verification
 
+User-reported native Edge acceptance: **0.1.27 passed**, recorded 2026-10-08. The following automated results are retained from implementation; no tests or build were rerun for this documentation-only checkpoint.
+
 `npm run check`: **257 tests / 24 files**, typecheck, lint, build and stable ID validation passed; tracked `dist/` is **0.1.27**, ID `nfhbegeoeafnpejpjdljhgagefbpafal`.
 
 - `check-management-dismissal.mjs` fails against 0.1.26 at its first unchanged Cancel (one unexpected prompt) and passes with the fix in light/dark isolated Chromium. Actual pointer/keyboard checks cover clean/dirty/reverted forms, repeated open/close, Escape and rejected/accepted discard, retained navigation, external-update conflict, focus restoration and unchanged/dirty/reverted bookmark/folder catalogue modals including archive checkbox reversal.
@@ -31,16 +33,11 @@ The 0.1.23 duplicate-bookmark binding fix remains preserved. The historical nati
 - Existing `check-editing.mjs`, `check-folders.mjs` and `check-appearance.mjs` passed, including repeated Escape, failed/duplicate saves, external conflicts, bookmark/folder partial-save recovery, inherited archive filtering, final-visible-section hover and theme/draft retention. The folder script’s obsolete pre-0.1.26 setup/review selectors were updated to the current Manage panels; recovery runs only in disposable fixtures. Prior 0.1.26 rendered evidence remains at [the review record](visual-review/generated/0.1.26-review.md); the new build adds no visual design changes.
 - Tests use isolated profiles/fixtures, not live bookmark data. Chromium results do not establish native Edge acceptance. The reported two-device move result above comes from the user.
 
-## Next action: focused native review
+## Checkpoint closed — await next user-directed work
 
-Reload **Indexfold 0.1.27** at `edge://extensions` or `chrome://extensions` using committed `dist/`, then open a fresh dashboard. Nothing pushed; Windows consumes the WSL-built artifact.
+Native Edge review of **Indexfold 0.1.27** is complete. `editing-validated-0.1.27` is an annotated tag on the documentation acceptance commit. No active title-change investigation or related review checklist remains. Historical evidence is retained without asserting an original cause or a proven title-overwrite fix.
 
-1. Manage → Bookmarks: open an existing editor, then Cancel or Escape without changes; no discard prompt. Repeat with a new blank editor.
-2. Change a field: Cancel/Escape must ask before discarding; decline and verify input remains. Revert all changes to their original values and dismiss without a prompt.
-3. Navigate among Manage panels and back to the dashboard; inputs remain available on return. Only changed drafts display the retained-draft notice.
-4. Briefly check bookmark/folder catalogue modal Cancel and repeated Escape, including archive changes. No repeat of the passed cross-Workspace/two-device suite is requested for this UI-only correction.
-
-No live repair or metadata reset. Active-Workspace filtering, Workspace ↔ ordinary-root support, copying, bulk operations, website thumbnails and semantic search remain deferred. The historical native-title-change cause is still unestablished.
+No version bump, rebuild, push, live repair or metadata reset accompanies this checkpoint. The committed 0.1.27 artifact and earlier validated references remain unchanged. Wait for the user's next scope; do not begin deferred features. Active-Workspace filtering, Workspace ↔ ordinary-root support, copying, bulk operations, website thumbnails and semantic search remain deferred.
 
 ## Corrected diagnosis and inspected evidence
 

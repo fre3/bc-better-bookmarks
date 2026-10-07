@@ -457,7 +457,9 @@ Both devices on **0.1.22**, disposable data only:
 
 No wholesale repeat of accepted creation/move sync checks is needed; transport/schema are unchanged. This targeted deletion check remains **pending** until reported.
 
-## 0.1.23 duplicate-move investigation — native review pending
+## Historical 0.1.23 duplicate-move investigation and review plan
+
+**Status update, 2026-10-08:** the title-change investigation is closed after user-reported nonrecurrence across several releases and native Edge acceptance of 0.1.27. Its original cause remains unconfirmed; no proven title-overwrite fix is claimed. The diagnostic/review plan below is retained historically, not an active checklist. The confirmed duplicate-binding fix is a separate finding.
 
 The 0.1.22 user report establishes native same-title duplicates and a user-supplied local-mapping(66) → ambiguous transition for `6822fc12…` after move, with 41 favorites retained. It does not establish a native title/URL overwrite. The original diagnostic attachment was unavailable; five screenshots were inspected. The earlier `b9d0d7c5…` deletion is separate. Do not mark 0.1.22 accepted or reinterpret the passed 0.1.21 checks as duplicate-convergence coverage.
 
@@ -470,3 +472,7 @@ The user confirms requested Edge 0.1.25 tests passed, including changes and tag 
 ## User-reported 0.1.26 cross-Workspace result
 
 The user confirms native cross-Workspace moves work and synchronize between PCs. Record that focused scenario as **passed**. This updates the pending move check above; it does not add unreported deletion, Chrome regression or cross-browser synchronization evidence. The 0.1.27 Manage dismissal fix changes no transport, metadata schema or mutation service and does not require repeating this native suite. Historical title-change causation remains unresolved.
+
+## Native Edge acceptance and investigation closure — 0.1.27, 2026-10-08
+
+The user accepts Indexfold 0.1.27 in native Edge. This supplements the already reported cross-Workspace movement and two-PC synchronization result, without inventing further cross-device scenarios. Following no recurrence across several subsequent releases, the historical title-change investigation is closed, no longer an active issue or review requirement. The original cause remains unconfirmed; neither this acceptance nor the separate duplicate-binding fix proves a title-overwrite fix. Prior evidence and unperformed historical cases remain accurately recorded.

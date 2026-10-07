@@ -4,7 +4,7 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-Validated references remain at `mvp-validated-0.1.1` and `ui-validated-0.1.15`. The user accepted 0.1.25 Edge tests and PC A/B changes/tag sync, and reported successful Chrome use. **0.1.26 awaits targeted review** of container-to-container moving, controls/menus, Manage organization and Indexfold branding. Use disposable content; the historical native-title-change cause remains unestablished. No live guessed repair, bulk operation, copying or transport redesign is authorized.
+Validated references remain at `mvp-validated-0.1.1` and `ui-validated-0.1.15`; **Indexfold 0.1.27 is accepted in native Edge**, checkpointed as `editing-validated-0.1.27`. Cross-Workspace moves and synchronization between PCs also passed. Successful Chrome use is reported, without implying a full Chrome regression or cross-browser sync suite. The historical title-change investigation is closed following user-reported nonrecurrence across several releases; its original cause is unconfirmed, with evidence retained in [the investigation record](move-identity-0.1.23.md). It is not an active issue or review task. Await the next explicitly requested scope; no deferred feature or live repair is authorized by this checkpoint.
 
 ## Future catalogue imagery and motion
 

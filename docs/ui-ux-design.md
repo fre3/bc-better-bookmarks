@@ -410,3 +410,7 @@ Menu rows highlight hover and keyboard focus in both themes; text wraps within v
 Opening Manage's bookmark editor captures the baseline without marking a draft dirty. Cancel/Escape compare native title, URL and destination plus normalized direct tags; unchanged and reverted forms close immediately, while real edits still use the existing discard confirmation. A declined confirmation retains input. The opening comparison state and worker conflict token are independent of background updates and failed/partial saves. No automatic URL rewriting or archive state is introduced. Manage's folder rename prompt and the separate catalogue bookmark/folder modals keep their existing behavior; modal archive checkbox round-trips remain clean.
 
 Settings/Bookmarks/Diagnostics and Back to dashboard remain non-destructive navigation: forms survive rather than being discarded. Only actual changes show the retained-draft notice. Escape observes native child-popup semantics and does not propagate to background catalogue/search handlers; focus returns to the opening control on dismissal.
+
+## Native review closure — 2026-10-08
+
+Indexfold 0.1.27 is accepted in native Edge, checkpointed as `editing-validated-0.1.27`. The focused Manage dismissal review is complete. The historical title-change investigation is closed after user-reported nonrecurrence across several releases; its original cause remains unconfirmed, not a proven title-overwrite fix. Earlier version-specific review notes remain historical evidence, not active requests to repeat that investigation.

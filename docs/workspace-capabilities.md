@@ -2,7 +2,7 @@
 
 ## Evidence and limits
 
-User review: other requested 0.1.23 checks pass; Workspace compatibility and editor highlighting remain outstanding. The duplicate-binding defect fixed in 0.1.23 is distinct from the historical native-title-change report. No cause of that historical title change has been established.
+Current user review: Indexfold 0.1.27 is accepted in native Edge; cross-Workspace moves and two-PC synchronization have passed. The historical title-change investigation is closed following reported nonrecurrence across several releases; its original cause remains unconfirmed, with no proven title-overwrite fix claimed. The duplicate-binding defect fixed in 0.1.23 remains a separate demonstrated finding. Earlier Workspace evidence below is retained.
 
 Inspected all five supplied 0.1.23 images with the image viewer: workspace-folder, bookmarks-highlighting, edit-hl-1, edit-hl-2, edit-hl-3. The first shows Edge rejecting a move with “Can't modify workspace folder”. This does not prove all cross-Workspace moves are prohibited or establish which tree nodes represent Workspace objects.
 
