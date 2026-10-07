@@ -1,13 +1,13 @@
 # Development State
 
 Last updated: 2026-10-07
-Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.25**, ready for native Edge review.
+Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.26**, implementation and verification in progress.
 Validated MVP: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated `mvp-validated-0.1.1`.
 Accepted visual checkpoint: `ui-validated-0.1.15` and `feature/ui-ux-redesign` remain at `0e6a596210b2be2d273eab4a19d2268d9a1407a1`. No push; supplied media and Windows clone untouched.
 
 ## Review status
 
-The user reports the other requested **0.1.23** tests pass. 0.1.24's blanket Workspace native restriction was rejected as too restrictive. **Stop for native Edge review of 0.1.25.** Its restored Workspace operations are verified in isolated Chromium fixtures, not yet native Edge. The 0.1.24 source-highlighting corrections are preserved; no additional native acceptance is inferred.
+The user reports all requested **0.1.25 Edge tests passed**, including changes and tag synchronization between PC A and PC B. Successful Chrome use was also reported; this is not a complete Chrome regression or cross-browser sync test. The earlier reports that the other requested **0.1.23** tests pass remain recorded. 0.1.24's blanket Workspace native restriction was rejected as too restrictive. 0.1.26 is the next review target. Its restored Workspace operations are verified in isolated Chromium fixtures, not yet native Edge. The 0.1.24 source-highlighting corrections are preserved; no additional native acceptance is inferred.
 
 The duplicate-bookmark binding defect fixed in 0.1.23 remains fixed. The historical native-title-change report remains unexplained. Native duplicate titles were established, but a title overwrite during dragging was neither established nor ruled out. No reset, merge, guessed repair, rename, delete, recreation or Workspace mutation was performed on live data. See [identity investigation](move-identity-0.1.23.md) for retained evidence and minimal read-only diagnostics.
 

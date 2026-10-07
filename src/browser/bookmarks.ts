@@ -1,3 +1,4 @@
+import { browserFamily } from './platform';
 import type { FavoriteNode } from '../core/model';
 
 export interface BookmarksRepository {
@@ -17,7 +18,7 @@ function project(node: chrome.bookmarks.BookmarkTreeNode): FavoriteNode {
 }
 export class BrowserBookmarksRepository implements BookmarksRepository {
   constructor(private readonly api: typeof chrome.bookmarks = chrome.bookmarks) {}
-  async getTree() { return (await this.api.getTree()).map(project); }
+  async getTree() { return (await this.api.getTree()).map(node => ({...project(node), browserFamily: browserFamily()})); }
   async create(input: { parentId: string; title: string; url?: string }) { return project(await this.api.create(input)); }
   async update(id: string, changes: { title?: string; url?: string }) { await this.api.update(id, changes); }
   async move(id: string, parentId: string, index?: number) { return project(await this.api.move(id, { parentId, ...(index === undefined ? {} : { index }) })); }

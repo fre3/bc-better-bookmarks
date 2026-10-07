@@ -11,6 +11,7 @@ export interface FavoriteNode {
   unmodifiable?: string;
   children?: FavoriteNode[];
   /** Derived application policy; never synchronized or used for identity. */
+  browserFamily?: 'edge' | 'chrome' | 'unknown';
   nativeRestriction?: string;
   workspaceRole?: 'root' | 'container' | 'content' | 'loose';
   workspaceId?: string;

@@ -1,4 +1,4 @@
-# Browser-location capabilities — 0.1.25
+# Browser-location capabilities — 0.1.26
 
 ## Evidence and limits
 
@@ -75,3 +75,11 @@ chrome.bookmarks.getTree().then(tree => console.log(JSON.stringify(tree.map(root
 Keep diagnostics private; inspect locally before sharing. Manage's existing browser-folder diagnostic view now also shows the derived restriction, writable and renamable fields. No native capability was probed by mutation. The accepted immediate-child policy replaces per-container proof; stronger root identification still requires supported evidence. Matching display names/paths is insufficient. Never repair existing Workspace entries by guessing.
 
 Native review uses disposable ordinary content in an Edge-created Workspace; Workspace creation/rename/deletion stays in Edge. Simulated Chromium fixtures do not establish native Workspace compatibility.
+
+## 0.1.26 policy update
+
+The user accepted 0.1.25 native Edge checks and two-device changes/tag synchronization, plus reported successful Chrome use (not a full Chrome or cross-browser sync test). Ordinary bookmarks and subtrees may now move between Workspace containers. Workspace ↔ ordinary-root moves remain restricted; direct Workspaces-root receiving and container lifecycle mutations remain prohibited. Native outcome verification from 0.1.25 remains mandatory. No active-Workspace state controls permission.
+
+The structural root assumption now requires positive Edge user-agent evidence from the browser adapter. A Chrome/unknown browser with the same root shape is not classified as Workspaces. Untyped/unknown special roots remain conservatively native-restricted; documented ordinary Chrome roots and descendants retain normal operations. This local derived signal is neither synchronized nor used in metadata identity.
+
+Isolated tests cover cross-container bookmarks/subtrees, direct identity/tag preservation, inherited archive changes, root/container protection and Chrome name/shape independence. Native extension API success for this newly enabled boundary still needs review. No live data was moved; the historical title-change cause is not claimed solved.
