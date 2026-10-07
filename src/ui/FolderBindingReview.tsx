@@ -6,8 +6,8 @@ import { folderEditToken } from '../core/node-tags';
 import { folderBindings } from './folder-bindings';
 
 type Execute = (command: Command) => Promise<SaveFailure | undefined>;
-export interface BindingReviewProps { snapshot: Snapshot; execute: Execute; folderId?: string; onComplete?: (archived: boolean) => void }
-export function FolderBindingReview({ snapshot, execute, folderId, onComplete }: BindingReviewProps) {
+export interface BindingReviewProps { snapshot: Snapshot; execute: Execute; folderId?: string; onComplete?: (archived: boolean) => void; onCancel?:()=>void }
+export function FolderBindingReview({ snapshot, execute, folderId, onComplete, onCancel }: BindingReviewProps) {
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -53,6 +53,6 @@ export function FolderBindingReview({ snapshot, execute, folderId, onComplete }:
     {folderId && snapshot.local.mappings[folderId] && !snapshot.reconciliation.mappings[folderId] && <p>Existing local identity cannot currently be resolved. Metadata health: {snapshot.metadataHealth[snapshot.local.mappings[folderId].stableId]?.status ?? 'unresolved'}. Review Manage diagnostics; missing metadata is never recreated by this dialog.</p>}
     {folderId && !reviews.some(row => row.match.candidateIds.includes(folderId)) && relevant.length > 0 && <p>This location also matches metadata bound to another folder. Copies do not receive the original identity. Review the folders in Edge Favorites; no association can be confirmed here.</p>}
     {error && <p className="editor-error" role="alert">{error}</p>}
-    <button type="button" disabled={saving || stale || !validIds.length} onClick={() => void confirm()}>{saving ? 'Confirming…' : 'Confirm binding'}</button>
+    <div className="editor-actions">{onCancel&&<button className="dialog-cancel" disabled={saving} onClick={onCancel}>Cancel</button>}<button data-affirmative type="button" disabled={saving || stale || !validIds.length} onClick={() => void confirm()}>{saving ? 'Confirming…' : 'Confirm binding'}</button></div>
   </div>;
 }

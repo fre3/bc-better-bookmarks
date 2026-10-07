@@ -1,3 +1,4 @@
+import { RootNavigation } from './RootNavigation';
 import { nodeTags } from '../core/node-tags';
 import { useCatalogueDrag } from './useCatalogueDrag';
 import type { Command } from '../core/model';
@@ -122,6 +123,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       if (target?.closest('dialog, [role="dialog"]')) return;
       const root = rootShortcut(event, roots, excluded);
       if (root !== undefined) { event.preventDefault(); switchScope(root); return; }
+      if (event.key === 'Escape' && target?.closest('select:open')) return;
       if (event.key === 'Escape') {
         event.preventDefault();
         if (searching) exitSearch();
@@ -145,19 +147,13 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     <div ref={chrome} className="catalogue-chrome">
     <header className="catalogue-navigation">
       {editing && <div className="editing-help">Click Edit beside a favorite or folder to make changes.</div>}
-      <nav aria-label="Bookmark roots">
-        {roots.map((root, index) => <button data-root-id={root.id === '*' ? undefined : root.id} key={root.id} aria-current={scope === root.id ? 'page' : undefined}
-          title={index < 9 ? `${root.title} · Alt+${index + 1}` : root.title}
-          aria-keyshortcuts={index < 9 ? `Alt+${index + 1}` : undefined}
-          aria-description={index < 9 ? `Switch root with Alt+${index + 1}` : undefined}
-          onClick={() => switchScope(root.id)}>{root.title || '(untitled root)'}</button>)}
-      </nav>
+      <RootNavigation roots={roots} scope={scope} onChange={switchScope} />
       <div className="navigation-actions">
         {editing && <span className="editing-badge">Editing</span>}
         <button ref={searchButton} onClick={() => searching ? input.current?.focus() : startSearch()}>Search /</button>
         {onEdit && <button id="catalogue-edit" aria-pressed={editing} onClick={() => setEditing(!editing)}><span className="mode-button-size"><span aria-hidden={editing} style={{ visibility: editing ? 'hidden' : 'visible' }}>Edit</span><span aria-hidden={!editing} style={{ visibility: editing ? 'visible' : 'hidden' }}>Done</span></span></button>}
         {editing && <AddMenu parentId={scope === '*' ? '' : scope} />}
-        <button onClick={onManage}>Manage</button>
+        {!editing && <button onClick={onManage}>Manage</button>}
       </div>
     </header>
 

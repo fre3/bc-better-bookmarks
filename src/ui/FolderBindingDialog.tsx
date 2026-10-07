@@ -1,3 +1,4 @@
+import { dialogKeyboard } from './dialog-keyboard';
 import { useLayoutEffect, useRef } from 'react';
 import { FolderBindingReview, type BindingReviewProps } from './FolderBindingReview';
 
@@ -13,7 +14,7 @@ export function FolderBindingDialog({ onClose, ...props }: BindingReviewProps & 
   }, []);
   const close = () => { if (dialog.current?.querySelector('[aria-busy="true"]')) return; onClose(); };
   return <dialog ref={dialog} className="favorite-editor binding-dialog" aria-labelledby="binding-dialog-heading" onCancel={event => { event.preventDefault(); event.stopPropagation(); close(); }} onKeyDownCapture={event => {
-    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); if (!event.repeat) close(); }
+    dialogKeyboard(event, close);
     if (event.key === 'Tab') {
       const stops = [...event.currentTarget.querySelectorAll<HTMLElement>('input:not(:disabled),button:not(:disabled),summary')];
       const first = stops[0], last = stops.at(-1);
@@ -23,7 +24,6 @@ export function FolderBindingDialog({ onClose, ...props }: BindingReviewProps & 
     }
   }}>
     <h2 id="binding-dialog-heading" tabIndex={-1}>Review folder tags</h2>
-    <FolderBindingReview {...props} />
-    <div className="editor-actions"><button type="button" onClick={close}>Cancel</button></div>
+    <FolderBindingReview {...props} onCancel={close} />
   </dialog>;
 }

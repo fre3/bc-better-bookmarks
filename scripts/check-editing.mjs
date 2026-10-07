@@ -29,7 +29,7 @@ try {
   const editBox=await edit(page,'0-0').boundingBox();await page.keyboard.down('Control');await page.mouse.click(editBox.x+editBox.width/2,editBox.y+editBox.height/2);await page.keyboard.up('Control');await expect(title(page)).toBeFocused();assert.equal(context.pages().length,1);
   assert.deepEqual(await page.evaluate(()=>({y:window.scrollY,width:document.querySelector('.catalogue-flow').getBoundingClientRect().width,height:Math.round(document.querySelector('.catalogue-flow').getBoundingClientRect().height*100)/100})),beforeModal);
   const geometry=await page.evaluate(()=>({y:window.scrollY,x:document.querySelector('.section-stack').getBoundingClientRect().x}));
-  await page.keyboard.press('Shift+Tab');assert.equal(await page.evaluate(()=>document.activeElement.textContent),'Cancel');
+  await page.keyboard.press('Shift+Tab');assert.equal(await page.evaluate(()=>document.activeElement.textContent),'Save');
   await page.keyboard.press('Tab');await expect(title(page)).toBeFocused();
   const rootBefore=await page.locator('[aria-current="page"]').textContent();
   await page.keyboard.press('Alt+3');assert.equal(await page.locator('[aria-current="page"]').textContent(),rootBefore);
@@ -57,9 +57,11 @@ try {
   const saved=await page.evaluate(async()=>{const s=await window.service.snapshot('check');return {favorite:s.favorites.find(f=>f.id==='0-0'),tags:s.metadata.records[0].tags}});assert.equal(saved.favorite.url,'https://example.test/changed');assert.deepEqual(saved.tags,['reference','work']);assert.equal(saved.favorite.parentId,'s0');
   await expect(page.getByRole('button',{name:'Done',exact:true})).toHaveAttribute('aria-pressed','true');
   // Every bookmarklet save retains the existing explicit browser confirmation.
-  await open(page,'0-5');const code='javascript:alert(1)\n// exact opaque code';await page.locator('#favorite-edit-url').fill(code);
+  await open(page,'0-5');const code='javascript:alert(1); /* exact opaque code */';await page.locator('#favorite-edit-url').fill(code);
   const prior=await page.evaluate(()=>window.commands.filter(c=>c.type==='edit').length);page.once('dialog',d=>d.dismiss());await save(page).click();await expect(dialog(page)).toBeVisible();assert.equal(await page.evaluate(()=>window.commands.filter(c=>c.type==='edit').length),prior);
   page.once('dialog',d=>d.accept());await save(page).click();await expect(dialog(page)).toHaveCount(0);assert.equal(await page.evaluate(async()=>(await window.service.snapshot('check')).favorites.find(f=>f.id==='0-5').url),code);
+  // Existing opaque multiline code survives an unrelated title edit unchanged.
+  const multiline='javascript:alert(1)\n// retained code';await page.evaluate(async url=>window.external('0-5',{url}),multiline);await page.waitForTimeout(200);await open(page,'0-5');await title(page).fill('Opaque multiline retained');page.once('dialog',d=>d.accept());await save(page).click();await expect(dialog(page)).toHaveCount(0);assert.equal(await page.evaluate(async()=>(await window.service.snapshot('check')).favorites.find(f=>f.id==='0-5').url),multiline);
   // External changes/moves/deletions preserve typed draft and reject stale writes.
   for(const [id,change] of [['0-1',{title:'External title'}],['0-2',{parentId:'s1'}],['0-3','delete']]){
    await open(page,id);await title(page).fill('Recoverable draft');await page.evaluate(async({id,change})=>window.external(id,change),{id,change});

@@ -11,19 +11,20 @@ export function sourceToken(s: Snapshot,id:string) {
  return JSON.stringify([editToken(n.url===undefined?folderNode(n as Snapshot['folders'][number],s.folders):n as Snapshot['favorites'][number],directTags(s,id)),n.dateAdded,n.index,s.local.mappings[id]?.stableId]);
 }
 export function childrenOf(s: Snapshot,id:string): FavoriteNode[] { return s.folders.find(f=>f.id===id)?.children ?? []; }
-export type Placement = { parentId:string; anchorId?:string; side:'before'|'after'|'end' };
+export type Placement = { parentId:string; anchorId?:string; side:'start'|'before'|'after'|'end' };
 export function placementToken(s:Snapshot,p:Placement) { return JSON.stringify([destinationToken(s,p.parentId),childrenOf(s,p.parentId).map(n=>[n.id,nativeToken(n)])]); }
 /** Full native sibling order, including filtered/archived nodes. Chrome's index
  * addresses the insertion gap BEFORE removing the source from its old parent. */
 export function planMove(s:Snapshot,id:string,p:Placement) {
- if(!['before','after','end'].includes(p.side))throw Error('Unsupported placement.');
+ if(!['start','before','after','end'].includes(p.side))throw Error('Unsupported placement.');
  const n=nodeById(s,id),parent=s.folders.find(f=>f.id===p.parentId);
  if(!n || n.unmodifiable || n.url===undefined && !(n as Snapshot['folders'][number]).renamable)throw Error('This item is missing, managed or browser-owned.');
  if(!parent?.writable)throw Error('Choose a writable destination.');
  if(parent.id===id || parent.ancestorIds.includes(id))throw Error('A folder cannot be moved into itself or its descendants.');
- const siblings=childrenOf(s,parent.id);let index=siblings.length;
- if(p.side!=='end'){const at=siblings.findIndex(n=>n.id===p.anchorId);if(at<0 || p.anchorId===id)throw Error('Choose another current sibling.');index=at+(p.side==='after'?1:0);}
+ const siblings=childrenOf(s,parent.id);let index=p.side==='start'?0:siblings.length;
+ if(p.side!=='end'&&p.side!=='start'){const at=siblings.findIndex(n=>n.id===p.anchorId);if(at<0 || p.anchorId===id)throw Error('Choose another current sibling.');index=at+(p.side==='after'?1:0);}
  const old=siblings.findIndex(n=>n.id===id), finalIndex=old>=0 && old<index?index-1:index;
  if(old===finalIndex)throw Error('The item is already in that position.');
  return {parentId:parent.id,index};
 }
+

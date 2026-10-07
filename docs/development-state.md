@@ -1,9 +1,13 @@
 # Development State
 
-Last updated: 2026-10-06
+Last updated: 2026-10-07
 Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.21**.
 Validated MVP: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated `mvp-validated-0.1.1`.
 Accepted visual checkpoint: **`ui-validated-0.1.15`** and `feature/ui-ux-redesign` remain at **`0e6a596210b2be2d273eab4a19d2268d9a1407a1`**. No push; supplied media and Windows clone untouched.
+
+## Accepted 0.1.21 checkpoint
+
+The user reports all requested 0.1.21 tests passed and accepts that checkpoint, including its documented creation/move review checklist and short two-device check. No additional unrequested tests are inferred. The supplied eight screenshots identify the navigation/menu sizing and insertion-marker refinements requested for 0.1.22; all eight were visually inspected. New deletion behavior remains untested natively.
 
 ## Current checkpoint and next action
 

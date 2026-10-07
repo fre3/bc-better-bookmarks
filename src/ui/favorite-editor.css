@@ -10,7 +10,7 @@
 .favorite-editor .editor-error { color: var(--error); overflow-wrap: anywhere; margin: 6px 0; }
 .favorite-editor .discard-confirmation { margin-top: 20px; border-top: 1px solid var(--input-rule); }
 .catalogue .bookmark-item.is-selected .bookmark-title { background: var(--selected); box-decoration-break: clone; }
-.catalogue .navigation-actions { flex-wrap: wrap; max-width: 100%; }
+
 @media (max-width: 600px) { .favorite-editor { padding: 18px; } }
 
 .favorite-editor .archive-choice { display: flex; align-items: baseline; gap: 8px; }
@@ -39,3 +39,15 @@
 .catalogue-item:has(> .extra-actions :focus-visible) > .item-annotation { visibility: visible; }
 .drag-status { overflow-wrap: anywhere; max-height: 30svh; overflow: hidden; }
 .item-menu { width: min(230px, calc(100vw - 16px)); max-height: calc(100svh - 16px); overflow: auto; }
+
+.item-menu, .item-menu button { text-transform: none; letter-spacing: 0; font: 16px/1.5 Helvetica, Arial, sans-serif; }
+.item-menu button { width: 100%; min-height: 36px; text-align: left; }
+.favorite-editor input, .favorite-editor select { min-height: 38px; font: inherit; }
+.favorite-editor .editor-actions { align-items: center; justify-content: flex-end; border-top: 1px solid var(--input-rule); padding-top: 16px; gap: 12px; }
+.favorite-editor .editor-actions .dialog-cancel { margin-right: auto; text-decoration: underline; padding-inline: 0; border: 0; background: transparent; }
+.favorite-editor .editor-actions button { padding: 7px 14px; border: 1px solid var(--control-border); background: var(--control-surface); }
+.favorite-editor .editor-actions [data-affirmative] { background: var(--text); color: var(--surface); border-color: var(--text); font-weight: 600; }
+.favorite-editor .editor-actions .destructive { background: var(--error); color: var(--surface); border-color: var(--error); }
+.favorite-editor .editor-actions button:disabled { opacity: .55; }
+
+.is-editing [data-drag-title] { user-select: none; -webkit-user-drag: none; touch-action: none; }

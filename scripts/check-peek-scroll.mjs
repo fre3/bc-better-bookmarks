@@ -120,13 +120,13 @@ try {
     assert(await link.evaluate(n => { const b=n.getBoundingClientRect(); return n.contains(document.elementFromPoint(b.x+b.width/2,b.y+b.height/2)); }), 'footer link must remain reachable');
     assert.equal(await link.getAttribute('href'), 'https://github.com/fre3');
     // Scope changes dynamically assign the final-header exception.
-    await page.getByRole('button', { name: 'Favorites bar', exact: true }).click();
+    if(await page.locator('.root-selector').isVisible())await page.locator('.root-selector').selectOption('r');else await page.getByRole('button', { name: 'Favorites bar', exact: true }).click();
     await page.mouse.move(width-5,height-5); await page.mouse.wheel(0,10000); await page.waitForTimeout(250);
     await pointAt(8); await page.waitForTimeout(200);
     const scoped = await header(8).boundingBox();
     await page.mouse.move(100,Math.min(height-15,scoped.y+scoped.height+20)); await page.waitForTimeout(250);
     assert.equal(await page.locator('.is-peeking').getAttribute('data-section-id'), 'folder:s8');
-    await page.getByRole('button', { name: 'All bookmarks', exact: true }).click();
+    if(await page.locator('.root-selector').isVisible())await page.locator('.root-selector').selectOption('*');else await page.getByRole('button', { name: 'All bookmarks', exact: true }).click();
     assert.equal(await page.locator('.is-peeking').count(), 0);
     // Open, then switch away from a long card; search/escape still work.
     await phase('open-search'); await page.mouse.move(width - 5, height - 5); await page.mouse.wheel(0, 10000); await page.waitForTimeout(300);
