@@ -1,4 +1,6 @@
 import { folderOption } from './folder-option';
+import { dialogKeyboard } from './dialog-keyboard';
+import { managementDraftState } from './management-draft';
 import { itemMetadataIssue } from '../core/item-metadata-health';
 import { copyDiagnosticReport } from '../browser/diagnostic-copy';
 import { moveBoundaryIssue } from '../core/capabilities';
@@ -9,7 +11,7 @@ import { diagnosticExport } from '../core/export';
 import { confirmLinkInput, editToken, isBookmarklet, safeHref, searchFavorites } from '../core/logic';
 import type { Command, Favorite, LinkInput, Snapshot } from '../core/model';
 
-type Editor = { requestId?: string; generation?: string; id?: string; expected?: string; input: LinkInput };
+type Editor = { requestId?: string; generation?: string; id?: string; expected?: string; input: LinkInput; initial: string };
 interface Props {
   s: Snapshot;
   tagSnapshot?: Snapshot;
@@ -23,7 +25,25 @@ export function LegacyManagement({ s, tagSnapshot = s, busy, execute, onDraftCha
   const [category, setCategory] = useState('');
 
   const [editor, setEditor] = useState<Editor>();
-  useEffect(() => onDraftChange?.(Boolean(editor)), [editor, onDraftChange]);
+  const dirty = Boolean(editor && managementDraftState(editor.input) !== editor.initial);
+  useEffect(() => onDraftChange?.(dirty), [dirty, onDraftChange]);
+  const editorTrigger = useRef<HTMLElement | null>(null);
+  const restoreFocus = useRef(false);
+  useEffect(() => {
+    if (!editor && restoreFocus.current) {
+      restoreFocus.current = false;
+      editorTrigger.current?.focus({ preventScroll: true });
+    }
+  }, [editor]);
+  function openEditor(value: Omit<Editor, 'initial'>) {
+    editorTrigger.current = document.activeElement as HTMLElement;
+    setEditor({ ...value, initial: managementDraftState(value.input) });
+  }
+  function dismissEditor() {
+    if (busy || dirty && !window.confirm('Discard this management draft?')) return;
+    restoreFocus.current = true;
+    setEditor(undefined);
+  }
   const folderRequest=useRef(crypto.randomUUID());
   const [folderName, setFolderName] = useState('');
   const [parentId, setParentId] = useState('');
@@ -35,20 +55,20 @@ export function LegacyManagement({ s, tagSnapshot = s, busy, execute, onDraftCha
   const results = searchFavorites(favorites.filter(f => !category || f.ancestorIds.includes(category)), query, id => effective.get(id)?.effective ?? []);
   const selectedParent = folders.some(f => f.id === parentId) ? parentId : folders[0]?.id ?? '';
   function edit(f: Favorite) {
-    setEditor({ generation: s.metadata.setup?.generation, id: f.id, expected: editToken(f, tagsFor(s!, f.id)), input: { title: f.title, url: f.url, parentId: f.parentId!, tags: tagsFor(s!, f.id) } });
+    openEditor({ generation: s.metadata.setup?.generation, id: f.id, expected: editToken(f, tagsFor(s!, f.id)), input: { title: f.title, url: f.url, parentId: f.parentId!, tags: tagsFor(s!, f.id) } });
   }
   const nativeReadOnly = Boolean(editor?.id && s.favorites.find(f=>f.id===editor.id)?.nativeRestriction);
   return <div className="legacy">
     <p>Changes modify your browser bookmarks.</p>
     <div className="toolbar"><input type="search" aria-label="Search Bookmarks" placeholder="Search bookmarks, or use #tag and @folder" title="Plain text searches everything; # targets user tags; @ targets folder. All terms must match. Lone # and @ are ignored." value={query} onChange={e => setQuery(e.target.value)} />
-      <button disabled={busy || Boolean(editor) || !selectedParent} onClick={() => setEditor({ requestId:crypto.randomUUID(), generation: s.metadata.setup?.generation, input: { title: '', url: 'https://', parentId: selectedParent, tags: [] } })}>New bookmark</button></div>
-    {editor && <section className="editor"><h2>{editor.id ? 'Edit bookmark' : 'New bookmark'}</h2>
+      <button disabled={busy || Boolean(editor) || !selectedParent} onClick={() => openEditor({ requestId:crypto.randomUUID(), generation: s.metadata.setup?.generation, input: { title: '', url: 'https://', parentId: selectedParent, tags: [] } })}>New bookmark</button></div>
+    {editor && <section className="editor" onKeyDown={event => { if (event.key === 'Escape') dialogKeyboard(event, dismissEditor); }}><h2>{editor.id ? 'Edit bookmark' : 'New bookmark'}</h2>
       <form onSubmit={e => { e.preventDefault(); const input = confirmLinkInput(editor.input, message => window.confirm(message)); if (!input) return; const command: Command = editor.id ? { type: 'edit', id: editor.id, expected: editor.expected!, input } : { type: 'create', input, requestId: editor.requestId }; void execute({ ...command, generation: editor.generation }).then(saved => { if (saved) setEditor(undefined); }); }}>
         {nativeReadOnly&&<p>Native fields are read-only here. Tags remain editable.</p>}<label>Title{nativeReadOnly&&<small>Read-only</small>}<input readOnly={nativeReadOnly} required value={editor.input.title} onChange={e => setEditor({ ...editor, input: { ...editor.input, title: e.target.value } })} /></label>
         <label>URL (HTTP, HTTPS, or bookmarklet)<input type="text" readOnly={nativeReadOnly} required spellCheck={false} value={editor.input.url} onChange={e => setEditor({ ...editor, input: { ...editor.input, url: e.target.value } })} /></label>
         <label>Folder<select disabled={nativeReadOnly} value={editor.input.parentId} onChange={e => setEditor({ ...editor, input: { ...editor.input, parentId: e.target.value } })}>{folders.filter(f=>!editor.id||!moveBoundaryIssue(s.favorites.find(n=>n.id===editor.id),f)).map(f => <option key={f.id} value={f.id}>{folderOption(f,folders)}</option>)}</select></label>
         <label>Tags (comma separated; stored lowercase)<input value={editor.input.tags.join(',')} onChange={e => setEditor({ ...editor, input: { ...editor.input, tags: e.target.value.split(',') } })} placeholder="development, azure, important" /></label>
-        <div className="actions"><button disabled={busy} type="submit">Save bookmark</button><button disabled={busy} type="button" onClick={() => { if(window.confirm('Discard this management draft?'))setEditor(undefined); }}>Cancel</button></div>
+        <div className="actions"><button disabled={busy} type="submit">Save bookmark</button><button disabled={busy} type="button" onClick={dismissEditor}>Cancel</button></div>
       </form></section>}
     <div className="layout"><nav aria-label="Folders"><button className={!category ? 'selected' : ''} onClick={() => setCategory('')}>All in dashboard ({favorites.length})</button>
       {displayFolders.map(f => <button key={f.id} className={category === f.id ? 'selected' : ''} onClick={() => setCategory(f.id)}>{f.path.join(' / ')} <small>({favorites.filter(b => b.ancestorIds.includes(f.id)).length})</small></button>)}

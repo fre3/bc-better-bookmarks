@@ -36,7 +36,7 @@ Confirmed source gap in 0.1.24: the browser adapter discarded the result of `boo
 
 A resolved unchanged result, unexpected parent/order, conflicting response or rejected API call produces an explicit error and refreshed observed state where readable. Rejection after an observed move is not described as an ordinary success. Read failure remains unverified. No automatic retry, copy/delete fallback, recreation or metadata reassignment occurs. Concurrent external order changes can deliberately produce an uncertain-result error; the user must inspect actual state before retrying. This is not a transaction with browser sync or a guarantee against changes after the final read.
 
-0.1.25 within-container CRUD/reorder/movement and tag synchronization were accepted by the user in native Edge. 0.1.26 container-to-container movement passes simulated worker and actual pointer/keyboard checks; fresh native verification is pending. Workspace ↔ ordinary-root moves and direct Workspaces-root receiving remain blocked before the native call.
+0.1.25 within-container CRUD/reorder/movement and tag synchronization were accepted by the user in native Edge. 0.1.26 container-to-container movement and synchronization between PCs are now user-confirmed passed, in addition to simulated worker and actual pointer/keyboard checks. Workspace ↔ ordinary-root moves and direct Workspaces-root receiving remain blocked before the native call.
 
 ## Active Workspace — deferred
 
@@ -82,4 +82,4 @@ The user accepted 0.1.25 native Edge checks and two-device changes/tag synchroni
 
 The structural root assumption now requires positive Edge user-agent evidence from the browser adapter. A Chrome/unknown browser with the same root shape is not classified as Workspaces. Untyped/unknown special roots remain conservatively native-restricted; documented ordinary Chrome roots and descendants retain normal operations. This local derived signal is neither synchronized nor used in metadata identity.
 
-Isolated tests cover cross-container bookmarks/subtrees, direct identity/tag preservation, inherited archive changes, root/container protection and Chrome name/shape independence. Native extension API success for this newly enabled boundary still needs review. No live data was moved; the historical title-change cause is not claimed solved.
+Isolated tests cover cross-container bookmarks/subtrees, direct identity/tag preservation, inherited archive changes, root/container protection and Chrome name/shape independence. The user subsequently confirmed native cross-Workspace movement and synchronization between PCs passed. No live data was moved; the historical title-change cause is not claimed solved.

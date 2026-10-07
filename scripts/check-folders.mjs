@@ -14,7 +14,7 @@ const save=p=>p.getByRole('button',{name:'Save',exact:true});
 const cancel=p=>p.getByRole('button',{name:'Cancel',exact:true});
 const modal=p=>p.getByRole('dialog');
 const editReturn=new WeakSet();
-const manage=p=>({click:async()=>{if(await p.getByRole('button',{name:'Done',exact:true}).count()){editReturn.add(p);await p.getByRole('button',{name:'Done',exact:true}).click();}await p.getByRole('button',{name:'Manage',exact:true}).click();}});
+const manage=p=>({click:async()=>{if(await p.getByRole('button',{name:'Done',exact:true}).count()){editReturn.add(p);await p.getByRole('button',{name:'Done',exact:true}).click();}await p.getByRole('button',{name:'Manage',exact:true}).click();await p.locator('.manage-navigation').getByRole('button',{name:'Settings',exact:true}).click();}});
 const back=p=>({click:async()=>{await p.getByRole('button',{name:'Back to dashboard',exact:true}).click();if(editReturn.has(p)){await p.locator('#catalogue-edit').click();editReturn.delete(p);}}});
 async function editFolder(p,id,name,t){await folderEdit(p,id).click();await expect(title(p)).toBeFocused();await expect(p.locator('#favorite-edit-url')).toHaveCount(0);if(name)await title(p).fill(name);await tags(p).fill(t);await p.getByLabel('Archive this folder and its contents',{exact:true}).setChecked(t.toLowerCase().split(',').map(t=>t.trim()).includes('archived'));await save(p).click();await expect(modal(p)).toHaveCount(0);}
 try {
@@ -47,7 +47,7 @@ try {
   await folderEdit(p,'s1').click();await title(p).fill('Draft');await p.keyboard.press('Escape');await expect(p.getByRole('button',{name:'Continue editing'})).toBeFocused();await p.getByRole('button',{name:'Continue editing'}).click();assert.equal((await p.evaluate(()=>window.requestSearch())).status,'blocked');await p.setViewportSize({width:390,height:700});await p.screenshot({path:join(output,`${theme}-folder-narrow.png`)});assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true);await cancel(p).click();await p.getByRole('button',{name:'Discard changes',exact:true}).click();
   // Deliberate reset only in this isolated fixture, preceded by downloadable
   // full metadata backup/inventory. Native tree and independent UI prefs survive.
-  await manage(p).click();await p.getByLabel('Show archived',{exact:true}).check();await p.getByText('Folder identity review and test metadata setup',{exact:true}).click();
+  await manage(p).click();await p.getByLabel('Show archived',{exact:true}).check();await p.locator('.manage-navigation').getByRole('button',{name:'Diagnostics',exact:true}).click();await p.getByText('Advanced: reset extension metadata',{exact:true}).click();
   const native=await p.evaluate(async()=>JSON.stringify((await window.service.snapshot('test')).tree));const dl=p.waitForEvent('download');await p.getByRole('button',{name:'Export metadata and review reset inventory'}).click();const download=await dl;await download.saveAs(join(output,`${theme}-synthetic-backup.json`));await expect(p.getByText('Backup download requested.',{exact:false})).toBeVisible();
   await p.getByLabel('I have verified metadata backups for every device and disabled all old clients.').check();await p.getByRole('button',{name:'Reset extension bookmark metadata only',exact:true}).click();await expect(p.getByRole('button',{name:'Reset extension bookmark metadata only',exact:true})).toHaveCount(0);await expect(p.getByLabel('Show archived',{exact:true})).toBeChecked();assert.equal(await p.evaluate(async()=>JSON.stringify((await window.service.snapshot('test')).tree)),native);assert.equal(await p.evaluate(()=>Object.keys(window.sync.data).filter(k=>k.startsWith('meta:')).length),0);
   report.push({theme,passed:'folder/nested editing, source inheritance, bold/deduplicated annotations, no reflow, search, archive gate, independent descendant archive, Manage and cross-tab preference, partial recovery, draft/keyboard isolation, narrow layout, controlled reset export and native-data invariance'});await context.close();
@@ -57,8 +57,8 @@ try {
  const c=await browser.newContext({viewport:{width:1250,height:700}});const p=await c.newPage();await p.goto(url);await p.getByRole('button',{name:'Edit',exact:true}).click();
  await editFolder(p,'s0',null,'source');await editFolder(p,'s1',null,'second');
  await p.evaluate(async()=>{window.local.data.state.mappings={};window.local.data.metadataJournal={schemaVersion:1,entries:{}};window.refresh()});
- await manage(p).click();await p.getByText('Folder identity review and test metadata setup',{exact:true}).click();
- const review=p.locator('.metadata-setup');await expect(review.locator('.binding-records > li')).toHaveCount(2);
+ await manage(p).click();await p.locator('.manage-navigation').getByRole('button',{name:/^Bookmarks/}).click();await p.locator('#folder-binding-review > summary').click();
+ const review=p.locator('#folder-binding-review');await expect(review.locator('.binding-records > li')).toHaveCount(2);
  for (const checkbox of await review.locator('li input[type=checkbox]').all()) await checkbox.check();await p.getByRole('button',{name:'Confirm binding'}).click();await expect(review.locator('.binding-records > li')).toHaveCount(0);
  await back(p).click();
  await section(p,0).click();await p.locator('#edit-bookmark-0-0').click();await tags(p).fill('baseline');await save(p).click();await expect(modal(p)).toHaveCount(0);await p.locator('#edit-bookmark-0-0').click();await p.getByLabel('Title',{exact:true}).fill('Native saved then moved');await tags(p).fill('remaining');await p.evaluate(()=>window.failTagWrite=true);await save(p).click();await expect(modal(p)).toContainText('Completed native changes: title');

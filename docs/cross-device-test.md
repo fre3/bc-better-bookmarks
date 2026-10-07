@@ -466,3 +466,7 @@ An isolated service/real-pointer Chromium reproduction confirms an overly broad 
 ## User-reported 0.1.25 acceptance — 2026-10-07
 
 The user confirms requested Edge 0.1.25 tests passed, including changes and tag synchronization between PC A and PC B. Successful Chrome use was also reported; this is not evidence of a complete Chrome regression or cross-browser synchronization. 0.1.26 cross-Workspace movement is newly enabled and requires the focused disposable bookmark/subtree move and PC B tag/inheritance check in the current handoff. Prior evidence is retained; no new native test is inferred from fixtures. Historical title-change causation remains unresolved.
+
+## User-reported 0.1.26 cross-Workspace result
+
+The user confirms native cross-Workspace moves work and synchronize between PCs. Record that focused scenario as **passed**. This updates the pending move check above; it does not add unreported deletion, Chrome regression or cross-browser synchronization evidence. The 0.1.27 Manage dismissal fix changes no transport, metadata schema or mutation service and does not require repeating this native suite. Historical title-change causation remains unresolved.
