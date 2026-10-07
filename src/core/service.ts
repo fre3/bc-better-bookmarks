@@ -109,7 +109,8 @@ export class DashboardService {
   private async createItem(s: Snapshot, command: Extract<Command, {type:'create'|'create-folder'}>): Promise<Snapshot> {
     const isFolder=command.type==='create-folder';
     const input=isFolder?this.validate({title:command.title,url:'https://folder.invalid/',parentId:command.parentId,tags:command.tags??[]}):this.validate(command.input);
-    const parent=this.folder(s,input.parentId);
+    const parent=s.folders.find(f=>f.id===input.parentId);
+    if(!parent)throw Error('Choose a writable destination; the original parent no longer exists.');
     const requestId=command.requestId??crypto.randomUUID();
     if(!/^[\w-]{8,80}$/.test(requestId))throw Error('Invalid creation request.');
     const request=JSON.stringify([isFolder,input.title,input.url,input.parentId,input.tags]);
@@ -119,6 +120,7 @@ export class DashboardService {
     if(!receipt && command.destinationExpected!==undefined && destinationToken(s,parent.id)!==command.destinationExpected)throw Error('Destination changed. Review and select it again before creating.');
     if(s.metadata.invalid.length || !s.preservation.available)throw Error('Metadata integrity prevents creation. Review Manage diagnostics.');
     if(!receipt){
+      this.folder(s,parent.id); // native creation only; an existing receipt may finish metadata in a protected location
       const freshTree=await this.bookmarks.getTree();const fresh={...s,tree:freshTree,...flattenTree(freshTree)};
       if(destinationToken(fresh,parent.id)!==destinationToken(s,parent.id))throw Error('Destination changed before creation. Nothing was created.');
       receipt={request,generation:s.metadata.setup?.generation,stableId:this.uuid()};

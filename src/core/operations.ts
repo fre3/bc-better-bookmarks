@@ -22,6 +22,8 @@ export function planMove(s:Snapshot,id:string,p:Placement) {
  assertNative(n); assertNative(parent);
  if(!n || n.unmodifiable || n.url===undefined && !(n as Snapshot['folders'][number]).renamable)throw Error('This item is missing, managed or browser-owned.');
  if(!parent?.writable)throw Error('Choose a writable destination.');
+ for(const child of [...s.folders,...s.favorites].filter(child=>child.ancestorIds.includes(id))) { assertNative(child); if(child.url===undefined&&!s.folders.find(f=>f.id===child.id)?.renamable)throw Error('This subtree contains a browser-owned folder and cannot be moved.'); }
+ if(p.anchorId) assertNative(nodeById(s,p.anchorId));
  if(parent.id===id || parent.ancestorIds.includes(id))throw Error('A folder cannot be moved into itself or its descendants.');
  const siblings=childrenOf(s,parent.id);let index=p.side==='start'?0:siblings.length;
  if(p.side!=='end'&&p.side!=='start'){const at=siblings.findIndex(n=>n.id===p.anchorId);if(at<0 || p.anchorId===id)throw Error('Choose another current sibling.');index=at+(p.side==='after'?1:0);}

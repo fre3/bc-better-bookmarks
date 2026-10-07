@@ -66,14 +66,14 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
   return <section ref={slot} id={`card-${section.id}`} className={`section-slot${open ? ' is-open' : ''}${showingPeek ? ' is-peeking' : ''}${preview && !peek ? ' is-leaving' : ''}`} data-section-id={section.id}
     style={{ zIndex: showingPeek ? stackSize + 1 : preview ? stackSize : stackIndex }}>
     <div className="section-sheet has-top-shadow">
-      <div ref={headingTags} className="section-header" data-moving={movingId === section.folder?.id || undefined} onPointerEnter={e => { if (blocked) return; hover.remember(e); setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={e => { if (!hover.retainOnLeave(e)) endMousePeek(); }}>
+      <div ref={headingTags} className="section-header" data-moving={Boolean(movingId && section.folder && movingId === section.folder.id) || undefined} onPointerEnter={e => { if (blocked) return; hover.remember(e); setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={e => { if (!hover.retainOnLeave(e)) endMousePeek(); }}>
         <h2 className={`section-inner section-tag-item${onEdit && metadataEditable(section.folder) ? ' has-folder-editor' : ''}`}>
-        {query !== null ? <span className="section-label"><span className="section-heading-text"><span className="section-title-text">{section.title || '(untitled)'}</span>{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
+        {query !== null ? <span className="section-label"><span className="section-heading-text"><span className="section-title-text" data-editing={Boolean(selectedId && section.folder && selectedId === section.folder.id) || undefined}>{section.title || '(untitled)'}</span>{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
           <a data-drag-title={onEdit&&section.folder?.renamable?section.folder.id:undefined} className="section-toggle" role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }} id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}
             onFocus={e => { if (e.currentTarget.matches(':focus-visible')) setFocusPeek(peekEpoch); }} onBlur={() => setFocusPeek(-1)}
             onClick={() => { setPointerPeek(-1); setFocusPeek(-1); onToggle(); }}>
             <span className="section-state" aria-hidden="true">{open ? '▾' : '▸'}</span>
-            <span className="section-heading-text"><span className="section-title-text">{section.title || '(untitled)'}</span>{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span>
+            <span className="section-heading-text"><span className="section-title-text" data-editing={Boolean(selectedId && section.folder && selectedId === section.folder.id) || undefined}>{section.title || '(untitled)'}</span>{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span>
           </a>}
         {onEdit && metadataEditable(section.folder) && <EditAction id={section.folder!.id} title={section.title} folder onEdit={onEdit} />}
         {onEdit && !section.folder && <AddMenu parentId={section.parentId} />}

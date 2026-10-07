@@ -29,6 +29,6 @@ try {for(const theme of ['light','dark']) {
  await page.getByRole('button',{name:'New',exact:true}).first().click();await page.getByRole('menuitem',{name:'New favorite',exact:true}).click();
  await expect(page.locator('#create-parent option[value="ws"]')).toHaveCount(0);await expect(page.locator('#create-parent option[value="ws-folder"]')).toHaveCount(0);await expect(page.locator('#create-parent option[value="r1"]')).toHaveCount(1);
  await page.getByRole('button',{name:'Cancel',exact:true}).click();
- await page.locator('#edit-folder-ws-container').click();await page.screenshot({path:join(fixture.output,`${theme}-workspace-metadata.png`)});await page.keyboard.press('Escape');
+ await page.locator('#edit-folder-ws-container').click();await expect(page.locator('.is-peeking,.is-leaving')).toHaveCount(0);await page.screenshot({path:join(fixture.output,`${theme}-workspace-metadata.png`)});await page.keyboard.press('Escape');
  report.push({theme,...evidence});await context.close();
 }await writeFile(join(fixture.output,'workspace-report.json'),JSON.stringify(report,null,2));console.log(fixture.output);}finally{await browser.close();fixture.server.close();}

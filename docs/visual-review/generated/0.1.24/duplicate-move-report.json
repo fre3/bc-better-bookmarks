@@ -1,0 +1,12 @@
+[
+  {
+    "theme": "light",
+    "moves": 10,
+    "result": "pointer duplicate moves/reorders preserve native IDs/title/URL/direct metadata; editor health/draft, immediate preview, section lines, click/Enter and native context-event checks passed"
+  },
+  {
+    "theme": "dark",
+    "moves": 10,
+    "result": "pointer duplicate moves/reorders preserve native IDs/title/URL/direct metadata; editor health/draft, immediate preview, section lines, click/Enter and native context-event checks passed"
+  }
+]

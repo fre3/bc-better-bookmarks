@@ -1,67 +1,53 @@
 # Development State
 
 Last updated: 2026-10-07
-Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.24** (implementation/verification in progress).
+Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.24**.
 Validated MVP: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated `mvp-validated-0.1.1`.
-Accepted visual checkpoint: **`ui-validated-0.1.15`** and `feature/ui-ux-redesign` remain at **`0e6a596210b2be2d273eab4a19d2268d9a1407a1`**. No push; supplied media and Windows clone untouched.
+Accepted visual checkpoint: `ui-validated-0.1.15` and `feature/ui-ux-redesign` remain at `0e6a596210b2be2d273eab4a19d2268d9a1407a1`. No push; supplied media and Windows clone untouched.
 
-## Current checkpoint — 0.1.24
+## Review status
 
-User reports the other 0.1.23 tests pass; Workspace compatibility and highlighting are outstanding. This is not a resolution of the historical native-title-change question. See [capability evidence and conservative policy](workspace-capabilities.md). Five supplied 0.1.23 images were visually inspected. User-supplied read-only properties confirm typed ordinary roots but no distinguishing Workspace/container fields. Unclassified domains now restrict native writes while retaining browsing and safe metadata-only editing. No live Favorites, metadata reset, speculative repair or native Workspace mutation was performed.
+The user reports the other requested **0.1.23** tests pass; Workspace compatibility and source-highlighting discrepancies are the outstanding issues addressed for this review. **Stop for native Edge review of 0.1.24.** Do not declare Workspace compatibility or comprehensive acceptance from Chromium fixtures.
 
-Workspace safeguards are implemented with unit and isolated Chromium verification in progress. Active-editor highlighting is the second implementation commit; final handoff will record both results. Next: finish rendered regression checks, regenerate 0.1.24 dist, then stop for native Edge review.
+The duplicate-bookmark binding defect fixed in 0.1.23 remains fixed. The historical native-title-change report remains unexplained. Native duplicate titles were established, but a title overwrite during dragging was neither established nor ruled out. No reset, merge, guessed repair, rename, delete, recreation or Workspace mutation was performed on live data. See [identity investigation](move-identity-0.1.23.md) for retained evidence and minimal read-only diagnostics.
 
-## Previous checkpoint evidence — 0.1.23
+## Workspace safeguards
 
-**0.1.21 is accepted within the user's existing checklist; 0.1.22 is NOT accepted. Stop for native Edge review of 0.1.23.** The current priority is the duplicate-move identity defect. No live metadata reset, native repair, merge, rename, deletion or recreation was performed.
+Visually inspected all five supplied 0.1.23 references; none missing. The user also supplied read-only native root/immediate-folder properties. Favorites bar and Other favorites expose documented ordinary `folderType` values; the Workspaces root and both direct folders expose no type/protection discriminator. Names, IDs and matching property sets do not prove which direct child is an actual Workspace.
 
-Inspected all five supplied images: `0.1.22_duplicate_1.png` through `_4.png` and `0.1.22_moving-design-section.png`. The native Edge image confirms two same-title favorites, not whether their URLs are identical or a move changed a title. `Pasted markdown.md` was not found by filename/content searches in accessible project/temp files. User-reported logs show `6822fc12…` moving from local-mapping(66) to ambiguous at 12:05:09 on 2026-10-07 with 41 favorites retained; the earlier deleted `b9d0d7c5…` is separate. No historical native title overwrite is established.
+[Evidence, shared policy and read-only follow-up](workspace-capabilities.md): documented ordinary domains retain native operations. Unclassified roots/types and their descendants remain visible/searchable, but native create, rename, URL change, move/reorder and delete are blocked. Managed restrictions remain independent. UI actions, destinations, drag planning, Manage and fresh worker preflight share that boundary, including protected descendants and insertion anchors. Browser rejection never falls back to copy/delete/recreation.
 
-## Confirmed cause and focused fix
+**Limitation:** native operations on ordinary-looking content inside the unclassified Workspace branch are also restricted. A safe distinction is not exposed by the supplied data; do not infer one by depth, title or local ID. Use Edge for those native changes until a supported signal or separately reviewed explicit association workflow exists. This does not assert that all cross-Workspace moves are prohibited by Edge. Browsers lacking ordinary root types will likewise be conservative.
 
-A regression against 0.1.22 reproduces **local-mapping → ambiguous** when moving one tagged favorite beside a same-title/same-URL favorite with its own valid local identity. The competitor check incorrectly allowed the other record's locator to compete with a known native node despite that record's distinct surviving binding. Native fields did not change; the only native write was `move`.
+Tags/archive metadata remain separately editable for real non-managed nodes below roots when identity and metadata health permit. Native names/URLs are read-only in those editors; unchanged fields cause no native update/move. Root/synthetic metadata remains prohibited. Existing bindings remain reconciliation participants; no synchronization schema/transport/permission change, automatic identity repair or metadata reset.
 
-Reconciliation now gives a uniquely validated existing local binding precedence over that record's locator candidates. It retains type/timestamp, deletion, ID-reuse and global conflict checks. Unbound/multiply-bound identities and fresh-device duplicates remain conservative; no metadata is guessed, merged, copied or recreated. Existing local mappings were retained during the ambiguity, so valid surviving evidence can be recognized after update. This does not prove that every affected profile has sufficient evidence or repair missing historical titles.
+## Active-editor highlighting
 
-The shared `itemMetadataIssue` check now serves worker preflight, catalogue warnings and editors. A healthy current mapping is not assigned another ambiguous record's warning merely because its native ID appears among historical candidates. Editors show native ID, explicit status and read-only diagnostic details separately from tags. Unsafe inputs/Save are blocked; existing drafts remain intact. Resolution requires explicit review; an editor opened initially blocked must close/reopen to load confirmed direct tags before editing.
+Confirmed synthetic-heading cause: absent `movingId` compared equal to absent `section.folder.id`, incorrectly assigning drag-source styling to every loose Bookmarks section. Require a real source and real folder before setting that attribute. Keyboard focus remains independent.
 
-Detailed cause, evidence limits, and **minimal read-only native ID/title/URL/mapping diagnostics**: [move investigation](move-identity-0.1.23.md). Preserve both affected items and inspect native values before further saves/moves; no speculative repair is authorized.
-
-## Interaction follow-up
-
-- A compact pointer-following **Moving …** preview appears immediately after the existing threshold, including over empty/invalid space. Source-only highlighting leaves layout/destination readability intact. Valid/invalid/no-target wording is explicit. The preview is inert/pointer-transparent; source ID/title remain captured through rerenders, scrolling and target expansion. Drop/cancel/failure cleanup retains existing safeguards.
-- Section Before/End boundaries use gutter-aligned horizontal lines. Flowing favorites/subfolders retain vertical carets; inside-folder intent remains separate. Root/parent context is explicit, native hidden-sibling order and canonical/no-op rules retained.
-- **Favorite primary click/Enter opens its editor in Edit mode**, superseding the 0.1.18–0.1.22 explicit-button-only rule. Edit buttons remain. Real href, native context menus and deliberate modifier/middle-click navigation remain. Folder/section titles still expand/collapse. A completed/cancelled drag must not trigger an editor afterward.
-- Help now reads: “Click a favorite to edit it, or use Edit beside a folder. Drag titles to move.” Ordinary browsing navigation is unchanged. No broader visual redesign, schema/permission/transport change or new mutation pathway.
-
-Implementation commits: `23b51c3` (identity/editor health) and `d87ab41` (drag/title interactions).
+Real section titles now receive explicit selected-ID styling matching favorites/subfolders, including search and sticky headers. Only the title is highlighted, excluding provenance/chevron/actions/header. Dirty confirmation and failed Save retain the state; Save/Cancel/discard clear it. Duplicate names do not share state; a removed source has no remaining highlight. No layout, expansion or scroll change is introduced to reveal selection.
 
 ## Verification
 
-`npm run check`: **232 tests / 20 files**, typecheck, lint, production build and stable extension-ID verification passed. Tracked `dist/` is 0.1.23, ID `nfhbegeoeafnpejpjdljhgagefbpafal`.
+`npm run check`: **240 tests / 21 files**, typecheck, lint, production build and stable extension-ID validation passed. Tracked `dist/` is **0.1.24**, ID `nfhbegeoeafnpejpjdljhgagefbpafal`.
 
-- New pure/service regressions fail against 0.1.22 and pass after the identity fix; cover record/node order, competing UUIDs, fresh-profile ambiguity, unchanged native values/direct records, repeated reconciliation and per-item diagnostics.
-- `check-023.mjs`: actual pointer and keyboard input in both themes; ten successful moves per theme across duplicate/reorder/other-URL cases, rerender during dragging, before/after native/identity/tag/source evidence, no `update` calls, interrupted/initially blocked drafts, healthy duplicate isolation, click/Enter, unprevented right-click/Shift+F10, native modifier/middle-click destination requests, failure/cancel cleanup, section lines, narrow layouts. External test destinations are intercepted; headless native OS menu contents require Edge review.
-- Existing `check-create-move`, `check-editing`, `check-archive-editor`, `check-drag-lifecycle` and `check-peek-scroll` pass. Creation recovery remains duplicate-free; search/Escape and repeated draft cancellation remain covered. The metadata-health fixture now includes the production snapshot fields instead of treating them as optional. Existing missing-metadata editor regression now expects blocking **before input**, not after Save.
-- [Rendered captures and reports](visual-review/generated/0.1.23-review.md) use isolated Chromium fixtures/browser doubles, not live Edge or fresh Microsoft sync acceptance. Final native title values/history on the affected profile remain unverified. Previous accepted two-device evidence below remains valid within its recorded scope.
+- New capability regressions: type/structure classification independent of names, unknown/managed restrictions, all worker native paths, protected subtrees/anchors, metadata-only exact native-field preservation, mapping retention across a new snapshot, rejection without fallback, fresh-tree capability changes, and duplicate-free metadata completion for an existing creation receipt after a location becomes restricted.
+- New isolated Chromium scripts: `check-workspace-policy.mjs` (both themes, read-only native fields, successful tag-only save/no native writes, blocked menu actions/destinations and real pointer-invalid-target feedback); `check-editor-highlights.mjs` (both themes, three synthetic groups, sections/favorites/nested/wrapped titles, no geometry shift, repeated Escape, failed/success Save, Cancel/discard, duplicate names/search/sticky states and source deletion).
+- Existing `check-023`, `check-editing`, `check-create-move`, `check-binding-review`, `check-archive-editor`, and `check-peek-scroll` passed. Duplicate moves preserve IDs/titles/URLs/direct metadata; creation recovery remains duplicate-free; binding/metadata guards, query/Escape restoration, archive semantics and repeated wheel/pointer footer cleanup remain covered.
+- [Review captures and reports](visual-review/generated/0.1.24-review.md) are synthetic, isolated Chromium evidence. Rendered images were visually inspected. They do not prove native Edge Workspace operations or new two-device sync. User-reported earlier native evidence remains scoped below.
 
-## Edge next action
+## Concrete next action: native Edge review
 
-Reload the unpacked extension at `edge://extensions`, verify **0.1.23**, and open a new dashboard using the committed `dist/`. Windows consumes this artifact; development/tooling remains WSL.
+Use the committed `dist/` from this WSL build. In `edge://extensions`, reload Better Bookmarks, verify **0.1.24**, and open a fresh dashboard. Windows is an artifact-consuming clone, not the build environment. Nothing pushed.
 
-1. Capture affected native IDs/current titles/URLs read-only first; compare mappings and direct tags after update. Keep ambiguous items untouched if evidence remains insufficient.
-2. With disposable duplicates only, move together/apart and reorder; verify title/URL/ID/direct tags unchanged and inheritance follows the destination.
-3. Check click/Enter editing, explicit Edit, right-click/Shift+F10 and modifier/middle navigation; no post-drag activation.
-4. Check immediate preview, invalid feedback, section lines/inline carets, receiving-root context, narrow/light/dark, edge scroll/cancel and footer stability.
-5. If a naturally blocked item exists, verify clear non-tag status, disabled Save, readable diagnostics and intact draft. Do not damage mappings to induce ambiguity.
+1. Inspect restrictions/explanations on the Workspace root and unclassified containers; do not rename/delete actual Workspaces through the dashboard.
+2. Use disposable ordinary content under typed ordinary roots to check creation/edit/move. Workspace lifecycle and native changes in its unclassified branch stay in Edge.
+3. Confirm unsupported destinations/drop targets are unavailable before a write; normal browse/search still shows those locations.
+4. Save tags on a confirmed protected folder and verify its native name stays unchanged. Do not bypass pending/ambiguous identity review.
+5. Check normal synthetic headings and matching favorite/subfolder/section highlights in both themes, including search and sticky headings.
+6. Check dirty Escape twice, failed Save/Cancel/discard cleanup, real keyboard focus, drag-source feedback and a brief search/footer traversal.
 
-A targeted two-device check of **already confirmed disposable duplicate identities** is appropriate for the changed reconciliation case, not a repeat of the full accepted suite. Fresh unbound duplicates must remain unresolved. No new native synchronization outcome is claimed.
-
-## Remaining limits
-
-Native title overwrite is not established or ruled out for the reported historical incident. No live title repair is proposed. Identical items without surviving local identity evidence cannot be attached by guessing; copied/local-state resets and unobserved recreation retain the existing limitations. Native and metadata writes remain non-atomic. 0.1.22 deletion-sync verification remains pending separately; no deletion was involved in this reproduction. Draft recovery across browser closure/reload remains unpromised.
-
-Bulk operations, copying, external/cross-tab drops, thumbnails, semantic search and broader Manage cleanup remain deferred.
+No destructive live Workspace probes or repeat of the full passed two-device suite is required. Bulk operations, copying, external/cross-tab drops, thumbnails, semantic search and broader Manage cleanup remain deferred.
 
 ## Corrected diagnosis and inspected evidence
 

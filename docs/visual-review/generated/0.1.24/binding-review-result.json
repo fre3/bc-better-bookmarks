@@ -1,0 +1,5 @@
+{
+  "command": "node scripts/check-binding-review.mjs",
+  "output": "/tmp/bb-editing-MvNpZ4",
+  "result": "archived review, explicit confirmation, blocked fields, draft preservation/rebase, local reload persistence, Manage draft and shared workflow passed"
+}

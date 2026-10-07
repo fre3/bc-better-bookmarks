@@ -3,7 +3,7 @@ import { setup } from './memory';
 import { flattenTree, editToken } from '../src/core/logic';
 import { metadataEditable } from '../src/core/capabilities';
 import { folderEditToken, directTags } from '../src/core/node-tags';
-import { sourceToken, placementToken, deletionToken } from '../src/core/operations';
+import { sourceToken, placementToken, deletionToken, planMove } from '../src/core/operations';
 
 function fixture() {
  const env=setup();
@@ -48,6 +48,13 @@ describe('conservative browser-location policy',()=>{
   s=await service.snapshot('reload');expect(s.reconciliation.mappings[folder.id].stableId).toBe(uuid);expect(directTags(s,folder.id)).toEqual(['work']);
   expect(bookmarks.data).toEqual(before);expect(bookmarks.calls).toEqual([]);
  });
+ it('does not move a parent carrying a protected subtree or anchor insertion to an unclassified node',async()=>{
+  const {service,bookmarks}=fixture();bookmarks.all().find(n=>n.id==='10')!.children!.push({id:'protected-child',parentId:'10',title:'Not a name rule',folderType:'unknown-special-type',children:[]});
+  const s=await service.snapshot('nested browser folder');
+  expect(()=>planMove(s,'10',{parentId:'11',side:'end'})).toThrow(/unclassified/);
+  expect(()=>planMove(s,'20',{parentId:'10',anchorId:'protected-child',side:'before'})).toThrow(/unclassified/);
+  expect(bookmarks.calls).toEqual([]);
+ });
  it('preserves exact favorite fields on metadata-only saves, including unnormalized native values',async()=>{
   const {service,bookmarks}=fixture();const node=bookmarks.all().find(n=>n.id==='link')!;node.title='  Untouched  ';node.url='https://example.test';
   let s=await service.snapshot('tags only');const f=s.favorites.find(n=>n.id===node.id)!;const before=structuredClone(bookmarks.data);
@@ -62,6 +69,13 @@ describe('conservative browser-location policy',()=>{
   const placement={parentId:'11',side:'end' as const};
   await expect(service.command({type:'move',id:'20',expected:sourceToken(s,'20'),placement,destinationExpected:placementToken(s,placement)})).rejects.toThrow("Can't modify workspace folder");
   expect(bookmarks.data).toEqual(before);expect(bookmarks.calls).toEqual(['rejected move']);
+ });
+ it('finishes an existing creation receipt without duplicate creation if the location becomes restricted',async()=>{
+  const {service,bookmarks,sync}=fixture();sync.fail=true;
+  const command={type:'create-folder' as const,parentId:'1',title:'Created once',tags:['recover'],requestId:'protected-retry'};
+  await expect(service.command(command)).rejects.toThrow('was CREATED');
+  delete bookmarks.all().find(n=>n.id==='1')!.folderType;sync.fail=false;
+  const s=await service.command(command);expect(s.mutation?.id).toBe('101');expect(directTags(s,'101')).toEqual(['recover']);expect(bookmarks.calls).toEqual(['create']);
  });
  it('rechecks changed capability before the native write',async()=>{
   const {service,bookmarks}=fixture();const s=await service.snapshot('open');

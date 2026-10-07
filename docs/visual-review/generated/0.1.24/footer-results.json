@@ -1,0 +1,46 @@
+[
+  {
+    "colorScheme": "light",
+    "width": 1250,
+    "height": 600,
+    "reduced": false,
+    "cycles": 3,
+    "frames": 1604,
+    "passed": true
+  },
+  {
+    "colorScheme": "light",
+    "width": 390,
+    "height": 700,
+    "reduced": false,
+    "cycles": 3,
+    "frames": 1602,
+    "passed": true
+  },
+  {
+    "colorScheme": "light",
+    "width": 1490,
+    "height": 950,
+    "reduced": false,
+    "cycles": 3,
+    "frames": 1606,
+    "passed": true
+  },
+  {
+    "colorScheme": "light",
+    "width": 1250,
+    "height": 600,
+    "reduced": true,
+    "cycles": 3,
+    "frames": 1603,
+    "passed": true
+  },
+  {
+    "shortPage": true,
+    "whiteSurface": true,
+    "resize": true,
+    "headerActivationOnly": true,
+    "keyboardStatic": true,
+    "passed": true
+  }
+]

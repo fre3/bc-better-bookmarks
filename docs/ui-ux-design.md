@@ -1,6 +1,6 @@
 # Typographic catalogue — browsing/search checkpoint
 
-Status: **0.1.15 accepted in native Edge**, preserved at `ui-validated-0.1.15`. The user reports Favorite editing works in 0.1.16; untested cases are not marked accepted. The user reports 0.1.17 tag changes/inheritance work well; **0.1.19 presentation review is pending.** The user supplied specific passed 0.1.18 two-device folder/tag/archive scenarios (see cross-device-test.md); this does not mark all editing UI cases accepted. Prior checkpoint notes below describe the accepted catalogue behavior; current additions are in the final section. Validated MVP references remain unchanged.
+Status: **0.1.15 accepted in native Edge**, preserved at `ui-validated-0.1.15`. The user reports Favorite editing works in 0.1.16; untested cases are not marked accepted. The user reports 0.1.17 tag changes/inheritance work well; **Later acceptance is recorded in the current handoff; 0.1.24 is pending native Edge review.** The user supplied specific passed 0.1.18 two-device folder/tag/archive scenarios (see cross-device-test.md); this does not mark all editing UI cases accepted. Prior checkpoint notes below describe the accepted catalogue behavior; current additions are in the final section. Validated MVP references remain unchanged.
 
 ## Implemented presentation
 
@@ -379,3 +379,12 @@ Favorite titles retain real href/native context menus, but primary click/Enter o
 Pointer-transparent compact “Moving …” feedback begins at threshold and stays visible without a valid target; source-only highlighting leaves item geometry unchanged. Valid/invalid/no-target wording is independent of color. Section Before/End positions use gutter-aligned horizontal lines; inline item positions use carets; inside-folder feedback is separate. Target text identifies receiving parent/root. Cleanup, hover expansion, edge scrolling, canonical positions and hidden native sibling semantics are unchanged.
 
 Unresolved metadata is a diagnostic status, never a user tag. Catalogue/editor/worker share per-native-ID health. The modal exposes ID and read-only matching details, disables unsafe input/Save and retains interrupted drafts. A resolved initially blocked form must reopen before editing its confirmed direct tags. Both themes and native keyboard/context-menu behavior remain subject to the targeted Edge review; 0.1.22 is not declared accepted.
+
+
+## 0.1.24 — capabilities and source highlighting
+
+[Workspace policy](workspace-capabilities.md) separates native permissions from extension tags. Unknown browser domains remain discoverable; native actions/destinations/drag sources are restricted, and metadata-only editors explicitly mark protected fields read-only. Their explanatory menu uses ordinary UI typography. No name-based Workspace classification or inactive-content filtering.
+
+Editor highlight is explicit native-item ID state. Favorites and nested folders keep their existing selected treatment; real section titles now use the same theme selection color and cloned inline background. Provenance, chevron and controls are excluded. Save/Cancel/discard clear the state, nested confirmation and failed saves retain it, and source removal removes its rendered indication. No auto-scroll or expansion to reveal a source. Synthetic groups cannot acquire drag or editor state from undefined-ID equality; their keyboard focus styling remains intact.
+
+User reports the other 0.1.23 checks passed; historical native-title-change causation is still unresolved. Native Workspace acceptance remains pending. Evidence and manual checks: [0.1.24 review](visual-review/generated/0.1.24-review.md).

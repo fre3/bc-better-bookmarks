@@ -58,3 +58,6 @@
 .drag-preview span { color: var(--secondary); }
 .catalogue-item[data-moving] > .bookmark-title, .catalogue-item[data-moving] > .folder-trigger .folder-title, .section-header[data-moving] .section-title-text { background: var(--selected); outline: 1px solid var(--edit-accent); box-decoration-break: clone; }
 @media (forced-colors: active) { .drag-preview { border-color: Highlight; } [data-moving] { outline-color: Highlight; } }
+
+/* Explicit editor identity, independent of keyboard focus and drag feedback. */
+.catalogue .section-title-text[data-editing] { background: var(--selected); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
