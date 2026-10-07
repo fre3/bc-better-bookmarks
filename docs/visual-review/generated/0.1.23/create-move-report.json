@@ -1,0 +1,10 @@
+[
+  {
+    "theme": "light",
+    "result": "creation root/nested, inherited/direct tags, partial retry, draft Escape, Move/search, pointer drag inside/reorder/cycle cancellation passed"
+  },
+  {
+    "theme": "dark",
+    "result": "creation root/nested, inherited/direct tags, partial retry, draft Escape, Move/search, pointer drag inside/reorder/cycle cancellation passed"
+  }
+]

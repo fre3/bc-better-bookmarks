@@ -1,0 +1,10 @@
+[
+  {
+    "theme": "light",
+    "checks": "activation, focus trap/restoration, modal isolation, validation, failed/duplicate/success saves, dirty protection, external conflicts, metadata guards and ignored legacy scope, search removal/Escape, narrow layout, transient mode"
+  },
+  {
+    "theme": "dark",
+    "checks": "activation, focus trap/restoration, modal isolation, validation, failed/duplicate/success saves, dirty protection, external conflicts, metadata guards and ignored legacy scope, search removal/Escape, narrow layout, transient mode"
+  }
+]

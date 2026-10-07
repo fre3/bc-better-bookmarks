@@ -456,3 +456,9 @@ Both devices on **0.1.22**, disposable data only:
 3. Reload both dashboards and reconcile if needed; verify the deleted subtree does not reappear and unrelated favorites/tags remain. Record timing, any partial cleanup message or unresolved records accurately. Do not reset metadata or recreate deleted items as a recovery shortcut.
 
 No wholesale repeat of accepted creation/move sync checks is needed; transport/schema are unchanged. This targeted deletion check remains **pending** until reported.
+
+## 0.1.23 duplicate-move investigation — native review pending
+
+The 0.1.22 user report establishes native same-title duplicates and a user-supplied local-mapping(66) → ambiguous transition for `6822fc12…` after move, with 41 favorites retained. It does not establish a native title/URL overwrite. The original diagnostic attachment was unavailable; five screenshots were inspected. The earlier `b9d0d7c5…` deletion is separate. Do not mark 0.1.22 accepted or reinterpret the passed 0.1.21 checks as duplicate-convergence coverage.
+
+An isolated service/real-pointer Chromium reproduction confirms an overly broad locator-competitor check against otherwise distinct local mappings. 0.1.23 corrects that precedence while preserving fresh-profile ambiguity and independent safeguards. This is not a transport redesign. After read-only inspection of the affected native values, use disposable, already-confirmed duplicate identities on A/B for a targeted check: move same-title/same-URL favorites together and apart on A, reorder, and inspect B's native IDs/values, unchanged direct tags and destination inheritance. Keep unresolved cases unresolved, never guess associations. Do not repeat deletion or the full passed suite to test this fix. Live historical native titles and fresh Microsoft convergence of this case remain unverified. See [read-only procedure and detailed cause](move-identity-0.1.23.md).

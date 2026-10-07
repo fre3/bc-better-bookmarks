@@ -4,7 +4,7 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated MVP remains at `mvp-validated-0.1.1`, and visual work at `ui-validated-0.1.15`. The user accepted all requested 0.1.21 creation/moving checks. On `feature/bookmark-editing`, **0.1.22 awaits Edge review**: compact full-name root selection, modal actions, full-title dragging/canonical positions and confirmed single-subtree deletion. Use disposable items and the short two-device deletion check. No broad Manage redesign, bulk operations, copying or sync redesign is promoted.
+The validated MVP remains at `mvp-validated-0.1.1`, and visual work at `ui-validated-0.1.15`. The user accepted the requested 0.1.21 creation/moving checklist. **0.1.22 is not accepted; 0.1.23 awaits targeted Edge review** of duplicate-move identity preservation, blocked editor health and drag/title interactions. Inspect affected native values read-only; use disposable duplicates for regression. Do not guess a live title/metadata repair. The separate deletion-sync check remains pending. No broad Manage redesign, bulk operations, copying or sync transport redesign is promoted.
 
 ## Future catalogue imagery and motion
 
