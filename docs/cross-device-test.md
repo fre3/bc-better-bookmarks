@@ -433,9 +433,9 @@ Historical instructions above to enable/select a Dashboard mutation root are obs
 
 User-supplied diagnosis distinguishes Work (`4d29ce79-d3f0-4c00-8dd5-d9eb18f1106d`, candidate 1227, already unresolved in 0.1.18) from the confirmed Folder Sync Test (`e7697eb9-249f-4b65-8fd0-ce640c24af83`, mapped to 1306). Enabling Show archived exposed the pending review entries. The supplied Work screenshot and navigation recording were inspected; accompanying `Pasted text.txt` was not available in this checkout, so the UUID comparison is attributed to the user, not an independently inspected export. No lost confirmed binding or transport defect is established. Administrative review now ignores archive filtering; the conservative worker attachment/persistence path is unchanged. Isolated Chromium confirmation survived repository reconstruction and reload. This is not fresh native sync evidence and does not change the passed 0.1.18 scenarios or unconfirmed test-subtree deletion.
 
-## 0.1.21 creation and moving — pending native check
+## 0.1.21 creation and moving — accepted native checklist
 
-The user accepted all requested native 0.1.20 checks. New 0.1.21 creation/moving has isolated service/Chromium fixture evidence, not new Microsoft sync evidence. No transport/schema/permission change or live reset is involved. The previously passed 0.1.18 scenarios remain passed; deletion propagation remains unconfirmed.
+The user accepted all requested native 0.1.20 checks and subsequently reported that the following 0.1.21 creation/move checklist passed. This is user-reported evidence in addition to the isolated service/Chromium checks. No transport/schema/permission change or live reset was involved. The previously passed 0.1.18 scenarios remain passed; deletion propagation remains unconfirmed.
 
 Use **disposable test items only**, both devices on 0.1.21 with the same development extension ID/profile sync configuration:
 
@@ -443,4 +443,16 @@ Use **disposable test items only**, both devices on 0.1.21 with the same develop
 2. On A, use Move or a handle to move the tagged subtree into another disposable tagged parent (and reorder a favorite). On B, verify native location/order, preserved direct tags and existing confirmed identities, and recomputed inherited tags/source paths. An already confirmed folder should retain its mapping; do not interpret a never-confirmed pending identity as lost sync.
 3. Include an archived destination in the disposable test if practical. Keep Show archived independently configured on A/B and verify visibility follows each device's preference while direct tags remain unchanged. Do not enable it automatically to compensate for a failed move. Report delayed arrival, pending reviews or conflicts separately from transport outcomes.
 
-No new deletion test is required for this checkpoint. Record actual outcomes before claiming native two-device acceptance.
+The user reports this checklist passed. It did not request deletion testing and does not establish deletion propagation; the new 0.1.22 check below addresses that separately.
+
+## 0.1.21 acceptance and 0.1.22 deletion check
+
+The user reports all requested 0.1.21 tests passed, accepting its existing creation/move and short two-device checklist. This is user-reported native evidence, not inferred from fixture storage writes. It does not add deletion propagation evidence.
+
+Both devices on **0.1.22**, disposable data only:
+
+1. Prepare one disposable parent/subfolder/favorite subtree with distinctive direct tags; include one archived descendant if practical. Verify it exists on B and confirm any legitimate pending folder binding there. Do not guess duplicate associations.
+2. On A use More → Delete for that subtree. Check full descendant counts/warning, cancel once, then explicitly confirm. Verify native deletion on A and subsequently in B's Edge Favorites and dashboard/search, with no surviving or reassigned direct metadata on unrelated items.
+3. Reload both dashboards and reconcile if needed; verify the deleted subtree does not reappear and unrelated favorites/tags remain. Record timing, any partial cleanup message or unresolved records accurately. Do not reset metadata or recreate deleted items as a recovery shortcut.
+
+No wholesale repeat of accepted creation/move sync checks is needed; transport/schema are unchanged. This targeted deletion check remains **pending** until reported.

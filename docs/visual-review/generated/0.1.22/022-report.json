@@ -1,0 +1,10 @@
+[
+  {
+    "theme": "light",
+    "result": "12px navigation, menus, responsive scopes, modal keyboard, URL inputs, placements, stale deletion, title drag/end geometry and native subtree fixture deletion passed"
+  },
+  {
+    "theme": "dark",
+    "result": "12px navigation, menus, responsive scopes, modal keyboard, URL inputs, placements, stale deletion, title drag/end geometry and native subtree fixture deletion passed"
+  }
+]
