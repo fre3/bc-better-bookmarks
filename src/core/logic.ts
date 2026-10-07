@@ -1,3 +1,4 @@
+import { ORDINARY_ROOT_TYPES, UNKNOWN_LOCATION } from './capabilities';
 import type { Favorite, FavoriteNode, Folder, FolderPart, LinkInput, Locator, SystemLabel } from './model';
 
 // Inspect only the scheme; bookmarklet code is opaque and never parsed or rewritten.
@@ -26,19 +27,22 @@ export function fingerprint(locator: Locator): string {
 export function flattenTree(tree: FavoriteNode[]): { favorites: Favorite[]; folders: Folder[] } {
   const favorites: Favorite[] = [];
   const folders: Folder[] = [];
-  const walk = (node: FavoriteNode, path: string[], parts: FolderPart[], ids: string[], managed: boolean) => {
-    const blocked = managed || Boolean(node.unmodifiable);
+  const walk = (node: FavoriteNode, path: string[], parts: FolderPart[], ids: string[], managed: boolean, inheritedRestriction?: string) => {
+    const blocked = managed || Boolean(node.unmodifiable) || node.folderType === 'managed';
+    const unknownRoot = ids.length === 1 && !ORDINARY_ROOT_TYPES.has(node.folderType ?? '');
+    const unknownType = Boolean(node.folderType && !ORDINARY_ROOT_TYPES.has(node.folderType) && node.folderType !== 'managed');
+    const restriction = inheritedRestriction || (unknownRoot || unknownType ? UNKNOWN_LOCATION : undefined);
     if (node.url !== undefined) {
-      favorites.push({ ...node, unmodifiable: blocked ? 'managed' : undefined, url: node.url, systemLabels: systemLabelsFor(node.url), folderPath: path, ancestorIds: ids,
+      favorites.push({ ...node, nativeRestriction: restriction, unmodifiable: blocked ? 'managed' : undefined, url: node.url, systemLabels: systemLabelsFor(node.url), folderPath: path, ancestorIds: ids,
         locator: { url: node.url, title: node.title, folderPath: parts } });
       return;
     }
     const isRoot = node.parentId === undefined;
     const nextPath = isRoot ? path : [...path, node.title];
     const nextParts = isRoot ? parts : [...parts, { kind: node.folderType ? 'browser' as const : 'title' as const, value: node.folderType ?? node.title }];
-    folders.push({ ...node, path: nextPath, ancestorIds: ids, writable: !blocked && !isRoot,
-      renamable: !blocked && !isRoot && ids.length > 1 && !node.folderType });
-    for (const child of node.children ?? []) walk(child, nextPath, nextParts, [...ids, node.id], blocked);
+    folders.push({ ...node, nativeRestriction: restriction, unmodifiable: blocked ? 'managed' : node.unmodifiable, path: nextPath, ancestorIds: ids, writable: !blocked && !isRoot && !restriction,
+      renamable: !blocked && !restriction && !isRoot && ids.length > 1 && !node.folderType });
+    for (const child of node.children ?? []) walk(child, nextPath, nextParts, [...ids, node.id], blocked, restriction);
   };
   for (const root of tree) walk(root, [], [], [], false);
   return { favorites, folders };

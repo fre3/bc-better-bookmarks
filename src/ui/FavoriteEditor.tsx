@@ -52,6 +52,7 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose, onReviewBind
   const conflict = draftConflict(snapshot, { ...draft, expected });
   const tags = useMemo(() => nodeTags(snapshot).get(draft.id), [snapshot, draft.id]);
   const current = draft.isFolder ? snapshot.folders.find(f => f.id === draft.id) : snapshot.favorites.find(f => f.id === draft.id);
+  const nativeReadOnly = Boolean(current?.nativeRestriction || draft.isFolder && current?.folderType);
   const archiveSources = tags?.sources.filter(source => source.tags.includes('archived')) ?? [];
   function finishTagEntry() {
     const split = splitArchiveTag(input.tags);
@@ -115,11 +116,12 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose, onReviewBind
       <div inert={discard}>
       {metadataIssue && <div className="editor-error" role="alert" id="favorite-metadata-status"><strong>Metadata unavailable for safe editing</strong><p>{metadataIssue}</p><p>Direct tags are unresolved, not an empty assignment. Fields and Save are blocked; any existing draft is retained. Do not copy this diagnostic into tags.</p></div>}
       {(identityBlocked || metadataIssue) && <details className="identity-details"><summary>Inspect metadata diagnostics for this item</summary><pre>{JSON.stringify(itemIdentityDetails(snapshot, draft.id), null, 2)}</pre><p>This is read-only evidence. For the full export, cancel safely and open Manage → Export diagnostics. Do not reset metadata or guess a matching duplicate.</p></details>}
+      {nativeReadOnly && <p id="native-readonly" className="editor-context">{current?.nativeRestriction ?? 'Native naming is managed in Edge.'} Native fields are read-only; Save changes extension tags only.</p>}
       <label htmlFor="favorite-edit-title">{draft.isFolder ? 'Name' : 'Title'}</label>
-      <input ref={title} id="favorite-edit-title" value={input.title} readOnly={saving || identityBlocked} required aria-invalid={Boolean(errors.title)} aria-describedby={errors.title ? 'favorite-title-error' : undefined} onChange={e => setInput({ ...input, title: e.target.value })} />
+      <input ref={title} id="favorite-edit-title" value={input.title} readOnly={saving || identityBlocked || nativeReadOnly} required aria-invalid={Boolean(errors.title)} aria-describedby={errors.title ? 'favorite-title-error' : undefined} onChange={e => setInput({ ...input, title: e.target.value })} />
       {errors.title && <p id="favorite-title-error" className="editor-error">{errors.title}</p>}
       {!draft.isFolder && <><label htmlFor="favorite-edit-url">URL (HTTP, HTTPS, or bookmarklet)</label>
-      <input type="text" onPaste={e=>singleLineUrlPaste(e,message=>setErrors(value=>({...value,url:message})))} id="favorite-edit-url" spellCheck={false} value={input.url} readOnly={saving || identityBlocked} required aria-invalid={Boolean(errors.url)} aria-describedby={errors.url ? 'favorite-url-error' : undefined} onChange={e => setInput({ ...input, url: e.target.value })} />
+      <input type="text" onPaste={e=>singleLineUrlPaste(e,message=>setErrors(value=>({...value,url:message})))} id="favorite-edit-url" spellCheck={false} value={input.url} readOnly={saving || identityBlocked || nativeReadOnly} required aria-invalid={Boolean(errors.url)} aria-describedby={errors.url ? 'favorite-url-error' : undefined} onChange={e => setInput({ ...input, url: e.target.value })} />
       {/[\r\n]/.test(input.url)&&<p>Existing multiline bookmarklet code is retained unchanged unless you edit the URL. This single-line field does not display its line breaks.</p>}
       {errors.url && <p id="favorite-url-error" className="editor-error">{errors.url}</p>}</>}
       <label htmlFor="favorite-edit-tags">Tags (comma separated; stored lowercase)</label>

@@ -1,3 +1,4 @@
+import { metadataEditable } from '../core/capabilities';
 import { editToken } from '../core/logic';
 import { directTags, folderNode } from '../core/node-tags';
 import type { Favorite, Folder, LinkInput, Snapshot } from '../core/model';
@@ -17,6 +18,6 @@ export function draftConflict(snapshot: Snapshot, draft: FavoriteDraft): string 
   const favorite = draft.isFolder ? snapshot.folders.find(item => item.id === draft.id) : snapshot.favorites.find(item => item.id === draft.id);
   if (!favorite) return 'This item was removed. Your draft is retained, but it cannot be saved. Copy any needed text before closing.';
   if (favoriteDraft(snapshot, favorite).expected !== draft.expected) return 'This item, its folder or its direct tags changed since editing began. Your draft is retained. Copy any needed text, then cancel and reopen to review the latest values.';
-  if (favorite.unmodifiable || draft.isFolder && !(favorite as Folder).renamable) return 'This item is managed or browser-owned and cannot be edited.';
+  if (favorite.unmodifiable || draft.isFolder && !metadataEditable(favorite)) return 'This item is managed or browser-owned and cannot be edited.';
   return undefined;
 }

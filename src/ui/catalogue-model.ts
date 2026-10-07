@@ -1,3 +1,4 @@
+import { metadataEditable } from '../core/capabilities';
 import { itemMetadataIssue } from '../core/item-metadata-health';
 import { nodeTags, folderNode, type NodeTags } from '../core/node-tags';
 import { parseSearch, searchFavorites } from '../core/logic';
@@ -59,7 +60,7 @@ export function buildCatalogue(s: Snapshot, showArchived = false): CatalogueMode
     }
     return result;
   });
-  return { roots, sections, tags, folderNodes: s.folders.filter(f => f.renamable && allowed(f.id)).map(f => ({ ...folderNode(f, s.folders), folderPath: f.path })) };
+  return { roots, sections, tags, folderNodes: s.folders.filter(f => metadataEditable(f) && allowed(f.id)).map(f => ({ ...folderNode(f, s.folders), folderPath: f.path })) };
 }
 
 export function filterCatalogue(model: CatalogueModel, favorites: Favorite[], scope: string, query: string, searching: boolean) {

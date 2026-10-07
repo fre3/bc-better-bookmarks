@@ -1,3 +1,4 @@
+import { metadataEditable } from '../core/capabilities';
 import { EditAction } from './EditAction';
 import { TagText } from './TagAnnotation';
 import { Fragment, type MouseEvent } from 'react';
@@ -29,7 +30,7 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0, on
       return <Fragment key={folder.id}>
         <span className={`catalogue-item folder-item${tagMatch ? ' tag-match' : ''}${selectedId === folder.id ? ' is-selected' : ''}`} data-moving={movingId === folder.id || undefined} data-item-id={folder.id}>
           {query !== null ? <span>{title}</span> : <a role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }} id={`folder-${folder.id}`} data-drag-title={onEdit&&query===null&&folder.renamable?folder.id:undefined} className="folder-trigger" aria-expanded={open} aria-controls={`children-${folder.id}`} onClick={() => onToggle(folder.id)}>{title}</a>}
-          {onEdit && folder.renamable && <EditAction id={folder.id} title={folder.title} folder onEdit={onEdit} />}
+          {onEdit && metadataEditable(folder) && <EditAction id={folder.id} title={folder.title} folder onEdit={onEdit} />}
           {folderTags.length > 0 && <span className="item-annotation"><span className="all-annotations"><TagText tags={folderTags} info={tagInfo} folder /></span>{tagMatch && <span className="matched-annotations" aria-hidden="true"><TagText tags={folderTags} info={tagInfo} folder /></span>}</span>}
         </span>
         {open && <span id={`children-${folder.id}`} className={`folder-children${depth === 0 ? ' first-expansion' : ''}`}>
@@ -40,6 +41,7 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0, on
     }
     const { favorite, tags, tagInfo, ambiguous, metadataIssue } = item;
     const editable = Boolean(onEdit && !favorite.unmodifiable);
+    const editDescription = favorite.nativeRestriction ? 'Click or press Enter to edit extension tags. Native fields are read-only in this browser location. Modifier and middle clicks open the link.' : 'Click or press Enter to edit this favorite. Drag its title to move. Modifier and middle clicks open the link.';
     const activate = (event: MouseEvent<HTMLElement>) => { if (editable && event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) { event.preventDefault(); onEdit?.(favorite.id); } };
     const href = safeHref(favorite.url);
     const icon = faviconUrl(favorite.url);
@@ -51,7 +53,7 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0, on
     const annotations = tags.length > 0 || Boolean(statusText);
     const label = <BookmarkLabel title={favorite.title} icon={icon} />;
     return <Fragment key={favorite.id}><span className={`catalogue-item bookmark-item${revealed.length ? ' tag-match' : ''}${ambiguous ? ' ambiguous' : ''}${selectedId === favorite.id ? ' is-selected' : ''}`} data-moving={movingId === favorite.id || undefined} data-item-id={favorite.id}>
-      {href ? <a id={`bookmark-${favorite.id}`} data-drag-title={onEdit&&query===null&&!favorite.unmodifiable?favorite.id:undefined} className="bookmark-title" lang="" href={href} onClick={activate} aria-description={editable ? 'Click or press Enter to edit this favorite. Drag its title to move. Modifier and middle clicks open the link.' : undefined} aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}>{label}</a> : <span id={`bookmark-${favorite.id}`} data-drag-title={onEdit&&query===null&&!favorite.unmodifiable?favorite.id:undefined} className="bookmark-title non-navigating" lang="" tabIndex={0} onClick={activate} onKeyDown={event => { if (editable && event.key === 'Enter') { event.preventDefault(); event.currentTarget.click(); } }} aria-description={editable ? 'Click or press Enter to edit this favorite. Drag its title to move.' : undefined} aria-describedby={`annotation-${favorite.id}`}>{label}</span>}
+      {href ? <a id={`bookmark-${favorite.id}`} data-drag-title={onEdit&&query===null&&!favorite.unmodifiable&&!favorite.nativeRestriction?favorite.id:undefined} className="bookmark-title" lang="" href={href} onClick={activate} aria-description={editable ? editDescription : undefined} aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}>{label}</a> : <span id={`bookmark-${favorite.id}`} data-drag-title={onEdit&&query===null&&!favorite.unmodifiable&&!favorite.nativeRestriction?favorite.id:undefined} className="bookmark-title non-navigating" lang="" tabIndex={0} onClick={activate} onKeyDown={event => { if (editable && event.key === 'Enter') { event.preventDefault(); event.currentTarget.click(); } }} aria-description={editable ? editDescription : undefined} aria-describedby={`annotation-${favorite.id}`}>{label}</span>}
       {onEdit && !favorite.unmodifiable && <EditAction id={favorite.id} title={favorite.title} onEdit={onEdit} />}
       {annotations && <span id={`annotation-${favorite.id}`} className="item-annotation">
         {tags.length > 0 && <span className="bookmark-tags all-annotations">{<TagText tags={tags} info={tagInfo} />}</span>}

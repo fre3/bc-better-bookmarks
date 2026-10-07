@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { folderBindings, folderNeedsReview } from '../src/ui/folder-bindings';
 import type { Snapshot } from '../src/core/model';
 function snapshot(): Snapshot {
-  return { folders: [{ id: 'folder', renamable: true }], metadata: { invalid: [], records: [{ stableId: 'one', tags: ['work'], initialLocator: { kind: 'folder' } }] }, local: { mappings: {} }, reconciliation: { mappings: {}, matches: [{stableId:'one',status:'unresolved',candidateIds:['folder']}] } } as unknown as Snapshot;
+  return { folders: [{ id: 'folder', renamable: true, ancestorIds: ['0','root'] }], metadata: { invalid: [], records: [{ stableId: 'one', tags: ['work'], initialLocator: { kind: 'folder' } }] }, local: { mappings: {} }, reconciliation: { mappings: {}, matches: [{stableId:'one',status:'unresolved',candidateIds:['folder']}] } } as unknown as Snapshot;
 }
 describe('folder binding review presentation', () => {
  it('blocks unresolved edit paths but permits resolved and genuinely new folders', () => {
@@ -21,7 +21,7 @@ describe('folder binding review presentation', () => {
   for(const state of ['competing','managed','invalid','bound'] as const) {
    const s=snapshot();
    if(state==='competing')s.reconciliation.matches.push({stableId:'other',status:'unresolved',candidateIds:['folder']});
-   if(state==='managed')s.folders[0].renamable=false;
+   if(state==='managed')s.folders[0].unmodifiable='managed';
    if(state==='invalid')s.metadata.invalid.push('invalid');
    if(state==='bound')s.local.mappings.folder={stableId:'another'} as never;
    expect(folderBindings(s)[0].available).toBe(false);

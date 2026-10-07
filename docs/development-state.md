@@ -1,11 +1,17 @@
 # Development State
 
 Last updated: 2026-10-07
-Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.23**.
+Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.24** (implementation/verification in progress).
 Validated MVP: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated `mvp-validated-0.1.1`.
 Accepted visual checkpoint: **`ui-validated-0.1.15`** and `feature/ui-ux-redesign` remain at **`0e6a596210b2be2d273eab4a19d2268d9a1407a1`**. No push; supplied media and Windows clone untouched.
 
-## Current checkpoint
+## Current checkpoint — 0.1.24
+
+User reports the other 0.1.23 tests pass; Workspace compatibility and highlighting are outstanding. This is not a resolution of the historical native-title-change question. See [capability evidence and conservative policy](workspace-capabilities.md). Five supplied 0.1.23 images were visually inspected. User-supplied read-only properties confirm typed ordinary roots but no distinguishing Workspace/container fields. Unclassified domains now restrict native writes while retaining browsing and safe metadata-only editing. No live Favorites, metadata reset, speculative repair or native Workspace mutation was performed.
+
+Workspace safeguards are implemented with unit and isolated Chromium verification in progress. Active-editor highlighting is the second implementation commit; final handoff will record both results. Next: finish rendered regression checks, regenerate 0.1.24 dist, then stop for native Edge review.
+
+## Previous checkpoint evidence — 0.1.23
 
 **0.1.21 is accepted within the user's existing checklist; 0.1.22 is NOT accepted. Stop for native Edge review of 0.1.23.** The current priority is the duplicate-move identity defect. No live metadata reset, native repair, merge, rename, deletion or recreation was performed.
 

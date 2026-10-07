@@ -1,3 +1,4 @@
+import { metadataEditable } from '../core/capabilities';
 import { AddMenu } from './ItemActions';
 import { EditAction } from './EditAction';
 import { TagText } from './TagAnnotation';
@@ -66,7 +67,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
     style={{ zIndex: showingPeek ? stackSize + 1 : preview ? stackSize : stackIndex }}>
     <div className="section-sheet has-top-shadow">
       <div ref={headingTags} className="section-header" data-moving={movingId === section.folder?.id || undefined} onPointerEnter={e => { if (blocked) return; hover.remember(e); setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={e => { if (!hover.retainOnLeave(e)) endMousePeek(); }}>
-        <h2 className={`section-inner section-tag-item${onEdit && section.folder?.renamable ? ' has-folder-editor' : ''}`}>
+        <h2 className={`section-inner section-tag-item${onEdit && metadataEditable(section.folder) ? ' has-folder-editor' : ''}`}>
         {query !== null ? <span className="section-label"><span className="section-heading-text"><span className="section-title-text">{section.title || '(untitled)'}</span>{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
           <a data-drag-title={onEdit&&section.folder?.renamable?section.folder.id:undefined} className="section-toggle" role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }} id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}
             onFocus={e => { if (e.currentTarget.matches(':focus-visible')) setFocusPeek(peekEpoch); }} onBlur={() => setFocusPeek(-1)}
@@ -74,7 +75,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
             <span className="section-state" aria-hidden="true">{open ? '▾' : '▸'}</span>
             <span className="section-heading-text"><span className="section-title-text">{section.title || '(untitled)'}</span>{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span>
           </a>}
-        {onEdit && section.folder?.renamable && <EditAction id={section.folder.id} title={section.title} folder onEdit={onEdit} />}
+        {onEdit && metadataEditable(section.folder) && <EditAction id={section.folder!.id} title={section.title} folder onEdit={onEdit} />}
         {onEdit && !section.folder && <AddMenu parentId={section.parentId} />}
         {Boolean(section.tagInfo?.effective.length) && <span className={`section-tag-annotation${explainsTags ? ' explains-search' : ''}`}><TagText tags={section.tagInfo!.effective} info={section.tagInfo} folder /></span>}
         </h2>

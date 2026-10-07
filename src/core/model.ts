@@ -10,6 +10,8 @@ export interface FavoriteNode {
   syncing?: boolean;
   unmodifiable?: string;
   children?: FavoriteNode[];
+  /** Derived application policy; never synchronized or used for identity. */
+  nativeRestriction?: string;
 }
 export interface FolderPart { kind: 'title' | 'browser'; value: string }
 export interface Locator { kind?: 'folder'; url: string; title: string; folderPath: FolderPart[] }

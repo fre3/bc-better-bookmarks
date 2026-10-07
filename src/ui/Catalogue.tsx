@@ -144,7 +144,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     return () => window.removeEventListener('keydown', onKey);
   });
 
-  return <ActionsContext.Provider value={editing && onCreate && onMove ? {create:onCreate,move:onMove,remove:onDelete,searching} : undefined}><div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-dragging={drag.active} data-expansion-end={EXPANSION_END} hidden={suspended}>
+  return <ActionsContext.Provider value={editing && onCreate && onMove ? {snapshot,create:onCreate,move:onMove,remove:onDelete,searching} : undefined}><div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-dragging={drag.active} data-expansion-end={EXPANSION_END} hidden={suspended}>
     <div ref={chrome} className="catalogue-chrome">
     <header className="catalogue-navigation">
       {editing && <div className="editing-help">Click a favorite to edit it, or use Edit beside a folder. Drag titles to move.</div>}

@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createServer } from 'node:http';
 
-export async function editingFixture({ deep = false, duplicates = false } = {}) {
+export async function editingFixture({ deep = false, duplicates = false, workspace = false } = {}) {
 const output = await mkdtemp(join(tmpdir(), 'bb-editing-'));
 await build({ stdin: { contents: `
 import {prepareMetadataReset,resetMetadata} from './src/browser/metadata-setup';
@@ -18,7 +18,8 @@ class Storage {
 }
 const sections=Array.from({length:12},(_,i)=>({id:'s'+i,parentId:i<6?'r1':'r2',title:['Design','Reference','Career','Crypto','Personal','Development'][i%6]+' '+i,children:[{id:'f'+i,parentId:'s'+i,title:'Nested folder',children:[{id:'n'+i,parentId:'f'+i,title:'Nested favorite',url:'https://example.test/nested'}]},...Array.from({length:20},(_,j)=>({id:i+'-'+j,parentId:'s'+i,title:j===0?'Unique target '+i:'Ordinary favorite '+j,url:'https://example.test/'+i+'/'+j}))]}));
 if (${deep}) sections[0].children[0].children.push({id:'deep',parentId:'f0',title:'A long nested folder title for wrapping across available lines',children:[{id:'deep-link',parentId:'deep',title:'Deep favorite',url:'https://example.test/deep'}]});
-const tree=[{id:'0',title:'',children:[{id:'r1',parentId:'0',title:'Favorites bar',children:sections.slice(0,6)},{id:'r2',parentId:'0',title:'Workspaces',children:sections.slice(6)}]}];
+const tree=[{id:'0',title:'',children:[{id:'r1',parentId:'0',folderType:'bookmarks-bar',title:'Favorites bar',children:sections.slice(0,6)},{id:'r2',parentId:'0',folderType:'other',title:'Workspaces',children:sections.slice(6)}]}];
+if (${workspace}) tree[0].children.push({id:'ws',parentId:'0',title:'Espaces de travail',children:[{id:'ws-container',parentId:'ws',title:'Projet',children:[{id:'ws-folder',parentId:'ws-container',title:'Notes',children:[{id:'ws-link',parentId:'ws-folder',title:'Workspace favorite',url:'https://example.test/workspace'}]}]},{id:'ws-loose',parentId:'ws',title:'Loose item',url:'https://example.test/loose'}]});
 const nodes=()=>{const walk=items=>items.flatMap(n=>[n,...walk(n.children??[])]);return walk(tree)};
 window.nativeWrites=[];
 let created=0;const bookmarks={getTree:async()=>{nodes().forEach(n=>n.children?.forEach((c,i)=>c.index=i));return structuredClone(tree)},update:async(id,value)=>{if(window.failSave)throw Error('Synthetic browser write failure');window.nativeWrites.push({operation:'update',id,value,before:structuredClone(nodes().find(n=>n.id===id))});Object.assign(nodes().find(n=>n.id===id),value)},move:async(id,parentId,index)=>{if(window.failMove)throw Error('Synthetic move failure');window.nativeWrites.push({operation:'move',id,parentId,index,before:structuredClone(nodes().find(n=>n.id===id))});const n=nodes().find(n=>n.id===id),old=nodes().find(p=>p.id===n.parentId),parent=nodes().find(p=>p.id===parentId);let at=index??parent.children.length;if(old===parent&&old.children.indexOf(n)<at)at--;old.children=old.children.filter(c=>c.id!==id);n.parentId=parentId;parent.children.splice(at,0,n)},create:async(input)=>{if(window.holdCreate)await new Promise(r=>window.releaseCreate=r);const n={...input,id:'created-'+(++created),dateAdded:Date.now(),...(input.url===undefined?{children:[]}:{})};nodes().find(p=>p.id===input.parentId).children.push(n);return structuredClone(n)},removeLink:async(id)=>{if(window.failDelete)throw Error('Synthetic deletion failure');const n=nodes().find(n=>n.id===id);if(!n||n.children?.length)throw Error('Missing or nonempty node');const p=nodes().find(p=>p.id===n.parentId);p.children=p.children.filter(c=>c.id!==id)},removeEmptyFolder:async(id)=>bookmarks.removeLink(id)};
@@ -31,7 +32,7 @@ if (${duplicates}) {
 }
 const restored=sessionStorage.getItem('binding-fixture');if(restored){const saved=JSON.parse(restored);local.data=saved.local;sync.data=saved.sync;}
 window.persistFixture=()=>sessionStorage.setItem('binding-fixture',JSON.stringify({local:local.data,sync:sync.data}));
-const service=new DashboardService(bookmarks,new BrowserMetadataRepository(sync,local),{extensionId:'fixture',version:'0.1.23'});
+const service=new DashboardService(bookmarks,new BrowserMetadataRepository(sync,local),{extensionId:'fixture',version:'0.1.24'});
 const listeners=new Set(),storageListeners=new Set();let queue=Promise.resolve();
 local.data['ui:show-archived']=localStorage.getItem('ui:show-archived')==='true';
 window.addEventListener('storage',e=>{if(e.key==='ui:show-archived'){local.data[e.key]=e.newValue==='true';storageListeners.forEach(f=>f({[e.key]:{newValue:e.newValue==='true'}},'local'))}});
