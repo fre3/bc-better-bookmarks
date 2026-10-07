@@ -13,5 +13,5 @@ export function AddMenu({parentId='',id,title='New'}:{parentId?:string;id?:strin
 }
 export function ExtraActions({id,title,folder}:{id:string;title:string;folder:boolean}) {
  const actions=useContext(ActionsContext);if(!actions)return null;
- return <span className="extra-actions"><AddMenu id={id} title={title} parentId={folder?id:undefined}/>{!actions.searching&&<button className="drag-handle" type="button" onClick={e=>{if(e.detail===0)actions.move(id);}} data-drag-id={id} aria-label={`Drag ${title} to move; use More then Move for keyboard`} title="Drag to move · More → Move for keyboard">⠿</button>}</span>;
+ return <span className="extra-actions"><AddMenu id={id} title={title} parentId={folder?id:undefined}/>{!actions.searching&&<span className="drag-handle" data-drag-id={id} aria-hidden="true" title="Drag title to move · More → Move for keyboard">⠿</span>}</span>;
 }

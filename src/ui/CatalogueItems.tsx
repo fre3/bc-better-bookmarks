@@ -27,7 +27,7 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0, on
       const title = <><span className="folder-title">{folder.title || '(untitled)'}/</span><span className="folder-count">{children.length}<span className="sr-only"> items</span></span></>;
       return <Fragment key={folder.id}>
         <span className={`catalogue-item folder-item${tagMatch ? ' tag-match' : ''}${selectedId === folder.id ? ' is-selected' : ''}`} data-item-id={folder.id}>
-          {query !== null ? <span>{title}</span> : <a role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }} id={`folder-${folder.id}`} className="folder-trigger" aria-expanded={open} aria-controls={`children-${folder.id}`} onClick={() => onToggle(folder.id)}>{title}</a>}
+          {query !== null ? <span>{title}</span> : <a role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }} id={`folder-${folder.id}`} data-drag-title={onEdit&&query===null&&folder.renamable?folder.id:undefined} className="folder-trigger" aria-expanded={open} aria-controls={`children-${folder.id}`} onClick={() => onToggle(folder.id)}>{title}</a>}
           {onEdit && folder.renamable && <EditAction id={folder.id} title={folder.title} folder onEdit={onEdit} />}
           {folderTags.length > 0 && <span className="item-annotation"><span className="all-annotations"><TagText tags={folderTags} info={tagInfo} folder /></span>{tagMatch && <span className="matched-annotations" aria-hidden="true"><TagText tags={folderTags} info={tagInfo} folder /></span>}</span>}
         </span>
@@ -48,7 +48,7 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0, on
     const annotations = tags.length > 0 || Boolean(statusText);
     const label = <BookmarkLabel title={favorite.title} icon={icon} />;
     return <Fragment key={favorite.id}><span className={`catalogue-item bookmark-item${revealed.length ? ' tag-match' : ''}${ambiguous ? ' ambiguous' : ''}${selectedId === favorite.id ? ' is-selected' : ''}`} data-item-id={favorite.id}>
-      {href ? <a id={`bookmark-${favorite.id}`} className="bookmark-title" lang="" href={href} aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}>{label}</a> : <span id={`bookmark-${favorite.id}`} className="bookmark-title non-navigating" lang="" tabIndex={0} aria-describedby={`annotation-${favorite.id}`}>{label}</span>}
+      {href ? <a id={`bookmark-${favorite.id}`} data-drag-title={onEdit&&query===null&&!favorite.unmodifiable?favorite.id:undefined} className="bookmark-title" lang="" href={href} aria-describedby={annotations ? `annotation-${favorite.id}` : undefined}>{label}</a> : <span id={`bookmark-${favorite.id}`} data-drag-title={onEdit&&query===null&&!favorite.unmodifiable?favorite.id:undefined} className="bookmark-title non-navigating" lang="" tabIndex={0} aria-describedby={`annotation-${favorite.id}`}>{label}</span>}
       {onEdit && !favorite.unmodifiable && <EditAction id={favorite.id} title={favorite.title} onEdit={onEdit} />}
       {annotations && <span id={`annotation-${favorite.id}`} className="item-annotation">
         {tags.length > 0 && <span className="bookmark-tags all-annotations">{<TagText tags={tags} info={tagInfo} />}</span>}

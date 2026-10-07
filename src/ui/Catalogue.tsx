@@ -119,7 +119,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       if (event.defaultPrevented || event.isComposing) return;
       const target = event.target instanceof Element ? event.target : null;
       const editingText = Boolean(target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]'));
-      const excluded = Boolean(target?.closest('dialog, [role="dialog"]')) || (editingText && target !== input.current);
+      const excluded = Boolean(target?.closest('dialog, [role="dialog"]')) || (editingText && target !== input.current && !target?.matches('.root-selector'));
       if (target?.closest('dialog, [role="dialog"]')) return;
       const root = rootShortcut(event, roots, excluded);
       if (root !== undefined) { event.preventDefault(); switchScope(root); return; }

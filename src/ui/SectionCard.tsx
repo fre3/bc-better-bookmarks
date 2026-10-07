@@ -67,7 +67,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
       <div ref={headingTags} className="section-header" onPointerEnter={e => { if (blocked) return; hover.remember(e); setMouseHover(e.pointerType === 'mouse'); if (e.pointerType !== 'touch') setPointerPeek(peekEpoch); }} onPointerLeave={e => { if (!hover.retainOnLeave(e)) endMousePeek(); }}>
         <h2 className={`section-inner section-tag-item${onEdit && section.folder?.renamable ? ' has-folder-editor' : ''}`}>
         {query !== null ? <span className="section-label"><span className="section-heading-text"><span className="section-title-text">{section.title || '(untitled)'}</span>{allRoots && <span className="root-provenance"> · {section.rootTitle}</span>}</span></span> :
-          <a className="section-toggle" role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }} id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}
+          <a data-drag-title={onEdit&&section.folder?.renamable?section.folder.id:undefined} className="section-toggle" role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }} id={`section-${section.id}`} aria-expanded={open} aria-controls={contentId}
             onFocus={e => { if (e.currentTarget.matches(':focus-visible')) setFocusPeek(peekEpoch); }} onBlur={() => setFocusPeek(-1)}
             onClick={() => { setPointerPeek(-1); setFocusPeek(-1); onToggle(); }}>
             <span className="section-state" aria-hidden="true">{open ? '▾' : '▸'}</span>
