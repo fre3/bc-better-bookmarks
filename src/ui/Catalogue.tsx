@@ -20,7 +20,7 @@ import { catalogueHandoff } from './catalogue-handoff';
 // Nested expansions always remain inline.
 const EXPANSION_END: 'inline' | 'break' = 'inline';
 
-export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek = true, showArchived = false, modalOpen = false, selectedId, onEdit, onManage, bindingReviews = [], onReviewBindings, onCreate, onMove, onDropMove, reveal }: { reveal?: {id:string;sequence:number}; onDropMove?: (c:Command)=>Promise<unknown>; onCreate?: (folder:boolean,parentId:string)=>void; onMove?: (id:string)=>void; bindingReviews?: ReturnType<typeof folderBindings>; onReviewBindings?: () => void; snapshot: Snapshot; suspended: boolean; searchRequest?: SearchIntent; autoScrollPeek?: boolean; onManage: () => void; modalOpen?: boolean; showArchived?: boolean; selectedId?: string; onEdit?: (id: string) => void }) {
+export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek = true, showArchived = false, modalOpen = false, selectedId, onEdit, onManage, bindingReviews = [], onReviewBindings, onCreate, onMove, onDelete, onDropMove, reveal }: { reveal?: {id:string;sequence:number}; onDropMove?: (c:Command)=>Promise<unknown>; onCreate?: (folder:boolean,parentId:string)=>void; onMove?: (id:string)=>void; onDelete?: (id:string)=>void; bindingReviews?: ReturnType<typeof folderBindings>; onReviewBindings?: () => void; snapshot: Snapshot; suspended: boolean; searchRequest?: SearchIntent; autoScrollPeek?: boolean; onManage: () => void; modalOpen?: boolean; showArchived?: boolean; selectedId?: string; onEdit?: (id: string) => void }) {
   const [handoff] = useState(() => typeof location === 'undefined' ? undefined : catalogueHandoff(takeSearchHandoff()));
   const [state, dispatch] = useReducer(catalogueReducer, handoff?.state ?? initialCatalogueState);
   const [editing, setEditing] = useState(false);
@@ -75,7 +75,8 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
       const target = browsePosition.current.focus;
       const id = target?.id || browsePosition.current.focusId;
       const restored = target?.isConnected ? target : id ? document.getElementById(id) : null;
-      (restored ?? searchButton.current)?.focus({ preventScroll: true });
+      const available = restored && !restored.closest('[inert], [hidden]') && restored.getClientRects().length ? restored : restored?.closest('.root-tabs') ? chrome.current?.querySelector<HTMLElement>('.root-selector:not([hidden])') : undefined;
+      (available ?? searchButton.current)?.focus({ preventScroll: true });
       window.scrollTo({ top: browsePosition.current.scroll, behavior: 'instant' });
     });
   }
@@ -143,7 +144,7 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
     return () => window.removeEventListener('keydown', onKey);
   });
 
-  return <ActionsContext.Provider value={editing && onCreate && onMove ? {create:onCreate,move:onMove,searching} : undefined}><div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-dragging={drag.active} data-expansion-end={EXPANSION_END} hidden={suspended}>
+  return <ActionsContext.Provider value={editing && onCreate && onMove ? {create:onCreate,move:onMove,remove:onDelete,searching} : undefined}><div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-dragging={drag.active} data-expansion-end={EXPANSION_END} hidden={suspended}>
     <div ref={chrome} className="catalogue-chrome">
     <header className="catalogue-navigation">
       {editing && <div className="editing-help">Click Edit beside a favorite or folder to make changes.</div>}

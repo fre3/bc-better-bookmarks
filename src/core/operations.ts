@@ -28,3 +28,10 @@ export function planMove(s:Snapshot,id:string,p:Placement) {
  return {parentId:parent.id,index};
 }
 
+/** Includes archived descendants; confirmation is about the native subtree. */
+export function deletionNodes(s:Snapshot,id:string) {
+ return [...s.folders,...s.favorites].filter(n=>n.id===id||n.ancestorIds.includes(id));
+}
+export function deletionToken(s:Snapshot,id:string,omitted:readonly string[]=[]) {
+ return JSON.stringify(deletionNodes(s,id).filter(n=>!omitted.includes(n.id)).map(n=>[nativeToken(n),n.ancestorIds,directTags(s,n.id),s.local.mappings[n.id]?.stableId,(n.children??[]).filter(c=>!omitted.includes(c.id)).map(c=>c.id)]));
+}

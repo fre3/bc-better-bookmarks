@@ -115,7 +115,7 @@ export type Command = (
   | { type: 'snapshot' | 'reconcile' }
   | { type: 'create'; input: LinkInput; requestId?: string; destinationExpected?: string }
   | { type: 'edit'; id: string; input: LinkInput; expected: string }
-  | { type: 'delete'; id: string; expected: string }
+  | { type: 'delete'; id: string; expected: string; subtreeExpected?:string }
   | { type: 'create-folder'; parentId: string; title: string; tags?: string[]; requestId?: string; destinationExpected?: string }
   | { type: 'move'; id: string; expected: string; placement: import('./operations').Placement; destinationExpected: string }
   | { type: 'edit-folder'; id: string; title: string; tags: string[]; expected: string }

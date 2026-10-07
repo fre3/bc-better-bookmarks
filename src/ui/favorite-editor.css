@@ -42,7 +42,7 @@
 
 .item-menu, .item-menu button { text-transform: none; letter-spacing: 0; font: 16px/1.5 Helvetica, Arial, sans-serif; }
 .item-menu button { width: 100%; min-height: 36px; text-align: left; }
-.favorite-editor input, .favorite-editor select { min-height: 38px; font: inherit; }
+.favorite-editor input:not([type="checkbox"]):not([type="radio"]), .favorite-editor select { min-height: 38px; font: inherit; }
 .favorite-editor .editor-actions { align-items: center; justify-content: flex-end; border-top: 1px solid var(--input-rule); padding-top: 16px; gap: 12px; }
 .favorite-editor .editor-actions .dialog-cancel { margin-right: auto; text-decoration: underline; padding-inline: 0; border: 0; background: transparent; }
 .favorite-editor .editor-actions button { padding: 7px 14px; border: 1px solid var(--control-border); background: var(--control-surface); }

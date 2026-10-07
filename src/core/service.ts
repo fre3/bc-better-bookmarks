@@ -6,7 +6,7 @@ import { folderNode, folderEditToken } from './node-tags';
 import { EditFailure, type EditProgress } from './edit-failure';
 import { reconcile } from './reconcile';
 import { validateLinkInput } from './link-input';
-import { destinationToken, nativeToken, nodeById, sourceToken, placementToken, planMove } from './operations';
+import { deletionNodes, deletionToken, destinationToken, nativeToken, nodeById, sourceToken, placementToken, planMove } from './operations';
 import { metadataHealth } from './metadata-diagnostics';
 
 export class DashboardService {
@@ -132,9 +132,9 @@ export class DashboardService {
         const node=await this.bookmarks.create({parentId:parent.id,title:input.title,...(isFolder?{}:{url:input.url})});
         receipt.id=node.id;receipt.native=nativeToken(node);
         await this.metadata.saveCreation(requestId,receipt);
-      } catch(error){throw Error(`Creation may have reached Edge. Retry only this request; never repeat Add. ${String(error)}`, {cause:error});}
+      } catch(error){throw Error(`Creation may have reached Edge. Retry only this request; do not start another creation request. ${String(error)}`, {cause:error});}
     }
-    if(!receipt.id)throw Error('Creation outcome is uncertain. No second item will be created. Inspect Edge Favorites before starting a new Add.');
+    if(!receipt.id)throw Error('Creation outcome is uncertain. No second item will be created. Inspect Edge Favorites before starting a new creation request.');
     try {
       const current=await this.snapshot('complete creation');
       const n=nodeById(current,receipt.id);
@@ -159,7 +159,7 @@ export class DashboardService {
   async command(command: Command): Promise<Snapshot> {
     if (command.type === 'snapshot' || command.type === 'reconcile') return this.snapshot(command.type);
     const s = await this.snapshot(`before ${command.type}`);
-    if (['create', 'create-folder', 'move', 'edit', 'edit-folder', 'attach-folder'].includes(command.type) && command.generation !== s.metadata.setup?.generation) throw new Error('Metadata was reset since this draft opened. Copy needed input, cancel and reopen.');
+    if (['create', 'create-folder', 'move', 'delete', 'edit', 'edit-folder', 'attach-folder'].includes(command.type) && command.generation !== s.metadata.setup?.generation) throw new Error('Metadata was reset since this draft opened. Copy needed input, cancel and reopen.');
     if (command.type === 'create-folder' || command.type === 'create') {
       return this.createItem(s, command);
     } else if (command.type === 'move') {
@@ -208,9 +208,35 @@ export class DashboardService {
       if (!command.title.trim()) throw new Error('Folder name is required.');
       await this.bookmarks.update(command.id, { title: command.title.trim() });
     } else if (command.type === 'delete') {
-      this.favorite(s, command.id, command.expected);
-      await this.bookmarks.removeLink(command.id);
-      await this.removed([command.id]);
+      if(command.subtreeExpected!==undefined && (command.generation!==s.metadata.setup?.generation || command.expected!==sourceToken(s,command.id) || command.subtreeExpected!==deletionToken(s,command.id)))throw Error('Deletion target or subtree changed. Review the refreshed summary and confirm again.');
+      if(command.subtreeExpected===undefined)this.favorite(s,command.id,command.expected); // Manage's existing single-Favorite confirmation.
+      const nodes=deletionNodes(s,command.id);
+      if(!nodes.length)throw Error('The deletion target no longer exists.');
+      for(const n of nodes){
+        if(n.unmodifiable || n.url===undefined && !(n as Snapshot['folders'][number]).renamable)throw Error('Browser-owned or managed items cannot be deleted.');
+        const f=n.url===undefined?folderNode(n as Snapshot['folders'][number],s.folders):n as Favorite;
+        this.preflightTags(s,f,this.tags(s,n.id));
+        if(!s.reconciliation.mappings[n.id]&&s.reconciliation.matches.some(m=>m.candidateIds.includes(n.id)))throw Error('Metadata needs binding review before deletion.');
+      }
+      if(!s.preservation.available)throw Error('Metadata journal unavailable; deletion is blocked.');
+      const removed:string[]=[];
+      try {
+        for(const n of [...nodes].sort((a,b)=>b.ancestorIds.length-a.ancestorIds.length)){
+          const fresh=await this.snapshot('before individual deletion');
+          if(fresh.metadata.invalid.length||!fresh.preservation.available)throw Error('Metadata integrity changed; deletion stopped.');
+          const current=nodeById(fresh,n.id);
+          if(current)this.preflightTags(fresh,current.url===undefined?folderNode(current as Snapshot['folders'][number],fresh.folders):current as Favorite,this.tags(fresh,n.id));
+          if(deletionToken(fresh,command.id)!==deletionToken(s,command.id,removed))throw Error('Remaining subtree changed; review before deleting anything further.');
+          // Single-node remove rejects nonempty folders, including a child added
+          // in the final native-call race. Never recursively remove unknown data.
+          if(n.url===undefined)await this.bookmarks.removeEmptyFolder(n.id);else await this.bookmarks.removeLink(n.id);
+          removed.push(n.id);
+          const result=await this.removed([n.id]);
+          const stable=s.local.mappings[n.id]?.stableId;
+          if(stable&&result.local.pendingDeletions.includes(stable))throw Error('Metadata cleanup is pending. Use Reconcile; do not repeat deletion.');
+        }
+        return {...await this.snapshot('after confirmed deletion'),mutation:{id:command.id,parentId:nodes.find(n=>n.id===command.id)!.parentId!}};
+      }catch(error){throw Error(`${removed.length} native item(s) DELETED. Deletion/metadata cleanup did not fully complete. Inspect the remaining items and reconcile; deleted items will not be recreated. ${String(error)}`,{cause:error});}
     } else if (command.type === 'edit') {
       const f = this.favorite(s, command.id, command.expected);
       const input = this.validate(command.input);

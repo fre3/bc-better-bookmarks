@@ -30,7 +30,7 @@ function setup(known = true) {
     getTree: vi.fn(async () => structuredClone(data)),
     create: vi.fn(async input => { const f = { ...input, id: 'new', dateAdded: 2 }; data[0].children![0].children![0].children!.push(f); return f; }),
     update: vi.fn(async (_id, changes) => { Object.assign(node, changes); }),
-    move: vi.fn(async () => undefined), removeLink: vi.fn(async () => undefined),
+    move: vi.fn(async () => undefined), removeEmptyFolder: vi.fn(async () => undefined), removeLink: vi.fn(async () => undefined),
   };
   local.data.state = { schemaVersion: 1, mappings: known ? mapping() : {}, rootId: '1', pendingDeletions: [] };
   if (known) sync.data = metadata().raw;

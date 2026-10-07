@@ -33,6 +33,7 @@ class MemoryBookmarks implements BookmarksRepository {
     const oldParent = this.all().find(n => n.id === node.parentId)!;
     const old=oldParent.children!.indexOf(node),parent=this.all().find(n=>n.id===parentId)!;let at=index??parent.children!.length;if(parent===oldParent&&old<at)at--;oldParent.children=oldParent.children!.filter(n=>n.id!==id);node.parentId=parentId;parent.children!.splice(at,0,node);
   }
+  async removeEmptyFolder(id:string){const n=this.all().find(n=>n.id===id);if(!n||n.children?.length)throw Error('Folder not empty');await this.removeLink(id);}
   async removeLink(id: string) { this.calls.push('delete'); const node = this.all().find(n => n.id === id)!; const p = this.all().find(n => n.id === node.parentId)!; p.children = p.children!.filter(n => n.id !== id); }
 }
 function setup(withMetadata = false) {
