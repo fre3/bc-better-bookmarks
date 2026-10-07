@@ -46,7 +46,6 @@ export const dashboardLaunchBrowser: DashboardLaunchBrowser = {
 export async function dashboardShortcut(): Promise<string | undefined> {
   return (await chrome.commands.getAll()).find(command => command.name === DASHBOARD_SEARCH_COMMAND)?.shortcut;
 }
-export function openShortcutSettings() { void chrome.tabs.create({ url: 'edge://extensions/shortcuts' }); }
 
 /** Register before announcing readiness, so requests cannot fall in a load gap. */
 export function onDashboardSearch(callback: (request: SearchIntent) => SearchDelivery): () => void {

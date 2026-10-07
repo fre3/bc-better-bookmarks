@@ -13,7 +13,7 @@ await build({stdin:{contents:`
 import {flattenTree} from './src/core/logic';
 const names=['Design','Reference','Career','Crypto','Personal','Development'];
 const sections=names.map((title,i)=>({id:'s'+i,parentId:i<3?'r1':'r2',title,children:[{id:'f'+i,parentId:'s'+i,title:'Nested references',children:[{id:'n'+i,parentId:'f'+i,title:'Nested illustration',url:'https://example.test/1'}]},...Array.from({length:24},(_,j)=>({id:i+'-'+j,parentId:'s'+i,title:['Transparent dark logo','White-backed icon','Color illustration','Missing icon','disaster_recovery/revised_template.pdf'][j%5],url:(j===0?'http':'https')+'://example.test/'+j}))]}));
-const tree=[{id:'0',title:'',children:[{id:'r1',parentId:'0',title:'Favorites bar',children:sections.slice(0,3)},{id:'r2',parentId:'0',title:'Workspaces',children:sections.slice(3)}]}];
+const tree=[{id:'0',title:'',children:[{id:'r1',parentId:'0',folderType:'bookmarks-bar',title:'Favorites bar',children:sections.slice(0,3)},{id:'r2',parentId:'0',folderType:'other',title:'Workspaces',children:sections.slice(3)}]}];
 const mappings=Object.fromEntries(sections.map((s,i)=>[i+'-0',{stableId:'tag'+i}]));
 window.fixture={tree,...flattenTree(tree),schemaVersion:1,extensionId:'fixture',version:'0.1.19',errors:[],logs:[],metadata:{records:sections.map((s,i)=>({stableId:'tag'+i,tags:['reference','design']})),raw:{},tombstones:{},invalid:[],histories:{}},reconciliation:{mappings,matches:[]},local:{rootId:'*',mappings,pendingDeletions:[]},metadataHealth:{},preservation:{available:true,stableIds:[]},syncBytes:0,quotas:{bytes:102400,items:512},lastReconciliation:'fixture'};
 import './src/main';`,loader:'tsx',resolveDir:process.cwd()},bundle:true,jsx:'automatic',target:'es2022',outfile:join(output,'fixture.js'),loader:{'.svg':'dataurl'}});
@@ -115,17 +115,17 @@ try {
     await page.keyboard.press('Escape');
     await section(page,0).click();
     // Manage draft survives a live change originating in another dashboard.
-    await other.getByRole('button',{name:'Add link',exact:true}).click();await other.getByLabel('Title',{exact:true}).fill('Unsaved draft');
+    await other.locator('.manage-navigation').getByRole('button',{name:/^Bookmarks/}).click();await other.getByRole('button',{name:'New bookmark',exact:true}).click();await other.getByLabel('Title',{exact:true}).fill('Unsaved draft');
     await other.bringToFront();await other.waitForTimeout(100);await other.screenshot({path:join(output,`${theme}-manage.png`)});
     await contrast(other,theme,['.appearance-setting small','.legacy small','.legacy .url','.legacy a','.legacy input']);
     await change(page,theme==='dark'?'light':'dark');assert.equal(await other.getByLabel('Title',{exact:true}).inputValue(),'Unsaved draft');
     await change(page,theme);
-    await other.evaluate(()=>{window.failAppearance=true;});await appearance.selectOption(theme==='light'?'dark':'light');
+    await other.locator('.manage-navigation').getByRole('button',{name:'Settings',exact:true}).click();await other.evaluate(()=>{window.failAppearance=true;});await appearance.selectOption(theme==='light'?'dark':'light');
     await other.getByRole('alert').waitFor();await contrast(other,theme,['.status-error']);
     assert.equal(await appearance.inputValue(),theme);assert.equal(await other.getByLabel('Title',{exact:true}).inputValue(),'Unsaved draft');
     await other.screenshot({path:join(output,`${theme}-error.png`)});
     await other.evaluate(()=>{window.failAppearance=false;});await appearance.selectOption(theme);
-    await other.getByRole('button',{name:'Cancel',exact:true}).click();
+    await other.locator('.manage-navigation').getByRole('button',{name:/^Bookmarks/}).click();other.once('dialog',d=>d.accept());await other.getByRole('button',{name:'Cancel',exact:true}).click();await other.locator('.manage-navigation').getByRole('button',{name:'Settings',exact:true}).click();
   }
   // Search scope, caret, focus and original Escape snapshot survive external updates.
   await page.getByRole('button',{name:'Favorites bar',exact:true}).click();await section(page,0).click();

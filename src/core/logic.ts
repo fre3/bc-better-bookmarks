@@ -10,7 +10,7 @@ export function systemLabelsFor(url: string): SystemLabel[] {
   const scheme = urlScheme(url);
   return scheme === 'javascript' ? ['JS'] : scheme === 'http' ? ['HTTP'] : [];
 }
-export const BOOKMARKLET_WARNING = 'Executable bookmarklet\n\nThis Favorite contains JavaScript code that can execute in the context of a web page. Only save bookmarklets whose code you trust.';
+export const BOOKMARKLET_WARNING = 'Executable bookmarklet\n\nThis Bookmark contains JavaScript code that can execute in the context of a web page. Only save bookmarklets whose code you trust.';
 export function confirmLinkInput(input: LinkInput, confirm: (message: string) => boolean): LinkInput | undefined {
   if (!isBookmarklet(input.url)) return { ...input, bookmarkletConfirmed: false };
   if (!confirm(BOOKMARKLET_WARNING)) return undefined;

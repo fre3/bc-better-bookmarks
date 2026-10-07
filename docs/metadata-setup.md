@@ -1,6 +1,12 @@
-# Folder metadata setup and controlled test reset — 0.1.17
+# Indexfold metadata recovery and device setup
 
-This is an explicit setup operation, not an automatic migration. Existing extension tags and identity metadata are disposable test data by user authorization. **Edge Favorites and folders remain authoritative and unchanged.** No reset is performed by startup, installation, build or tests against a live profile.
+Current entry points (0.1.26): ordinary binding review is in **Manage → Bookmarks**, including archived and excluded records. Destructive metadata reset is in **Manage → Diagnostics → Advanced: reset extension metadata**. It is optional recovery, never routine startup/setup. Export and inventory confirmation remain required. Existing native bookmarks and unrelated preferences must stay unchanged. No reset is required for the Indexfold rebrand.
+
+The original test-data/schema-transition authorization and coordinated procedure below remain historical context and safety requirements, not an instruction to reset working metadata.
+
+## Recovery semantics (introduced in 0.1.17)
+
+This is an explicit destructive recovery operation, never an automatic migration. During the 0.1.17 transition the user authorized discarding test metadata. That historical permission does not make current tags disposable or authorize an unattended reset. **Edge Favorites and folders remain authoritative and unchanged.** No reset is performed by startup, installation, build or tests against a live profile.
 
 ## What is discarded and preserved
 
@@ -24,7 +30,7 @@ This is not a full extension-storage clear. Export is for controlled recovery; t
 ## Coordinated setup on every device
 
 1. Stop editing and close/copy unsaved drafts. Identify **every** profile/device sharing this extension ID, including temporarily offline devices. Keep old clients disabled until upgraded. A client predating 0.1.17 cannot participate safely.
-2. With writes paused, upgrade each device to the same committed 0.1.17 `dist/`. Enable only as needed to export via Manage, verify each private backup and its inventory, then disable again. Do not reset yet. Upgrading alone does not wipe tags.
+2. With writes paused, upgrade each device to the same current committed release `dist/` (0.1.17 introduced the folder schema). Enable only as needed to export via Manage, verify each private backup and its inventory, then disable again. Do not reset yet. Upgrading alone does not wipe tags.
 3. Keep all other clients disabled. On one designated device, open Manage, export a fresh backup, verify it, confirm the backups/old-client checkbox, and choose **Reset extension bookmark metadata only**. If synchronized metadata changed after export, reset refuses; export/review again. Native Favorites are not touched.
 4. Check that reset completed and `setup:epoch` is `ready`. If interrupted, writes remain blocked while it is `resetting`; the setup panel remains available even when the snapshot cannot load. Export the remaining state and deliberately retry the reset after checking the other devices. Do not bypass it by clearing storage.
 5. Enable each **upgraded** device in turn with no tag edits until it sees the same ready generation. Its stale mappings, pending deletion state and journal are invalidated automatically when that marker is adopted. Do not copy `storage.local` from another device. Settings stay local and unchanged.

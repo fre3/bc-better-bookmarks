@@ -15,7 +15,7 @@ const cancel=p=>p.getByRole('button',{name:'Cancel',exact:true});
 const modal=p=>p.getByRole('dialog');
 const editReturn=new WeakSet();
 const manage=p=>({click:async()=>{if(await p.getByRole('button',{name:'Done',exact:true}).count()){editReturn.add(p);await p.getByRole('button',{name:'Done',exact:true}).click();}await p.getByRole('button',{name:'Manage',exact:true}).click();}});
-const back=p=>({click:async()=>{await p.getByRole('button',{name:'Back to catalogue',exact:true}).click();if(editReturn.has(p)){await p.locator('#catalogue-edit').click();editReturn.delete(p);}}});
+const back=p=>({click:async()=>{await p.getByRole('button',{name:'Back to dashboard',exact:true}).click();if(editReturn.has(p)){await p.locator('#catalogue-edit').click();editReturn.delete(p);}}});
 async function editFolder(p,id,name,t){await folderEdit(p,id).click();await expect(title(p)).toBeFocused();await expect(p.locator('#favorite-edit-url')).toHaveCount(0);if(name)await title(p).fill(name);await tags(p).fill(t);await p.getByLabel('Archive this folder and its contents',{exact:true}).setChecked(t.toLowerCase().split(',').map(t=>t.trim()).includes('archived'));await save(p).click();await expect(modal(p)).toHaveCount(0);}
 try {
  for (const theme of ['light','dark']) {

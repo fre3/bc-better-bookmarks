@@ -4,7 +4,7 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
-The validated MVP remains at `mvp-validated-0.1.1`, and visual work at `ui-validated-0.1.15`. The user accepted the requested 0.1.21 creation/moving checklist. **0.1.22 is not accepted; 0.1.23 awaits targeted Edge review** of duplicate-move identity preservation, blocked editor health and drag/title interactions. Inspect affected native values read-only; use disposable duplicates for regression. Do not guess a live title/metadata repair. The separate deletion-sync check remains pending. No broad Manage redesign, bulk operations, copying or sync transport redesign is promoted.
+Validated references remain at `mvp-validated-0.1.1` and `ui-validated-0.1.15`. The user accepted 0.1.25 Edge tests and PC A/B changes/tag sync, and reported successful Chrome use. **0.1.26 awaits targeted review** of container-to-container moving, controls/menus, Manage organization and Indexfold branding. Use disposable content; the historical native-title-change cause remains unestablished. No live guessed repair, bulk operation, copying or transport redesign is authorized.
 
 ## Future catalogue imagery and motion
 
@@ -34,7 +34,7 @@ Possible future system-label targeting syntax such as `!js` remains undecided.
 
 ## Search enhancements
 
-Current implemented MVP syntax:
+Current search syntax:
 
 - plain text searches all searchable fields;
 - `#term` targets user tags;
@@ -73,9 +73,9 @@ Before production publication through Edge Add-ons:
 Do not assume the development manifest key determines the production store identity.
 
 
-## Manage organization — deferred
+## Manage organization — implemented for 0.1.26 review
 
-Reorganize and clean up Manage in a future update: separate everyday preferences, identity review and advanced diagnostics/setup more clearly. Do not redesign it during the 0.1.17 increment beyond the requested folder review and settings. Any metadata import/recovery workflow needs an explicit, evidence-driven design; the private reset export is not a one-click restore feature.
+Settings / Bookmarks / Diagnostics now separate everyday preferences, bookmark management and technical tools. Further metadata import/recovery needs an explicit evidence-driven design; private reset exports are not one-click restoration. See the current handoff before extending this interface.
 
 ## Local creation receipt housekeeping
 
@@ -83,4 +83,8 @@ A future explicit recovery/housekeeping view may expose local creation receipts 
 
 ## Current Workspace filtering — deferred
 
-No supported active-Workspace identity is established in public tab/window/bookmark fields. Keep all containers visible. Revisit only with a supported signal; no manual selector, private API or profile-file access. Cross-Workspace extension moves require separate native API outcome evidence before removing the temporary boundary restriction.
+No supported active-Workspace identity is established in public tab/window/bookmark fields. Keep all containers visible. Revisit only with a supported signal; no manual selector, private API or profile-file access. Container-to-container moving is now enabled with outcome verification; Workspace ↔ ordinary-root moving still requires separate support evidence.
+
+## 0.1.26 scope update
+
+Manage's Settings / Bookmarks / Diagnostics organization and Indexfold display branding are implemented for review. Broad future management improvements can build on these panels; no test setup is required. Container-to-container native moves are enabled with verified outcomes and await targeted Edge/two-device review. Only Workspace ↔ ordinary-root boundary support remains deferred pending evidence. Automatic active-Workspace filtering, semantic search, thumbnails, copying and bulk operations remain deferred.

@@ -22,7 +22,7 @@ describe('catalogue safety and semantics', () => {
     expect(markup).not.toContain('<a ');
     expect(markup).not.toContain('<img');
     expect(markup).toContain('tabindex="0"');
-    expect(markup).toContain('Run this bookmarklet through Edge Favorites.');
+    expect(markup).toContain('Run this bookmarklet through your browser bookmark manager.');
     expect(markup).toContain('#work');
   });
   it('renders title then trailing favicon and semicolon, with distinct supplementary tags', () => {

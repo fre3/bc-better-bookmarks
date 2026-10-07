@@ -10,18 +10,18 @@ The user supplied a read-only `getTree` property inventory during implementation
 
 [Chromium's bookmarks contract](https://developer.chrome.com/docs/extensions/reference/api/bookmarks) documents browser-owned folder types (`bookmarks-bar`, `other`, `mobile`, `managed`) and managed-node restrictions. [Microsoft's API support list](https://learn.microsoft.com/en-us/microsoft-edge/extensions/developer-guide/api-support) lists bookmarks support. Neither establishes a public Workspace-container discriminator. [Microsoft's Workspace guide](https://learn.microsoft.com/en-us/deployedge/microsoft-edge-workspaces) documents the product, not a bookmarks extension capability contract. These documents do not certify that modifying a native Favorites tree entry updates Workspace lifecycle state.
 
-## Accepted application policy — supersedes 0.1.24 blanket restriction
+## Current application policy — 0.1.26
 
 The user reports creation/editing inside real Workspaces worked, including editing Personal while Development was active. 0.1.24's blanket native restriction was rejected as too restrictive. Whether dashboard-created direct folders were recognized by Edge as actual Workspaces remains a hypothesis. The reported silent boundary move and native Favorites UI support do not establish the extension API's behavior.
 
-Root identification uses the strongest supplied **structural assumption**: under the virtual root, documented `bookmarks-bar` and `other` roots coexist with exactly one additional non-managed, untyped root. Other unknown types or multiple unknown roots prevent identification. This matches the supplied native inventory. It uses no root/container names, fixed IDs, ordering or active tab state. A different browser-specific root with the same structure is indistinguishable; this is not a universal Edge-provided identifier. Unmatched shapes retain conservative unclassified restrictions. No manual classification/setup is added.
+Root identification requires positive Edge browser evidence, then uses the supplied **structural assumption**: under the virtual root, documented `bookmarks-bar` and `other` roots coexist with exactly one additional non-managed, untyped root. Other unknown types or multiple unknown roots prevent identification. This matches the supplied native inventory. It uses no root/container names, fixed IDs, ordering or active tab state. A different browser-specific root with the same structure is indistinguishable; this is not a universal Edge-provided identifier. Unmatched shapes retain conservative unclassified restrictions. No manual classification/setup is added.
 
 Once that root is established, **every immediate folder is treated as a Workspace container by user-accepted application policy**, including an accidentally created ordinary folder. No claim of an API-provided child discriminator is made.
 
 - Root: browse/search, no native mutation, ordinary creation or receiving moves. Create new Workspaces in Edge.
 - Immediate containers: protected native name/order/parent/deletion; extension tags/archive and explicit conservative metadata binding remain available. Their contents are writable.
-- Descendant favorites and nested folders: ordinary native CRUD and within-container moving/reordering, with unchanged independent managed/identity/staleness/integrity checks. No active/inactive distinction.
-- Crossing into/out of/between Workspace containers: temporarily blocked by application policy because extension-API support is unverified. Use native Edge Favorites. No claim that Edge prohibits it; no copy/delete fallback or automatic retry.
+- Descendant favorites and nested folders: ordinary native CRUD and within/between-container moving/reordering, with unchanged independent managed/identity/staleness/integrity checks. No active/inactive distinction.
+- Crossing between Workspace containers: enabled for ordinary bookmarks/subtrees, with verified native outcome before success. Workspace ↔ ordinary-root moves remain temporarily restricted. No claim that Edge prohibits those boundaries; no copy/delete fallback or automatic retry.
 - Missing/unknown browser domains and managed subtrees remain protected. Source, destination, protected descendants and anchors are checked in the shared planner and again against the worker's current tree. Metadata-only container saves never update the native name.
 
 Browsing hides direct loose favorites and their synthetic Bookmarks group under Workspaces, including All bookmarks. Search still includes eligible loose items with full paths. Manage listings expose them with an explanation; archive filtering still applies normally. Binding review and diagnostics remain complete. No hidden entry or its metadata is mutated by this projection. Root New is absent in Workspace scope; container New remains available.
@@ -36,7 +36,7 @@ Confirmed source gap in 0.1.24: the browser adapter discarded the result of `boo
 
 A resolved unchanged result, unexpected parent/order, conflicting response or rejected API call produces an explicit error and refreshed observed state where readable. Rejection after an observed move is not described as an ordinary success. Read failure remains unverified. No automatic retry, copy/delete fallback, recreation or metadata reassignment occurs. Concurrent external order changes can deliberately produce an uncertain-result error; the user must inspect actual state before retrying. This is not a transaction with browser sync or a guarantee against changes after the final read.
 
-Within-container CRUD/reorder/movement passes simulated worker and real pointer/keyboard UI checks. Native Edge verification remains pending. Cross-boundary operations are blocked before the native call until separately established, including Workspace ↔ ordinary root and container ↔ container. Direct-root receiving is always prohibited by this checkpoint's policy.
+0.1.25 within-container CRUD/reorder/movement and tag synchronization were accepted by the user in native Edge. 0.1.26 container-to-container movement passes simulated worker and actual pointer/keyboard checks; fresh native verification is pending. Workspace ↔ ordinary-root moves and direct Workspaces-root receiving remain blocked before the native call.
 
 ## Active Workspace — deferred
 

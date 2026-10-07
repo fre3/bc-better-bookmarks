@@ -4,7 +4,7 @@ The browser-scoped command is `open-dashboard-search`, described as **Open dashb
 
 ## Assignment and use
 
-Open `edge://extensions/shortcuts`, find Better Bookmarks, and inspect the actual assignment. Suggestions can conflict with browser/extension shortcuts; do not assume Ctrl+Shift+B was assigned. Set or change it there if desired. Removing it is respected: the extension never writes or restores assignments.
+Open `edge://extensions/shortcuts` in Edge or `chrome://extensions/shortcuts` in Chrome, find Indexfold, and inspect the actual assignment. Suggestions can conflict with browser/extension shortcuts; do not assume Ctrl+Shift+B was assigned. Set or change it there if desired. Removing it is respected: the extension never writes or restores assignments.
 
 **Manage → Dashboard search shortcut** displays the actual value returned by `chrome.commands.getAll()`, including “unassigned”, and provides a shortcut-settings action. It refreshes when Manage opens or regains focus. In the extension worker console, the same read-only check is:
 
@@ -74,3 +74,7 @@ The user accepts top-number-row Alt+1–9 and Windows Alt+numpad character entry
 The accepted already-open-address-bar case may still need Ctrl+F6; no new investigation is requested. Stop for user Edge review. Website thumbnails, further editing operations, drag/drop and synchronization changes remain deferred.
 
 For the current editing review, use [the 0.1.16 focused checklist](development-state.md#edge-review). The keyboard behaviors above are accepted baseline evidence, not an outstanding request to repeat the entire shortcut investigation.
+
+## Indexfold 0.1.26 settings
+
+Manage → Settings displays the command's actual assignment, along with the appropriate browser's address to open manually. It does not attempt unsupported navigation to an internal settings URL. The suggested Windows shortcut remains Ctrl+Shift+B. The Ctrl+F6/address-bar limitation is accepted user-tested Edge behavior; successful Chrome use does not establish the same limitation or a fresh full shortcut regression there. Internal command names and extension identity are unchanged by branding.

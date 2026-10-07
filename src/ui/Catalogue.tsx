@@ -147,14 +147,14 @@ export function Catalogue({ snapshot, suspended, searchRequest, autoScrollPeek =
   return <ActionsContext.Provider value={editing && onCreate && onMove ? {snapshot,create:onCreate,move:onMove,remove:onDelete,searching} : undefined}><div onFocusCapture={event => { lastFocused.current = event.target; }} className={`catalogue${editing ? ' is-editing' : ''}`} data-dragging={drag.active} data-expansion-end={EXPANSION_END} hidden={suspended}>
     <div ref={chrome} className="catalogue-chrome">
     <header className="catalogue-navigation">
-      {editing && <div className="editing-help">Click a favorite to edit it, or use Edit beside a folder. Drag titles to move.</div>}
+      {editing && <div className="editing-help">Click a bookmark to edit it, or use Edit beside a folder. Drag titles to move.</div>}
       <RootNavigation roots={roots} scope={scope} onChange={switchScope} />
       <div className="navigation-actions">
         {editing && <span className="editing-badge">Editing</span>}
         <button ref={searchButton} onClick={() => searching ? input.current?.focus() : startSearch()}>Search /</button>
         {onEdit && <button id="catalogue-edit" aria-pressed={editing} onClick={() => setEditing(!editing)}><span className="mode-button-size"><span aria-hidden={editing} style={{ visibility: editing ? 'hidden' : 'visible' }}>Edit</span><span aria-hidden={!editing} style={{ visibility: editing ? 'visible' : 'hidden' }}>Done</span></span></button>}
         {editing && snapshot.folders.find(f=>f.id===scope)?.workspaceRole!=='root' && <AddMenu parentId={scope === '*' ? '' : scope} />}
-        {!editing && <button onClick={onManage}>Manage</button>}
+        {!editing && <button id="catalogue-manage" onClick={onManage}>Manage</button>}
       </div>
     </header>
 

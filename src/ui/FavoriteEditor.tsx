@@ -60,7 +60,7 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose, onReviewBind
   }
   useLayoutEffect(() => {
     const element = dialog.current!;
-    element.showModal(); title.current?.focus({ preventScroll: true });
+    element.showModal(); (element.querySelector<HTMLInputElement>('input:not([readonly]):not(:disabled)') ?? title.current)?.focus({ preventScroll: true });
     // Preserve scrollbar geometry and scroll offset while the native top-layer
     // dialog makes the background inert. No fixed-body scroll restoration hack.
     const root = document.documentElement;
@@ -73,7 +73,7 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose, onReviewBind
   function resumeEditing() {
     setDiscard(false);
     cancelAnimationFrame(focusFrame.current);
-    focusFrame.current = requestAnimationFrame(() => title.current?.focus({ preventScroll: true }));
+    focusFrame.current = requestAnimationFrame(() => (dialog.current?.querySelector<HTMLInputElement>('input:not([readonly]):not(:disabled)') ?? title.current)?.focus({ preventScroll: true }));
   }
   function requestClose() {
     if (submitting.current) return;
@@ -109,7 +109,7 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose, onReviewBind
       else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
     }} onCancel={event => { event.preventDefault(); event.stopPropagation(); if (discard) resumeEditing(); else requestClose(); }}>
-    <h2 id="favorite-editor-heading">{draft.isFolder ? 'Edit Folder' : 'Edit Favorite'}</h2>
+    <h2 id="favorite-editor-heading">{draft.isFolder ? 'Edit folder' : 'Edit bookmark'}</h2>
     <p id="favorite-edit-folder" className="editor-context">{draft.isFolder ? 'Parent' : 'Folder'}: {folderContext || '(root)'}</p>
     <details className="identity-details"><summary>Diagnostic details</summary><p>Native item ID: {draft.id}</p>{nativeReadOnly && <p>{current?.nativeRestriction}</p>}</details>
     <form noValidate onSubmit={event => { event.preventDefault(); void save(); }} aria-busy={saving}>
@@ -129,7 +129,7 @@ export function FavoriteEditor({ draft, snapshot, execute, onClose, onReviewBind
       {errors.tags && <p id="favorite-tags-error" className="editor-error">{errors.tags}</p>}
       <p className="editor-context">Enter direct tags without #.</p>
       {tags && tags.sources.length > 0 && <div className="editor-inheritance"><p>Inherited tags (read only). Change these at their source:</p><ul>{tags.sources.map(source => <li key={source.id}><strong>{source.tags.map(tag => `#${tag}`).join(' · ')}</strong> — {source.path.join(' / ')}</li>)}</ul><p>Removing a direct tag leaves any inherited assignment in effect.</p></div>}
-      <label className="archive-choice"><input type="checkbox" checked={archived} onPointerDown={() => { archivePointerIntent.current = !archived; }} onPointerCancel={() => { archivePointerIntent.current = null; }} onKeyDown={() => { archivePointerIntent.current = null; }} onBlur={() => { archivePointerIntent.current = null; }} disabled={saving || identityBlocked} aria-describedby="archive-help archive-inheritance" onChange={event => { setArchived(archivePointerIntent.current ?? event.target.checked); archivePointerIntent.current = null; setInput(value => ({ ...value, tags: splitArchiveTag(value.tags).tags })); }} /> {draft.isFolder ? 'Archive this folder and its contents' : 'Archive this favorite'}</label>
+      <label className="archive-choice"><input type="checkbox" checked={archived} onPointerDown={() => { archivePointerIntent.current = !archived; }} onPointerCancel={() => { archivePointerIntent.current = null; }} onKeyDown={() => { archivePointerIntent.current = null; }} onBlur={() => { archivePointerIntent.current = null; }} disabled={saving || identityBlocked} aria-describedby="archive-help archive-inheritance" onChange={event => { setArchived(archivePointerIntent.current ?? event.target.checked); archivePointerIntent.current = null; setInput(value => ({ ...value, tags: splitArchiveTag(value.tags).tags })); }} /> {draft.isFolder ? 'Archive this folder and its contents' : 'Archive this bookmark'}</label>
       <p id="archive-help" className="editor-context">Hidden from the dashboard and search unless Show archived is enabled.</p>
       <p id="archive-inheritance" hidden={!archiveSources.length}>{archived ? 'Unchecking here does not remove inherited archiving.' : 'This item is archived by its source folders; restore them to restore visibility.'} Sources: {archiveSources.map(source => `${source.path.join(' / ')} [folder ${source.id}]`).join('; ')}. Any remaining ancestor assignment can keep this item archived.</p>
       

@@ -14,7 +14,7 @@ const edit=(page,id)=>page.locator(`[id="edit-bookmark-${id}"]`);
 const title=page=>page.getByLabel('Title',{exact:true});
 const save=page=>page.getByRole('button',{name:'Save',exact:true});
 const cancel=page=>page.getByRole('button',{name:'Cancel',exact:true});
-const dialog=page=>page.getByRole('dialog',{name:'Edit Favorite'});
+const dialog=page=>page.getByRole('dialog',{name:'Edit bookmark'});
 async function closeDirty(page){await cancel(page).click();await page.getByRole('button',{name:'Discard changes',exact:true}).click();await expect(dialog(page)).toHaveCount(0)}
 async function open(page,id='0-0'){await edit(page,id).click();await expect(title(page)).toBeFocused()}
 try {
@@ -29,10 +29,10 @@ try {
   const editBox=await edit(page,'0-0').boundingBox();await page.keyboard.down('Control');await page.mouse.click(editBox.x+editBox.width/2,editBox.y+editBox.height/2);await page.keyboard.up('Control');await expect(title(page)).toBeFocused();assert.equal(context.pages().length,1);
   assert.deepEqual(await page.evaluate(()=>({y:window.scrollY,width:document.querySelector('.catalogue-flow').getBoundingClientRect().width,height:Math.round(document.querySelector('.catalogue-flow').getBoundingClientRect().height*100)/100})),beforeModal);
   const geometry=await page.evaluate(()=>({y:window.scrollY,x:document.querySelector('.section-stack').getBoundingClientRect().x}));
-  await page.keyboard.press('Shift+Tab');assert.equal(await page.evaluate(()=>document.activeElement.textContent),'Save');
-  await page.keyboard.press('Tab');await expect(title(page)).toBeFocused();
-  const rootBefore=await page.locator('[aria-current="page"]').textContent();
-  await page.keyboard.press('Alt+3');assert.equal(await page.locator('[aria-current="page"]').textContent(),rootBefore);
+  await page.keyboard.press('Shift+Tab');await expect(page.getByText('Diagnostic details',{exact:true})).toBeFocused();await page.keyboard.press('Shift+Tab');assert.equal(await page.evaluate(()=>document.activeElement.textContent),'Save');
+  await page.keyboard.press('Tab');await expect(page.getByText('Diagnostic details',{exact:true})).toBeFocused();await page.keyboard.press('Tab');await expect(title(page)).toBeFocused();
+  const rootBefore=await page.locator('.catalogue [aria-current="page"]').textContent();
+  await page.keyboard.press('Alt+3');assert.equal(await page.locator('.catalogue [aria-current="page"]').textContent(),rootBefore);
   assert.equal((await page.evaluate(()=>window.requestSearch())).status,'blocked');await expect(title(page)).toBeFocused();
   await page.mouse.click(4,4);await expect(dialog(page)).toBeVisible();
   await page.mouse.wheel(0,450);await page.waitForTimeout(150);assert.equal(await page.evaluate(()=>window.scrollY),geometry.y);
@@ -75,8 +75,8 @@ try {
   // snapshot survive, with an accessible nearby focus fallback.
   await page.getByRole('button',{name:'Favorites bar',exact:true}).click();await section(page,0).click();await page.locator('#folder-f0').click();
   await page.getByRole('button',{name:'Search /',exact:true}).click();const search=page.getByRole('textbox',{name:'Search bookmarks'});await search.fill('"no match"');await search.fill('Ordinary favorite 4');await open(page,'0-4');await page.locator('#favorite-edit-tags').fill('retained-result');await save(page).click();await expect(dialog(page)).toHaveCount(0);await expect(edit(page,'0-4')).toBeFocused();await expect(search).toHaveValue('Ordinary favorite 4');await search.fill('Unique target 1');
-  await open(page,'1-0');await title(page).fill('Renamed search result');await save(page).click();await expect(dialog(page)).toHaveCount(0);await expect(search).toBeFocused();await expect(search).toHaveValue('Unique target 1');await expect(bookmark(page,'1-0')).toHaveCount(0);await expect(page.getByRole('status').filter({hasText:'Favorite saved'})).toHaveCount(1);
-  await page.keyboard.press('Escape');await expect(page.locator('[aria-current="page"]')).toHaveText('Favorites bar');await expect(section(page,0)).toHaveAttribute('aria-expanded','true');await expect(page.locator('#folder-f0')).toHaveAttribute('aria-expanded','true');
+  await open(page,'1-0');await title(page).fill('Renamed search result');await save(page).click();await expect(dialog(page)).toHaveCount(0);await expect(search).toBeFocused();await expect(search).toHaveValue('Unique target 1');await expect(bookmark(page,'1-0')).toHaveCount(0);await expect(page.getByRole('status').filter({hasText:'Bookmark saved'})).toHaveCount(1);
+  await page.keyboard.press('Escape');await expect(page.locator('.catalogue [aria-current="page"]')).toHaveText('Favorites bar');await expect(section(page,0)).toHaveAttribute('aria-expanded','true');await expect(page.locator('#folder-f0')).toHaveAttribute('aria-expanded','true');
   await section(page,1).hover();await page.waitForTimeout(1250);await expect(page.locator('.is-peeking')).toHaveCount(1);
   const beforePeekModal=await page.evaluate(()=>window.scrollY);await edit(page,'n0').evaluate(n=>n.focus({preventScroll:true}));await page.keyboard.press('Enter');await expect(title(page)).toBeFocused();await expect(page.locator('.is-peeking, .is-leaving')).toHaveCount(0);assert.equal(await page.evaluate(()=>window.scrollY),beforePeekModal);
   await page.setViewportSize({width:390,height:700});await expect(title(page)).toBeFocused();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true);assert.equal(await dialog(page).evaluate(d=>d.scrollWidth<=d.clientWidth),true);await page.screenshot({path:join(output,`${theme}-narrow.png`)});await cancel(page).click();

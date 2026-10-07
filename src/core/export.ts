@@ -19,7 +19,7 @@ function sanitize(value: unknown): unknown {
 export function diagnosticExport(snapshot: Snapshot) {
   return sanitize({
     schemaVersion: 1, exportedAt: new Date().toISOString(),
-    note: 'Favorites data, not browsing history. Credentials and common secret URL parameters redacted. Review before sharing; titles, tags and ordinary URLs may be private. Not an importable backup.',
+    note: 'Bookmarks data, not browsing history. Credentials and common secret URL parameters redacted. Review before sharing; titles, tags and ordinary URLs may be private. Not an importable backup.',
     extensionId: snapshot.extensionId, version: snapshot.version,
     dashboardTree: snapshot.tree,
     favorites: snapshot.favorites, folders: snapshot.folders,

@@ -56,7 +56,7 @@ export class DashboardService {
     const health = metadataHealth(finalMetadata, local, finalResult, preservation.stableIds);
     const problems = Object.entries(health).filter(([, h]) => h.status !== 'valid').map(([id, h]) => `${id.slice(0, 8)}=${h.status} (raw meta ${h.rawMeta}, locally preserved ${h.preservedLocally})`);
     if (problems.length) await this.log(`Metadata health: ${problems.join('; ')}`);
-    await this.log(`${reason}: ${favorites.length} Favorites; ${finalResult.matches.map(m => `${m.stableId.slice(0, 8)}=${m.status}${m.bookmarkId ? `(${m.bookmarkId})` : ''}`).join(', ') || 'no metadata'}${errors.length ? `; ${errors.length} errors/warnings` : ''}`);
+    await this.log(`${reason}: ${favorites.length} Bookmarks; ${finalResult.matches.map(m => `${m.stableId.slice(0, 8)}=${m.status}${m.bookmarkId ? `(${m.bookmarkId})` : ''}`).join(', ') || 'no metadata'}${errors.length ? `; ${errors.length} errors/warnings` : ''}`);
     return { schemaVersion: 1, ...this.identity, tree, favorites, folders, metadata: finalMetadata, local,
       reconciliation: finalResult, metadataHealth: health, preservation, syncBytes: await this.metadata.bytes(), quotas: this.identity.quotas ?? QUOTAS,
       lastReconciliation: this.now(), logs: this.logs ?? [], errors };
@@ -75,8 +75,8 @@ export class DashboardService {
   }
   private favorite(snapshot: Snapshot, id: string, expected: string) {
     const f = snapshot.favorites.find(f => f.id === id);
-    if (!f || f.unmodifiable) throw new Error('Favorite is missing or managed.');
-    if (editToken(f, this.tags(snapshot, id)) !== expected) throw new Error('This Favorite or its tags changed since editing began. Cancel and reopen the editor.');
+    if (!f || f.unmodifiable) throw new Error('Bookmark is missing or managed.');
+    if (editToken(f, this.tags(snapshot, id)) !== expected) throw new Error('This Bookmark or its tags changed since editing began. Cancel and reopen the editor.');
     return f;
   }
   private tags(snapshot: Snapshot, id: string) {
@@ -130,13 +130,13 @@ export class DashboardService {
         const node=await this.bookmarks.create({parentId:parent.id,title:input.title,...(isFolder?{}:{url:input.url})});
         receipt.id=node.id;receipt.native=nativeToken(node);
         await this.metadata.saveCreation(requestId,receipt);
-      } catch(error){throw Error(`Creation may have reached Edge. Retry only this request; do not start another creation request. ${String(error)}`, {cause:error});}
+      } catch(error){throw Error(`Creation may have reached the browser. Retry only this request; do not start another creation request. ${String(error)}`, {cause:error});}
     }
-    if(!receipt.id)throw Error('Creation outcome is uncertain. No second item will be created. Inspect Edge Favorites before starting a new creation request.');
+    if(!receipt.id)throw Error('Creation outcome is uncertain. No second item will be created. Inspect browser bookmarks before starting a new creation request.');
     try {
       const current=await this.snapshot('complete creation');
       const n=nodeById(current,receipt.id);
-      if(!n || nativeToken(n)!==receipt.native)throw Error('Created item changed or disappeared. Review that item in Edge; it will not be recreated or overwritten.');
+      if(!n || nativeToken(n)!==receipt.native)throw Error('Created item changed or disappeared. Review that item in the browser; it will not be recreated or overwritten.');
       if(input.tags.length){
         const f=n.url===undefined?folderNode(n as Snapshot['folders'][number],current.folders):n as Favorite;
         receipt.record??={schemaVersion:2,stableId:receipt.stableId,...(receipt.generation?{generation:receipt.generation}:{}),initialLocator:f.locator,tags:input.tags,updatedAt:this.now()};
@@ -160,12 +160,12 @@ export class DashboardService {
     try { reply = await this.bookmarks.move(id, parentId, index); } catch (error) { rejected = error; failed=true; }
     let after: Snapshot;
     try { const tree = await this.bookmarks.getTree(); after = {...before, tree, ...flattenTree(tree)}; }
-    catch (error) { throw Error(`Move outcome is unverified: native state could not be read. No automatic retry; inspect Edge Favorites before another attempt. ${String(rejected ?? error)}`, {cause:error}); }
+    catch (error) { throw Error(`Move outcome is unverified: native state could not be read. No automatic retry; inspect browser bookmarks before another attempt. ${String(rejected ?? error)}`, {cause:error}); }
     const issue=moveOutcome(before,after,id,parentId,index,reply);
     if(issue || failed) {
       // Refresh/reconcile the observed state, without issuing a second move.
       try { await this.snapshot('move outcome not confirmed'); } catch { /* retain the native outcome error */ }
-      throw Error(`${issue ?? 'The requested native position was observed, but Edge returned an error.'} No automatic retry; inspect Edge Favorites before another attempt.${failed ? ` Edge reported: ${String(rejected)}` : ''}`);
+      throw Error(`${issue ?? 'The requested native position was observed, but the browser returned an error.'} No automatic retry; inspect browser bookmarks before another attempt.${failed ? ` Browser reported: ${String(rejected)}` : ''}`);
     }
   }
   async command(command: Command): Promise<Snapshot> {
@@ -179,7 +179,7 @@ export class DashboardService {
       const target=planMove(s,command.id,command.placement);
       const moving=nodeById(s,command.id)!;
       const nodes=[...s.favorites,...s.folders.filter(metadataEditable).map(f=>folderNode(f,s.folders))].filter(n=>n.id===moving.id || n.ancestorIds.includes(moving.id) || n.id===target.parentId || s.folders.find(f=>f.id===target.parentId)?.ancestorIds.includes(n.id));
-      for(const n of nodes){this.preflightTags(s,n,this.tags(s,n.id));if(!s.reconciliation.mappings[n.id] && s.reconciliation.matches.some(m=>m.candidateIds.includes(n.id)))throw Error('Folder or favorite metadata needs binding review before moving.');}
+      for(const n of nodes){this.preflightTags(s,n,this.tags(s,n.id));if(!s.reconciliation.mappings[n.id] && s.reconciliation.matches.some(m=>m.candidateIds.includes(n.id)))throw Error('Folder or bookmark metadata needs binding review before moving.');}
       const freshTree=await this.bookmarks.getTree();
       const fresh={...s,tree:freshTree,...flattenTree(freshTree)};
       if(sourceToken(fresh,command.id)!==command.expected || placementToken(fresh,command.placement)!==command.destinationExpected)throw Error('Native source or destination changed before the move. Nothing was moved.');
@@ -204,7 +204,7 @@ export class DashboardService {
       const folder = s.folders.find(f => f.id === command.id);
       if (!folder || !metadataEditable(folder)) throw Error('Browser-owned, managed or missing folder cannot be edited.');
       const title = !folder.renamable && command.title === folder.title ? folder.title : command.title.trim();
-      if (title !== folder.title) { assertNative(folder); if (!folder.renamable) throw Error('Naming is managed in Edge. Only extension tags may be edited.'); }
+      if (title !== folder.title) { assertNative(folder); if (!folder.renamable) throw Error('Naming is managed by the browser. Only extension tags may be edited.'); }
       if (folderEditToken(s, folder) !== command.expected) throw new Error('Folder or direct tags changed. Reopen the editor.');
       if (!command.title.trim()) throw new Error('A name is required.');
       const tags = normalizeTags(command.tags);
@@ -214,7 +214,7 @@ export class DashboardService {
       if (!s.reconciliation.mappings[folder.id] && s.reconciliation.matches.some(m => m.candidateIds.includes(folder.id))) throw new Error('Review the existing folder metadata before assigning tags; no identity was guessed.');
       const progress: EditProgress = { title: false, url: false, location: false, tags: 'not-confirmed' };
       try {
-        if (folder.title !== title) { const current = flattenTree(await this.bookmarks.getTree()).folders.find(n=>n.id===folder.id); assertNative(current); if(!current?.renamable) throw Error('Naming is managed in Edge.'); await this.bookmarks.update(folder.id, { title }); progress.title = true; }
+        if (folder.title !== title) { const current = flattenTree(await this.bookmarks.getTree()).folders.find(n=>n.id===folder.id); assertNative(current); if(!current?.renamable) throw Error('Naming is managed by the browser.'); await this.bookmarks.update(folder.id, { title }); progress.title = true; }
         const fresh = flattenTree(await this.bookmarks.getTree()).folders;
         const current = fresh.find(f => f.id === folder.id);
         if (!current) throw new Error('Folder disappeared during edit.');
@@ -227,7 +227,7 @@ export class DashboardService {
       if (!folder.renamable) throw new Error('Browser-owned root folders cannot be renamed.');
       if (folder.title !== command.expectedTitle) throw new Error('Folder changed. Reopen the editor.');
       if (!command.title.trim()) throw new Error('Folder name is required.');
-      const current = flattenTree(await this.bookmarks.getTree()).folders.find(n=>n.id===command.id); assertNative(current); if(!current?.renamable) throw Error('Naming is managed in Edge.');
+      const current = flattenTree(await this.bookmarks.getTree()).folders.find(n=>n.id===command.id); assertNative(current); if(!current?.renamable) throw Error('Naming is managed by the browser.');
       await this.bookmarks.update(command.id, { title: command.title.trim() });
     } else if (command.type === 'delete') {
       if(command.subtreeExpected!==undefined && (command.generation!==s.metadata.setup?.generation || command.expected!==sourceToken(s,command.id) || command.subtreeExpected!==deletionToken(s,command.id)))throw Error('Deletion target or subtree changed. Review the refreshed summary and confirm again.');
@@ -277,9 +277,9 @@ export class DashboardService {
         if (f.title !== input.title || f.url !== input.url) { await this.bookmarks.update(f.id, { title: input.title, url: input.url }); progress.title = f.title !== input.title; progress.url = f.url !== input.url; }
         if (f.parentId !== input.parentId) { const tree=await this.bookmarks.getTree(); const beforeMove={...s,tree,...flattenTree(tree)}; const target=planMove(beforeMove,f.id,{parentId:input.parentId,side:'end'}); await this.moveNative(beforeMove,f.id,target.parentId,target.index); progress.location = true; }
         const fresh = flattenTree(await this.bookmarks.getTree()).favorites.find(n => n.id === f.id);
-        if (!fresh) throw new Error('Favorite disappeared during edit.');
+        if (!fresh) throw new Error('Bookmark disappeared during edit.');
         await this.setTags(fresh, input.tags);
-      } catch (error) { throw new EditFailure(`Edit may be partially applied to Edge Favorites. ${String(error)}`, progress); }
+      } catch (error) { throw new EditFailure(`Edit may be partially applied to browser bookmarks. ${String(error)}`, progress); }
     }
     return this.snapshot(`after ${command.type}`);
   }

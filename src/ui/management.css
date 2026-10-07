@@ -1,0 +1,22 @@
+.manage { padding-block: 28px 50px; max-width: 1400px; margin-inline: auto; font: 16px/1.5 Helvetica, Arial, sans-serif; }
+.manage-header { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
+.manage-header h1 { font: 38px/1.2 Georgia, serif; margin: 0; }
+.manage-header p { margin: 6px 0; }
+.manage-description { max-width: 65ch; color: var(--secondary); }
+.manage h2 { font-size: 23px; margin-block: 24px 10px; }
+.manage-navigation { display: flex; flex-wrap: wrap; gap: 12px 28px; border-bottom: 1px solid var(--input-rule); margin-block: 22px; }
+.manage-navigation button { padding-block: 12px; }
+.manage-navigation [aria-current] { border-bottom: 2px solid var(--text); font-weight: 600; }
+.manage .back-dashboard, .manage-review button, .manage-draft button { text-decoration: underline; min-height: 36px; }
+.manage-review, .manage-draft { border-inline-start: 2px solid var(--edit-accent); padding-inline-start: 12px; }
+.manage input, .manage select { max-width: 100%; }
+.manage summary { cursor: pointer; padding-block: 8px; }
+.manage .legacy :is(button,input,select,textarea,article,.settings,.editor,.diagnostics) { border-radius: 0; }
+.manage .legacy article { background: var(--surface); }
+.manage .legacy .settings, .manage .legacy .diagnostics { background: var(--surface); }
+.manage .metadata-setup { margin-block: 28px; padding: 16px; border: 1px solid var(--error); }
+.manage .metadata-setup button, .manage .folder-binding-workflow button { padding: 8px 12px; border: 1px solid var(--control-border); margin: 8px 8px 8px 0; }
+.manage .metadata-setup pre { overflow: auto; white-space: pre-wrap; max-height: 320px; }
+.manage :is(p,li,summary,code) { overflow-wrap: anywhere; }
+.manage .shortcut-help { max-width: 70ch; }
+@media(max-width:600px) { .manage-header { flex-wrap: wrap; } .manage-navigation { gap: 16px; } }

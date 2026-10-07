@@ -5,7 +5,7 @@ export function itemMetadataIssue(state: Snapshot, id: string): string | undefin
   if (state.metadata.invalid.length) return 'Unsupported synchronized data is present. Tag writes are blocked until reviewed in diagnostics.';
   if (!state.reconciliation.mappings[id] && state.reconciliation.matches.some(m => m.status === 'ambiguous' && m.candidateIds.includes(id))) return 'Ambiguous metadata match. Tags were not written.';
   const previousId = state.local.mappings[id]?.stableId;
-  if (previousId && (state.metadata.tombstones[previousId] || state.local.pendingDeletions.includes(previousId))) return 'Deletion evidence exists for this Favorite. Editing its metadata is blocked; inspect diagnostics.';
+  if (previousId && (state.metadata.tombstones[previousId] || state.local.pendingDeletions.includes(previousId))) return 'Deletion evidence exists for this Bookmark. Editing its metadata is blocked; inspect diagnostics.';
   const mapping = state.reconciliation.mappings[id];
   const existing = state.metadata.records.find(r => r.stableId === mapping?.stableId);
   if (previousId && mapping && mapping.stableId !== previousId) return 'Conflicting local identity. Editing is blocked; inspect diagnostics.';

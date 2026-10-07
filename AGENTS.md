@@ -1,12 +1,12 @@
-# Better Bookmarks
+# Indexfold
 
-Personal Microsoft Edge Manifest V3 New Tab dashboard. TypeScript + React + plain Vite; no backend or separate bookmark database.
+Personal Chrome and Microsoft Edge Manifest V3 New Tab dashboard. TypeScript + React + plain Vite; no backend or separate bookmark database.
 
-- **Edge Favorites are authoritative** for titles, URLs, folder hierarchy and order. Never silently move/restructure Favorites, bulk-delete, call `removeTree`, or perform destructive migrations.
+- **Native browser bookmarks are authoritative** for titles, URLs, folder hierarchy and order. Never silently move/restructure bookmarks, bulk-delete, call `removeTree`, or perform destructive migrations.
 - **Cross-device bookmark IDs are not guaranteed stable.** Never key synchronized tags by a browser bookmark ID. UUID metadata and locator history live in sync storage; local mappings/root selection live in local storage. Ambiguity must remain visible and unresolved.
 - Browser APIs belong in `src/browser` and worker event wiring in `src/background.ts`. React sends typed commands. `src/core` contains mockable service/pure matching/search/schema logic.
-- One worker queue owns writes. Reconciliation never edits Favorites, creates UUIDs automatically, guesses duplicate identity, or rewrites tags during locator publication.
-- Preserve `public/manifest.json`'s public key; development ID must match on both machines. Never commit private signing material, secrets or Favorites diagnostic exports.
+- One worker queue owns writes. Reconciliation never edits bookmarks, creates UUIDs automatically, guesses duplicate identity, or rewrites tags during locator publication.
+- Preserve `public/manifest.json`'s public key; development ID must match on both machines. Never commit private signing material, secrets or bookmark diagnostic exports.
 - Node 24 LTS. `npm ci`; `npm run typecheck`; `npm run lint`; `npm test`; `npm run build`. `npm run check` runs all checks. Load `dist/` unpacked; `npm run dev` watches builds. `npm run extension:id` prints expected ID.
 - `package.json` is the canonical release/test-build version; keep `public/manifest.json` and the generated `dist/manifest.json` at the same version. Bump the patch version when deliberately handing off a materially changed build for Edge testing (not for every commit). `npm run build` verifies version consistency.
 - `dist/` is intentionally version-controlled as the exact browser-test artifact shared between development and testing. After meaningful implementation changes, regenerate it with `npm run build` (normally via `npm run check`) and commit resulting `dist/` changes with the source. Desktop/Edge testing should `git pull` and use the committed `dist/` rather than rebuilding independently. Do not add `dist/` back to `.gitignore`.

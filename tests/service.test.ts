@@ -274,7 +274,7 @@ describe('creation/move safety boundaries',()=>{
  it('does not repeat a native create with an uncertain outcome',async()=>{
   const {service,bookmarks}=setup();bookmarks.create=async()=>{bookmarks.calls.push('create');throw Error('lost native response');};
   const command={type:'create-folder' as const,requestId:'uncertain-123',parentId:'1',title:'New'};
-  await expect(service.command(command)).rejects.toThrow('may have reached Edge');await expect(service.command(command)).rejects.toThrow('uncertain');expect(bookmarks.calls).toEqual(['create']);
+  await expect(service.command(command)).rejects.toThrow('may have reached the browser');await expect(service.command(command)).rejects.toThrow('uncertain');expect(bookmarks.calls).toEqual(['create']);
  });
  it('rejects virtual/managed destinations and browser roots as sources',async()=>{
   const {service,bookmarks}=setup();bookmarks.all().find(n=>n.id==='11')!.unmodifiable='managed';const s=await service.snapshot('test');

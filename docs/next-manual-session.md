@@ -16,7 +16,7 @@ Cross-device gate G: after each mutation, leave both Edges online and observe th
 
 ## Read-only worker inspection helper
 
-User opens edge://extensions, finds Better Bookmarks, then opens its service-worker Inspect link and Console. This keeps the worker awake: close it for persistence/wakeup tests. If the link/console is unavailable, report that and leave those checks unverified. Do not paste scripts into an ordinary website console. All API calls below are reads; replace UUID placeholders only with the intended disposable test identity. Run the definition again after restarting DevTools if needed.
+User opens edge://extensions, finds Indexfold, then opens its service-worker Inspect link and Console. This keeps the worker awake: close it for persistence/wakeup tests. If the link/console is unavailable, report that and leave those checks unverified. Do not paste scripts into an ordinary website console. All API calls below are reads; replace UUID placeholders only with the intended disposable test identity. Run the definition again after restarting DevTools if needed.
 
 ```js
 var bbInspect = async function (id) {
@@ -53,7 +53,7 @@ Remove ALL Guide tags, save and inspect again. Expected: same UUID with metadata
 
 ### E3. Persistence across reload and no startup replay
 
-If a naturally missing identity is available on this device, first record its raw meta absence and preservation status before reload for the no-replay comparison. Close worker DevTools, reload Better Bookmarks from edge://extensions, and open a fresh New Tab. Inspect Guide again using the helper. Expected: same UUID, journal entry and empty metadata tags survive; opening/reloading did not rewrite the journal timestamp. Notes' entry remains unchanged. Existing unrelated missing metadata, if any, must not be recreated. This validates reload persistence, not actual worker suspension or Microsoft transport. If no missing record exists, the no-replay-on-missing observation remains NOT EXERCISED.
+If a naturally missing identity is available on this device, first record its raw meta absence and preservation status before reload for the no-replay comparison. Close worker DevTools, reload Indexfold from edge://extensions, and open a fresh New Tab. Inspect Guide again using the helper. Expected: same UUID, journal entry and empty metadata tags survive; opening/reloading did not rewrite the journal timestamp. Notes' entry remains unchanged. Existing unrelated missing metadata, if any, must not be recreated. This validates reload persistence, not actual worker suspension or Microsoft transport. If no missing record exists, the no-replay-on-missing observation remains NOT EXERCISED.
 
 ### E4. Conditional missing-identity rejection
 

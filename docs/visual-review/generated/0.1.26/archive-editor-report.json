@@ -1,0 +1,10 @@
+[
+  {
+    "theme": "light",
+    "result": "direct/inherited/both, multiple sources, checkbox-only repeated Escape/discard, typed archive normalization at blur, direct-only persistence, no permanent labels, result removal and focus"
+  },
+  {
+    "theme": "dark",
+    "result": "direct/inherited/both, multiple sources, checkbox-only repeated Escape/discard, typed archive normalization at blur, direct-only persistence, no permanent labels, result removal and focus"
+  }
+]

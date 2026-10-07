@@ -9,13 +9,13 @@ React New Tab → typed runtime commands → single MV3 worker queue
                                ↙                  ↘
            BrowserBookmarksRepository        MetadataRepository
                   ↓                          ↙              ↘
-          Edge bookmarks API          storage.sync      storage.local
+          Browser bookmarks API          storage.sync      storage.local
                                             ↑
                               BookmarkMetadataReconciler
                               (pure reconcile function)
 ```
 
-- `src/browser/bookmarks.ts`: mockable Favorites CRUD, and allowlisted projection of browser nodes. Never invokes `removeTree`; checks that the one node being deleted is a link.
+- `src/browser/bookmarks.ts`: mockable bookmark CRUD, and allowlisted projection of browser nodes. Never invokes `removeTree`; checks that the one node being deleted is a link.
 - `src/browser/metadata.ts`: mockable storage, compare-before-write, quota preflight, invalid-record overwrite protection, local settings and logs.
 - `src/core/reconcile.ts`: `reconcile` is the BookmarkMetadataReconciler. Pure global candidate analysis with explicit proposed locator writes; no API calls.
 - `src/core/logic.ts`: tree flattening, exact structured fingerprints, tag normalization, and `searchFavorites` (the small SearchService function). No search library or unnecessary class layer.
@@ -24,7 +24,7 @@ React New Tab → typed runtime commands → single MV3 worker queue
 - `src/browser/client.ts`: message transport and dashboard refresh subscription. React never directly uses bookmarks/storage APIs.
 - `src/core/export.ts`: allowlisted diagnostic export with URL credential redaction. Browser `dateLastUsed` is never read into application models.
 
-React's view model includes full display paths and local ancestry IDs. Grouping uses actual folder IDs to distinguish equally named folders. The full ordered browser tree remains the source. No snapshot of bookmarks is persisted as an alternative database. Root selection restricts UI mutations, while reconciliation and diagnostics intentionally inspect the complete tree so a move outside the dashboard can still preserve identity.
+React's view model includes full display paths and local ancestry IDs. Grouping uses actual folder IDs to distinguish equally named folders. The full ordered browser tree remains the source. No snapshot of bookmarks is persisted as an alternative database. Root selection scopes presentation, while mutation checks use capabilities and identity health across the complete tree. Reconciliation and diagnostics retain the complete tree.
 
 `Favorite.systemLabels` is derived by `flattenTree` from the URL scheme: `javascript:` → `JS`, `http:` → `HTTP`, HTTPS → none. User tags remain in the existing metadata `tags` array. Labels never enter that array, allocate UUIDs or cause storage writes. The persisted schema and reconciliation algorithm are unchanged. A URL edit of an already mapped Favorite can still publish locator history under the existing rules; that write is for identity, never for a label.
 
@@ -225,3 +225,13 @@ Containers are non-renamable/non-movable/non-deletable native items but writable
 The browse projection omits direct loose Workspace-root entries only. The full snapshot, search, diagnostic and administrative binding views retain them. Search paths identify location; archive filtering remains independent. No native data or metadata is changed by visibility.
 
 `move-outcome.ts` verifies full native order against the preflight plan, returned API node and fresh tree, including same-parent removal semantics. Worker and Manage moving share it. Confirmed no-op/unexpected/rejected/uncertain outcomes cannot become successful mutation messages, and never trigger fallback writes or automatic retry. No synchronized schema, identity algorithm, transport or permission changes. The historical native-title-change cause remains unestablished.
+
+## Indexfold management and cross-container moves — 0.1.26
+
+Display branding changes no manifest public key, extension ID, storage key, synchronized schema, export field identity, repository name or metadata namespace. Historical references and native labels retain original wording; application labels use bookmarks. Browser adapter adds only a derived `browserFamily` to root snapshots, gating the Edge-specific structural assumption. Ordinary Chrome roots do not acquire Workspace semantics. No active-Workspace inference or new permissions.
+
+The shared boundary guard now permits ordinary items/subtrees between two Workspace containers while still rejecting Workspace ↔ ordinary-root moves. All callers (drag, Move, Manage, worker) retain capability, subtree, binding, generation and concurrency checks. 0.1.25 move-result verification remains mandatory; no copy/delete, automatic retry or guessed repair. Direct metadata/mappings remain stable; reconciled ancestry drives inherited tags/archive/source paths. The reported historical native-title-change cause remains unknown. Native cross-container outcomes still require user review.
+
+Manage is a three-panel view (the diagnostic table mounts on its first visit, avoiding hidden initial dashboard work): Settings, Bookmarks, Diagnostics. Hidden panels retain existing form state/query/selection. Returning to dashboard also retains drafts; visibility does not save/discard. A draft notice links back to Bookmarks, and additional editor-opening actions cannot overwrite a live management draft. Modal protection/worker queue remain unchanged. Bookmarks uses archive-filtered content but full-source effective tags; Diagnostics and administrative folder binding use the complete snapshot, including archived/excluded records.
+
+Settings uses local appearance/archive/preview hooks and actual commands API assignment; browser-specific shortcut page addresses are instructions, not unsupported automatic internal-page navigation. Browser label is diagnostic only. Optional copy/export is read-only and warns about private data. Existing metadata recovery remains behind Advanced, export/inventory and cross-device confirmation. Test folder defaults/setup wording are removed; no automatic initialization, generator or destructive recovery runs. Build/tests retain isolated fixture infrastructure.

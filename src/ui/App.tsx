@@ -7,15 +7,16 @@ import type { Command, Snapshot } from '../core/model';
 import { folderBindings, folderNeedsReview } from './folder-bindings';
 import { FolderBindingDialog } from './FolderBindingDialog';
 import { Catalogue } from './Catalogue';
-import { LegacyManagement } from './LegacyManagement';
-import { onDashboardSearch, dashboardShortcut, openShortcutSettings } from '../browser/dashboard-launch';
+import { MetadataSetup } from './MetadataSetup';
+import { Management } from './Management';
+import { browserFamily, shortcutSettingsAddress } from '../browser/platform';
+import { onDashboardSearch, dashboardShortcut } from '../browser/dashboard-launch';
 import type { SearchIntent } from '../core/dashboard-launch';
 import { useArchivePreference } from './useArchivePreference';
 import { visibleSnapshot } from '../core/node-tags';
 import { usePeekPreference } from './usePeekPreference';
 import './legacy.css';
 import { EditFailure, errorText, type SaveFailure } from '../core/edit-failure';
-import { MetadataSetup } from './MetadataSetup';
 import { FavoriteEditor } from './FavoriteEditor';
 import { favoriteDraft, type FavoriteDraft } from './favorite-editor';
 import { AppearanceSetting } from './AppearanceSetting';
@@ -40,6 +41,8 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const [draft, setDraft] = useState<FavoriteDraft>();
   const [managing, setManaging] = useState(false);
+  const previouslyManaging=useRef(false);
+  useEffect(()=>{if(managing) document.getElementById('manage-title')?.focus({preventScroll:true}); else if(previouslyManaging.current) document.getElementById('catalogue-manage')?.focus({preventScroll:true}); previouslyManaging.current=managing;},[managing]);
   const [searchRequest, setSearchRequest] = useState<SearchIntent>();
   const [shortcut, setShortcut] = useState<string>();
   useEffect(() => onDashboardSearch(id => {
@@ -111,7 +114,7 @@ export function App() {
     const saved = await execute(command, value => { failure = value; });
     return saved ? undefined : failure ?? { error: 'Could not complete this action. Your input is retained.' };
   }
-  if (!snapshot) return <main><h1>Better Bookmarks</h1><p role="status">{error || 'Reading Edge Favorites…'}</p><button onClick={() => void execute({ type: 'snapshot' })}>Retry</button><MetadataSetup onReset={() => void execute({ type: 'snapshot' })} /></main>;
+  if (!snapshot) return <main><h1>Indexfold</h1><p role="status">{error || 'Reading browser bookmarks…'}</p><button onClick={() => void execute({ type: 'snapshot' })}>Retry</button><MetadataSetup onReset={() => void execute({ type: 'snapshot' })} /></main>;
   return <main className={managing ? undefined : 'catalogue-page'}>
     {error && <p className="status-error" role="alert">{error}</p>}
     <p className={managing ? undefined : 'sr-only'} hidden={managing && !notice} role="status" aria-atomic="true">{notice}</p>
@@ -123,22 +126,21 @@ export function App() {
     {draft && <FavoriteEditor draft={draft} snapshot={snapshot} onReviewBinding={() => openBindingReview(draft.id)} execute={executeReviewed} onClose={saved => {
       restoreFavorite.current = draft.id;
       setDraft(undefined);
-      if (saved) setNotice(draft.isFolder ? 'Folder saved in this browser.' : 'Favorite saved in this browser.');
+      if (saved) setNotice(draft.isFolder ? 'Folder saved in this browser.' : 'Bookmark saved in this browser.');
     }} />}
     {bindingReview && <FolderBindingDialog snapshot={snapshot} folderId={bindingReview.folderId} execute={executeReviewed} onClose={closeBindingReview} onComplete={archived => {
       closeBindingReview();
       setNotice(`Folder binding confirmed. Received tags applied on this device.${archived && !archivePreference.enabled ? ' Archived folders are now hidden; enable Show archived in Manage to view them.' : ''}`);
     }} />}
     <div hidden={!managing}>
-      <div className="management-heading"><span>Management and settings</span><button onClick={() => { setManaging(false); setNotice(''); }}>Back to catalogue</button></div>
+      <Management snapshot={snapshot} content={managementSnapshot!} busy={busy} execute={execute} onClose={() => { setManaging(false); setNotice(''); }} onReview={() => openBindingReview()} settings={<>
       <AppearanceSetting />
-      <p><label><input type="checkbox" checked={archivePreference.enabled} disabled={!archivePreference.ready || archivePreference.saving} onChange={e => void archivePreference.update(e.target.checked)} /> Show archived</label> <small>Include archived favorites and folders in the dashboard and search.</small></p>
+      <p><label><input type="checkbox" checked={archivePreference.enabled} disabled={!archivePreference.ready || archivePreference.saving} onChange={e => void archivePreference.update(e.target.checked)} /> Show archived</label> <small>Include archived bookmarks and folders in the dashboard and search.</small></p>
       {archivePreference.error && <p role="alert">{archivePreference.error}</p>}
-      <p>Dashboard search shortcut: {shortcut === undefined ? 'assignment unavailable' : shortcut || 'unassigned'}. <button onClick={openShortcutSettings}>Keyboard shortcut settings</button>. New Tab fallback: Ctrl+F6, then type.</p>
+      <p>Dashboard search shortcut: {shortcut === undefined ? 'assignment unavailable' : shortcut || 'unassigned'}. Open <code>{shortcutSettingsAddress()}</code> in the address bar to change it.{browserFamily()==='edge' && <> In Edge, if typing remains in the address bar, use Ctrl+F6, then type.</>}</p>
       <p><label><input type="checkbox" checked={peekPreference.enabled} disabled={!peekPreference.ready || peekPreference.saving} onChange={e => void peekPreference.update(e.target.checked)} /> Auto-scroll peek previews</label> <small>On this device · starts after 1 second · disabled by reduced motion</small></p>
       {peekPreference.error && <p role="alert">{peekPreference.error}</p>}
-      <MetadataSetup snapshot={snapshot} execute={execute} onReset={() => void execute({ type: 'snapshot' })} />
-      <LegacyManagement s={managementSnapshot!} tagSnapshot={snapshot} busy={busy} execute={execute} />
+      </>} />
     </div>
   </main>;
 }

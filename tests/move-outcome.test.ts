@@ -21,7 +21,7 @@ describe('native move outcome verification',()=>{
  it('does not call API rejection success even when a move took effect',async()=>{
   const {service,bookmarks}=setup();const s=await service.snapshot('before');const move=bookmarks.move.bind(bookmarks);
   bookmarks.move=async(id,parent)=>{await move(id,parent);throw Error('lost response');};const placement:Placement={parentId:'11',side:'end'};
-  await expect(service.command({type:'move',id:'20',expected:sourceToken(s,'20'),placement,destinationExpected:placementToken(s,placement)})).rejects.toThrow('position was observed, but Edge returned an error');expect(bookmarks.calls).toEqual(['move']);
+  await expect(service.command({type:'move',id:'20',expected:sourceToken(s,'20'),placement,destinationExpected:placementToken(s,placement)})).rejects.toThrow('position was observed, but the browser returned an error');expect(bookmarks.calls).toEqual(['move']);
  });
  it('rejects conflicting API reply and post-API read failure without claiming a confirmed result',async()=>{
   for(const kind of ['reply','read']){

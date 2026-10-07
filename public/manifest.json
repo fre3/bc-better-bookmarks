@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Better Bookmarks — Technical MVP",
+  "name": "Indexfold",
   "version": "0.1.26",
-  "description": "Edge Favorites dashboard with experimental synchronized tags and identity diagnostics.",
+  "description": "A typography-first bookmark dashboard with instant search and keyboard navigation. Built for Chrome and Edge.",
   "permissions": [
     "bookmarks",
     "storage",

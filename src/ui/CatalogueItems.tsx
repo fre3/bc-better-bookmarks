@@ -42,12 +42,12 @@ export function CatalogueItems({ items, expanded, onToggle, query, depth = 0, on
     }
     const { favorite, tags, tagInfo, ambiguous, metadataIssue } = item;
     const editable = Boolean(onEdit && !favorite.unmodifiable);
-    const editDescription = favorite.nativeRestriction ? 'Click or press Enter to edit extension tags. Native fields are read-only in this browser location. Modifier and middle clicks open the link.' : 'Click or press Enter to edit this favorite. Drag its title to move. Modifier and middle clicks open the link.';
+    const editDescription = favorite.nativeRestriction ? 'Click or press Enter to edit extension tags. Native fields are read-only in this browser location. Modifier and middle clicks open the link.' : 'Click or press Enter to edit this bookmark. Drag its title to move. Modifier and middle clicks open the link.';
     const activate = (event: MouseEvent<HTMLElement>) => { if (editable && event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) { event.preventDefault(); onEdit?.(favorite.id); } };
     const href = safeHref(favorite.url);
     const icon = faviconUrl(favorite.url);
     const revealed = query !== null ? matchingTags(favorite, tags, query) : [];
-    const explanation = !href ? (isBookmarklet(favorite.url) ? 'Run this bookmarklet through Edge Favorites.' : "Open this Favorite using Edge's Favorites UI.") : '';
+    const explanation = !href ? (isBookmarklet(favorite.url) ? 'Run this bookmarklet through your browser bookmark manager.' : "Open this Bookmark using your browser bookmark manager.") : '';
     // URL status is derived from the Favorite, not a user tag. It uses the same
     // item-local reveal rules rather than a permanently visible annotation path.
     const statusText = [...favorite.systemLabels, explanation, metadataIssue || (ambiguous ? 'Ambiguous metadata — inspect diagnostics in Manage' : '')].filter(Boolean).join(' · ');

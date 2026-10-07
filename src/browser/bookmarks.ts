@@ -29,7 +29,7 @@ export class BrowserBookmarksRepository implements BookmarksRepository {
   }
   async removeLink(id: string) {
     const [node] = await this.api.get(id);
-    if (node.url === undefined) throw new Error('Deletion is restricted to a single Favorite, never a folder.');
+    if (node.url === undefined) throw new Error('Deletion is restricted to a single Bookmark, never a folder.');
     await this.api.remove(id);
   }
 }

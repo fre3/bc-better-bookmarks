@@ -1,53 +1,48 @@
 # Development State
 
 Last updated: 2026-10-07
-Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.26**, implementation and verification in progress.
+Current branch: `feature/bookmark-editing`. Browser-review build: **0.1.26**, ready for native review.
 Validated MVP: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated `mvp-validated-0.1.1`.
 Accepted visual checkpoint: `ui-validated-0.1.15` and `feature/ui-ux-redesign` remain at `0e6a596210b2be2d273eab4a19d2268d9a1407a1`. No push; supplied media and Windows clone untouched.
 
 ## Review status
 
-The user reports all requested **0.1.25 Edge tests passed**, including changes and tag synchronization between PC A and PC B. Successful Chrome use was also reported; this is not a complete Chrome regression or cross-browser sync test. The earlier reports that the other requested **0.1.23** tests pass remain recorded. 0.1.24's blanket Workspace native restriction was rejected as too restrictive. 0.1.26 is the next review target. Its restored Workspace operations are verified in isolated Chromium fixtures, not yet native Edge. The 0.1.24 source-highlighting corrections are preserved; no additional native acceptance is inferred.
+The user accepted **0.1.25 Edge tests**, including changes and tag synchronization between PC A and PC B. Successful Chrome use was also reported; no full Chrome regression or cross-browser synchronization is inferred. **0.1.26 is ready for targeted native review, not yet accepted.**
 
-The duplicate-bookmark binding defect fixed in 0.1.23 remains fixed. The historical native-title-change report remains unexplained. Native duplicate titles were established, but a title overwrite during dragging was neither established nor ruled out. No reset, merge, guessed repair, rename, delete, recreation or Workspace mutation was performed on live data. See [identity investigation](move-identity-0.1.23.md) for retained evidence and minimal read-only diagnostics.
+The 0.1.23 duplicate-bookmark binding fix remains preserved. The historical native-title-change report remains unexplained; this checkpoint neither claims its cause nor repairs live data. No reset, guessed identity repair, merge, recreation or live bookmark mutation was performed. Supplied screenshots `0.1.25_readonly-fields.png`, `0.1.25_context-menu-items.png` and `0.1.25_management.png` were all opened with the image viewer before implementation.
 
-## Workspace safeguards — 0.1.25
+## Current behavior — Indexfold 0.1.26
 
-0.1.24 was judged too restrictive. The user accepts immediate folders beneath the established Workspaces root as protected containers, including ordinary folders accidentally created there. Native operations inside either active or inactive containers were reported working previously. Direct-root folder recognition by Edge remains a hypothesis; silent cross-Workspace movement is under investigation.
-
-[Current policy and exact root assumption](workspace-capabilities.md): a typed bar + other plus one untyped non-managed root matches the supplied structure. No names/IDs are hard-coded. Containers stay native-protected but their contents regain creation/edit/delete and within-container moves. Cross-boundary moves remain temporarily blocked, not declared prohibited by Edge. Loose direct-root entries disappear from browse only; search/full paths, Manage and administrative review retain access. 0.1.24 highlighting remains intact. No live mutation/reset or new permissions.
-
-Move investigation found a concrete reporting gap: the adapter discarded the move API result, and the service reported success after a refresh without comparing the actual parent/order to the requested result. A resolved no-op reproduces silent success in the old path. This does **not** establish why the user's cross-Workspace operation did not move. The service now checks the response and fresh full native sibling order, including same-parent index adjustment and source values, and rechecks after reconciliation. Unchanged/unexpected/rejected/unreadable outcomes are explicit, with no automatic retry or fallback mutation. Legacy Manage moves use the same verification. An external change after verification remains possible; no browser API transaction is claimed.
-
-Root recognition remains a bounded structural assumption, not a reliable public Workspace discriminator. Multiple unknown roots or unsupported shapes remain conservatively restricted. Every immediate folder under the assumed root is protected by accepted policy, even if accidentally created there. No supported active-Workspace identifier was found; all containers remain visible. See the capability document for a short optional read-only tab/window comparison. No native IDs, translated names or active tab state determine these permissions.
-
-## Active-editor highlighting
-
-Confirmed synthetic-heading cause: absent `movingId` compared equal to absent `section.folder.id`, incorrectly assigning drag-source styling to every loose Bookmarks section. Require a real source and real folder before setting that attribute. Keyboard focus remains independent.
-
-Real section titles now receive explicit selected-ID styling matching favorites/subfolders, including search and sticky headers. Only the title is highlighted, excluding provenance/chevron/actions/header. Dirty confirmation and failed Save retain the state; Save/Cancel/discard clear it. Duplicate names do not share state; a removed source has no remaining highlight. No layout, expansion or scroll change is introduced to reveal selection.
+- Ordinary bookmarks/subtrees can move **between Edge Workspace containers**, using the existing native move command and full parent/order verification. Direct tags/IDs/bindings remain; inherited tags, archive state and paths follow the actual destination. Rejected, unchanged and uncertain outcomes remain explicit errors with refreshed state and no automatic retry. The old silent-success reporting gap was fixed in 0.1.25; the native cause of the user's original failed boundary operation was not established.
+- Workspace root/container lifecycle protection remains. No creation/receiving directly beneath the root. Workspace ↔ ordinary-root moves remain restricted. Root identification now requires positive Edge browser evidence plus the documented structural assumption; arbitrary unknown Chrome roots are never classified as Workspaces. No active-Workspace filter. [Current capability limits](workspace-capabilities.md).
+- Protected names use a selectable subdued read-only surface and a Read-only label. Tags/archive remain editable; initial focus uses the first editable input. Native IDs and lifecycle details move to optional Diagnostic details. Unambiguous destination paths omit IDs; identical full paths retain an ID suffix for deliberate selection.
+- Menus highlight actionable hover/keyboard rows, wrap within viewport bounds and omit container Move/Delete/drag plus lifecycle prose. Metadata/ambiguity diagnostics remain available where needed.
+- Manage is **Settings / Bookmarks / Diagnostics**, with Back to dashboard. Panels stay mounted: drafts, queries and selections survive navigation and theme changes. An existing management draft cannot be overwritten by opening another. Binding review stays proactive and complete, including archived/excluded records. Diagnostics uses the full snapshot. Settings shows actual command assignment and browser-specific manual shortcut-settings instructions.
+- Test-folder defaults/experimental setup messages are removed from normal presentation. Genuine metadata recovery remains under Diagnostics → Advanced with export, inventory and confirmation. No reset ran. Diagnostic copy/export warns about private data; native fields/URLs are not sent to an external service.
+- Display branding is **Indexfold**, tagline **Your bookmarks, beautifully within reach.**, and footer **Indexfold.** Existing footer URLs and `source=bcbb` remain. Native names such as Favorites bar stay unchanged; application wording uses bookmarks. Manifest key/ID, storage/schema/namespaces, preferences and repository identifiers are unchanged. Historical evidence retains its original branding.
 
 ## Verification
 
-`npm run check`: **251 tests / 23 files**, typecheck, lint, production build and stable extension-ID validation passed. Tracked `dist/` is **0.1.25**, ID `nfhbegeoeafnpejpjdljhgagefbpafal`.
+`npm run check`: **253 tests / 23 files**, typecheck, lint, build and stable ID validation passed; tracked `dist/` is **0.1.26**, ID `nfhbegeoeafnpejpjdljhgagefbpafal`.
 
-- Unit tests: structural root ambiguity/name independence, protected root/container worker paths, metadata-only saves without native updates, descendant CRUD, boundary guards including legacy Manage, browse-only loose exclusion and archive/search behavior. Move outcomes cover resolved no-op, wrong parent/order, rejection after a move, inconsistent API reply, post-write read failure, forward/backward indices, concurrent order changes and partial-save reporting.
-- `check-workspace-policy.mjs`: both themes, container tags/no native update, descendant create/edit/delete in two containers, forbidden destinations, real Move-dialog no-op reporting, native sibling reorder, actual pointer move with identity/direct tags retained, loose search/full paths and Manage explanation.
-- `check-editor-highlights`, `check-023`, `check-editing`, `check-create-move`, `check-binding-review`, `check-archive-editor`, and `check-peek-scroll` passed. These cover source highlighting, ten duplicate moves per theme, draft/health safeguards, creation recovery, query/Escape restoration, binding persistence, archive editing, and repeated actual wheel/pointer footer cycles and cleanup.
-- [Review captures and reports](visual-review/generated/0.1.25-review.md) are isolated Chromium evidence. Light/dark container editors and settled loose search results were visually inspected. Fixtures simulate browser behavior; they do not establish native Edge Workspace API support, active-Workspace signals or fresh two-device sync.
+- Workspace unit tests cover cross-container bookmarks/subtrees, identity/direct-tag preservation, destination archive inheritance and removal of old sources, root/container restrictions and Edge/Chrome classification. Existing outcome tests cover no-op, wrong parent/order, response/read uncertainty, rejection and legacy partial outcomes.
+- `check-026.mjs` uses real pointer/keyboard input: cross-container subtree Move and bookmark drag, resolved cross-container no-op/error without retry, source identity/native values/direct tags, inheritance, Manage panel/draft/focus retention, browser-specific instructions, menu focus/hover/resize, selectable protected fields, both themes and forced colors.
+- Existing `check-workspace-policy`, `check-023`, `check-editor-highlights`, `check-editing`, `check-create-move`, `check-binding-review`, `check-archive-editor`, `check-appearance`, `check-022`, and `check-peek-scroll` passed. Label/tab-stop selectors were adjusted for intentional wording, optional diagnostic details and Manage panels; test fixture records/titles remain native data. Actual pointer/wheel footer cycles and duplicate identity moves remain covered.
+- [Captures, reports and changed-file inventory](visual-review/generated/0.1.26-review.md). Rendered light/dark control/menu/Manage captures were visually inspected, including narrow Settings. This is isolated Chromium evidence, not native Edge Workspace API acceptance or new transport verification.
 
-## Concrete next action: native Edge review
+## Next action: native review
 
-Use committed `dist/` from WSL. In `edge://extensions`, reload Better Bookmarks, verify **0.1.25**, and open a fresh dashboard. Windows is an artifact-consuming clone, not the build environment. Nothing pushed.
+Reload **Indexfold 0.1.26** at `edge://extensions` or `chrome://extensions` using committed `dist/`, then open a fresh dashboard. Nothing pushed; Windows consumes the WSL-built artifact.
 
-1. Confirm Workspace containers remain visible/protected; browse has no loose Bookmarks group or Workspace-root New action.
-2. Inside an Edge-created disposable test Workspace, create/edit/delete a favorite and nested folder. Do not rename/delete the Workspace container through the dashboard.
-3. From Development, repeat ordinary-content operations inside Personal; permissions should be identical.
-4. Reorder/move disposable items within one Workspace; compare native position and retained direct/inherited tags.
-5. Confirm cross-boundary destinations are unavailable with the temporary-policy explanation. Unexpected/no-op API results must report uncertainty/failure, not silent success; do not blindly retry.
-6. Save container tags without native renaming; check matching source highlights, Manage visibility for loose entries, search paths/Escape and a brief final-section/footer traversal.
+1. Move disposable bookmarks/subfolders between Workspace containers; compare native destination/order, retained direct tags and destination inheritance.
+2. Check PC B receives moves/tags, confirming bindings if required. This is the new targeted two-device check, not a repeat of the entire accepted suite.
+3. Containers/root remain protected; names visibly read-only, tags/archive editable.
+4. Menus highlight hover/focus, fit narrow widths and offer only relevant actions.
+5. Settings / Bookmarks / Diagnostics preserve drafts; pending bindings and private diagnostic export remain accessible.
+6. Indexfold branding, native root names and Chrome/Edge-specific instructions are correct.
+7. Brief search/Escape, modal, theme and final-section/footer checks.
 
-No destructive live Workspace probes or repeat of the full passed two-device suite is required. Automatic current-Workspace filtering and boundary API verification remain deferred. Bulk operations, copying, external/cross-tab drops, thumbnails, semantic search and broader Manage cleanup remain deferred.
+No live repair or metadata reset. Native extension API may still reject a cross-container operation; report the actual error/state rather than retrying blindly. Active-Workspace filtering, Workspace ↔ ordinary-root support, copying, bulk operations, website thumbnails and semantic search remain deferred.
 
 ## Corrected diagnosis and inspected evidence
 
