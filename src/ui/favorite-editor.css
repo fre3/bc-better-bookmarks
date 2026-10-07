@@ -61,3 +61,21 @@
 
 /* Explicit editor identity, independent of keyboard focus and drag feedback. */
 .catalogue .section-title-text[data-editing] { background: var(--selected); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+
+/* Read-only is selectable content; disabled is an unavailable control. */
+.favorite-editor input[readonly], .favorite-editor textarea[readonly], .legacy input[readonly], .legacy textarea[readonly] {
+  background: var(--readonly-surface); color: var(--secondary); border: 1px solid var(--readonly-border); border-bottom-style: dashed; cursor: text;
+}
+.readonly-label { margin-inline-start: .75em; color: var(--secondary); font-size: 12px; font-weight: 400; }
+.favorite-editor .identity-details { margin-block: 12px; font-size: 14px; color: var(--secondary); }
+.favorite-editor :disabled, .legacy :disabled, .manage :disabled { opacity: 1; color: var(--disabled); border-color: var(--readonly-border); background: var(--readonly-surface); cursor: not-allowed; }
+.item-menu { white-space: normal; overflow-wrap: anywhere; max-width: calc(100vw - 16px); }
+.item-menu button { padding: 7px 10px; margin-block: 2px; white-space: normal; overflow-wrap: anywhere; }
+.item-menu button:not(:disabled):is(:hover,:focus-visible) { background: var(--control-hover); text-decoration: none; }
+.item-menu button:focus-visible { outline: 1px solid var(--focus); outline-offset: -2px; }
+.item-menu button:disabled { color: var(--disabled); background: var(--readonly-surface); opacity: 1; }
+@media (forced-colors: active) {
+ .favorite-editor input[readonly], .favorite-editor textarea[readonly], .legacy input[readonly], .legacy textarea[readonly] { background: Canvas; color: CanvasText; border: 1px dashed CanvasText; }
+ .favorite-editor :disabled, .legacy :disabled, .manage :disabled { color: GrayText; border-color: GrayText; background: Canvas; }
+ .item-menu button:not(:disabled):is(:hover,:focus-visible) { background: Highlight; color: HighlightText; }
+}

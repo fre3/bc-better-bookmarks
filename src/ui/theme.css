@@ -20,6 +20,8 @@
   --placeholder: light-dark(#d0d0d0, #929292);
   --input-rule: light-dark(#b0b0b0, #929292);
   --control-surface: light-dark(#fff, #303030);
+  --readonly-surface: light-dark(#f4f4f2, #242424);
+  --readonly-border: light-dark(#ccc, #606060);
   --control-border: light-dark(#aeb9c7, #858585);
   --control-hover: light-dark(#eef3fb, #3b4552);
   --panel-border: light-dark(#d9e0e9, #656565);
