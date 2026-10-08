@@ -1,0 +1,125 @@
+{
+  "baseline": {
+    "version": "0.1.27",
+    "windowErrors": 13,
+    "phases": {
+      "peek": 5,
+      "final-wheel": 8
+    },
+    "message": "ResizeObserver loop completed with undelivered notifications.",
+    "committedRegression": "Fails at peek-settled on editing-validated-0.1.27 (five peek-entry window errors)."
+  },
+  "corrected": {
+    "version": "0.1.28",
+    "nativeEdgeAcceptance": "pending",
+    "runs": [
+      {
+        "theme": "light",
+        "width": 1200,
+        "reduced": false,
+        "errors": [],
+        "phase": "auto-scroll-cancelled",
+        "callbacks": 469,
+        "frames": 181,
+        "pending": 0,
+        "writes": 184
+      },
+      {
+        "theme": "dark",
+        "width": 390,
+        "reduced": false,
+        "errors": [],
+        "phase": "auto-scroll-cancelled",
+        "callbacks": 507,
+        "frames": 191,
+        "pending": 0,
+        "writes": 210
+      },
+      {
+        "theme": "light",
+        "width": 1200,
+        "reduced": true,
+        "errors": [],
+        "phase": "auto-scroll-cancelled",
+        "callbacks": 341,
+        "frames": 67,
+        "pending": 0,
+        "writes": 71
+      }
+    ],
+    "transitionFrames": [
+      {
+        "theme": "light",
+        "width": 1200,
+        "reduced": false,
+        "samples": 21
+      },
+      {
+        "theme": "light",
+        "width": 1200,
+        "reduced": false,
+        "samples": 8
+      },
+      {
+        "theme": "light",
+        "width": 1200,
+        "reduced": false,
+        "samples": 20
+      },
+      {
+        "theme": "light",
+        "width": 1200,
+        "reduced": false,
+        "samples": 21
+      },
+      {
+        "theme": "dark",
+        "width": 390,
+        "reduced": false,
+        "samples": 21
+      },
+      {
+        "theme": "dark",
+        "width": 390,
+        "reduced": false,
+        "samples": 8
+      },
+      {
+        "theme": "dark",
+        "width": 390,
+        "reduced": false,
+        "samples": 21
+      },
+      {
+        "theme": "dark",
+        "width": 390,
+        "reduced": false,
+        "samples": 21
+      },
+      {
+        "theme": "light",
+        "width": 1200,
+        "reduced": true,
+        "samples": 21
+      },
+      {
+        "theme": "light",
+        "width": 1200,
+        "reduced": true,
+        "samples": 8
+      },
+      {
+        "theme": "light",
+        "width": 1200,
+        "reduced": true,
+        "samples": 21
+      },
+      {
+        "theme": "light",
+        "width": 1200,
+        "reduced": true,
+        "samples": 21
+      }
+    ]
+  }
+}

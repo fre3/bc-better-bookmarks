@@ -37,7 +37,8 @@ try {
       window.clearTimeout = id => { timers.delete(id); clear(id); };
       const RO = window.ResizeObserver; window.measurements = 0;
       window.ResizeObserver = class extends RO { constructor(fn) { super((...args) => { window.measurements++; fn(...args); }); } };
-      window.trace = []; window.phase = 'load';
+      window.trace = []; window.phase = 'load'; window.resizeErrors = [];
+      window.addEventListener('error', event => window.resizeErrors.push({message:event.message,phase:window.phase}));
       const sample = (type, event) => {
         const spacer = document.querySelector('.peek-footer-space'); if (!spacer) return;
         window.trace.push({ time: performance.now(), phase: window.phase, type, scroll: scrollY, document: document.documentElement.scrollHeight,
@@ -150,6 +151,7 @@ try {
       }
     }
     assert.deepEqual(errors, []);
+    assert.deepEqual(await page.evaluate(() => window.resizeErrors), [], 'window error events include ResizeObserver delivery failures');
     await writeFile(join(output, `trace-${width}-${reduced}.json`), JSON.stringify(trace));
     reports.push({ colorScheme, width, height, reduced, cycles: 3, frames: trace.filter(x => x.type === 'frame').length, passed: true });
     await page.close();
@@ -157,6 +159,7 @@ try {
   // A short catalogue has white flex space beyond the preview content itself.
   // Only an active final-header session may retain that area.
   const short = await browser.newPage({colorScheme,viewport:{width:1250,height:800}});
+  await short.addInitScript(() => { window.resizeErrors=[];window.addEventListener('error',event=>window.resizeErrors.push(event.message)); });
   await short.goto(pathToFileURL(join(output,'index.html')).href+'?single');
   const last = short.locator('[id="section-folder:s0"]');
   await short.mouse.move(120,600); await short.waitForTimeout(200);
@@ -177,6 +180,7 @@ try {
   await short.setViewportSize({width:900,height:600}); await short.waitForTimeout(200);
   assert.equal(await short.locator('.is-peeking').count(),0,'resize must end retention when pointer falls outside');
   // Keyboard-only activation never arms mouse retention or automatic scrolling.
+  assert.deepEqual(await short.evaluate(()=>window.resizeErrors),[]);
   await short.mouse.move(-10,-10); await short.reload();
   for(let i=0;i<12 && !(await last.evaluate(n=>n===document.activeElement));i++) await short.keyboard.press('Tab');
   assert(await last.evaluate(n=>n===document.activeElement)); await short.waitForTimeout(1300);
@@ -186,6 +190,7 @@ try {
   assert.equal(await last.getAttribute('aria-expanded'),'true');
   assert.equal(await short.locator('.peek-footer-space').evaluate(n=>n.getBoundingClientRect().height),0);
   reports.push({shortPage:true,whiteSurface:true,resize:true,headerActivationOnly:true,keyboardStatic:true,passed:true});
+  assert.deepEqual(await short.evaluate(()=>window.resizeErrors),[]);
   await short.close();
   await writeFile(join(output, 'results.json'), JSON.stringify(reports, null, 2));
   console.log(`PASS final-surface retention, wheel/pointer regression, repeated cycles and callback cleanup. Evidence: ${output}`);

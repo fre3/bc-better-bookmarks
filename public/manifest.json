@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Indexfold",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "description": "A typography-first bookmark dashboard with instant search and keyboard navigation. Built for Chrome and Edge.",
   "permissions": [
     "bookmarks",

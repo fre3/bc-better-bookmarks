@@ -50,7 +50,7 @@ export function SectionCard({ section, nextSection, sections, stackIndex, stackS
     if (blocked) { setMouseHover(false); setPointerPeek(-1); setFocusPeek(-1); }
   }, [blocked]);
   const preview = !open && (peek || retainedPreview);
-  const { slot, coveredIds } = usePeekCoverage(preview);
+  const { slot, coveredIds } = usePeekCoverage(preview, peek);
   const endMousePeek = useCallback(() => { setMouseHover(false); setPointerPeek(-1); }, []);
   const hover = usePeekHoverRetention(!blocked && mouseHover && pointerPeek === peekEpoch && !open && query === null, !nextSection, slot, endMousePeek);
   const covered = useMemo(() => {

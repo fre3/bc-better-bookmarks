@@ -1,7 +1,7 @@
 # Development State
 
 Last updated: 2026-10-08
-Current branch: `feature/bookmark-editing`. **0.1.27 accepted in native Edge**; documentation checkpoint: `editing-validated-0.1.27`.
+Current branch: `feature/bookmark-editing`. Review build: **0.1.28**, ResizeObserver correction awaiting native Edge review. Accepted `editing-validated-0.1.27` remains at `bd87c83232eebce4afca1e86c9bcc6c2c436fcb7`.
 Validated MVP: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated `mvp-validated-0.1.1`.
 Accepted visual checkpoint: `ui-validated-0.1.15` and `feature/ui-ux-redesign` remain at `0e6a596210b2be2d273eab4a19d2268d9a1407a1`. No push; supplied media and Windows clone untouched.
 
@@ -11,7 +11,7 @@ The user accepted **0.1.25 Edge tests**, including changes and tag synchronizati
 
 The 0.1.23 duplicate-bookmark binding fix remains preserved. The historical native-title-change investigation is **closed** on 2026-10-08 because the user reports no recurrence across several subsequent releases. Its original cause remains unconfirmed; this is not evidence of a proven title-overwrite fix. It is no longer an active issue or review requirement. [Historical evidence and closure](move-identity-0.1.23.md) remain available, separately from the demonstrated duplicate-binding fix. No live reset, guessed identity repair, merge, recreation or live bookmark mutation was performed. Supplied screenshots `0.1.25_readonly-fields.png`, `0.1.25_context-menu-items.png` and `0.1.25_management.png` were all opened with the image viewer before implementation.
 
-## Current behavior — Indexfold 0.1.27
+## Current behavior — Indexfold 0.1.28
 
 - Ordinary bookmarks/subtrees can move **between Edge Workspace containers**, using the existing native move command and full parent/order verification. Direct tags/IDs/bindings remain; inherited tags, archive state and paths follow the actual destination. Rejected, unchanged and uncertain outcomes remain explicit errors with refreshed state and no automatic retry. The old silent-success reporting gap was fixed in 0.1.25; the native cause of the user's original failed boundary operation was not established.
 - Workspace root/container lifecycle protection remains. No creation/receiving directly beneath the root. Workspace ↔ ordinary-root moves remain restricted. Root identification now requires positive Edge browser evidence plus the documented structural assumption; arbitrary unknown Chrome roots are never classified as Workspaces. No active-Workspace filter. [Current capability limits](workspace-capabilities.md).
@@ -22,22 +22,32 @@ The 0.1.23 duplicate-bookmark binding fix remains preserved. The historical nati
 - Test-folder defaults/experimental setup messages are removed from normal presentation. Genuine metadata recovery remains under Diagnostics → Advanced with export, inventory and confirmation. No reset ran. Diagnostic copy/export warns about private data; native fields/URLs are not sent to an external service.
 - Display branding is **Indexfold**, tagline **Your bookmarks, beautifully within reach.**, and footer **Indexfold.** Existing footer URLs and `source=bcbb` remain. Native names such as Favorites bar stay unchanged; application wording uses bookmarks. Manifest key/ID, storage/schema/namespaces, preferences and repository identifiers are unchanged. Historical evidence retains its original branding.
 
+## ResizeObserver follow-up
+
+Inspected `0.1.27_ext-error.png`. Reproduced the exact window error in isolated Chromium on 0.1.27: peek coverage writes resize the sibling lip observed by the footer, and footer writes resize ancestors observed by final-hover retention during ResizeObserver delivery. A traced run captured 13 warnings. Geometry tasks now coalesce outside resize delivery, ordered cover-before-footer; unchanged observations/writes are retained/skipped. Mount-time measurement remains before paint. Actual CSS reveal transitions receive bounded per-frame measurement, including their first changing frame; work stops at transition completion and is cancelled on cleanup. No error filter, observer removal workaround, animation timing change or synchronization change. [Full audit of all eight observers, reproduction and correction](resize-observer-0.1.28.md).
+
 ## Verification
 
-User-reported native Edge acceptance: **0.1.27 passed**, recorded 2026-10-08. The following automated results are retained from implementation; no tests or build were rerun for this documentation-only checkpoint.
+User-reported native Edge acceptance: **0.1.27 passed**, recorded 2026-10-08. The new observer correction is not yet accepted in Edge.
 
-`npm run check`: **257 tests / 24 files**, typecheck, lint, build and stable ID validation passed; tracked `dist/` is **0.1.27**, ID `nfhbegeoeafnpejpjdljhgagefbpafal`.
+`npm run check`: **261 tests / 25 files**, typecheck, lint, build and stable ID validation passed for 0.1.28. The tracked loadable artifact retains extension ID `nfhbegeoeafnpejpjdljhgagefbpafal`.
 
-- `check-management-dismissal.mjs` fails against 0.1.26 at its first unchanged Cancel (one unexpected prompt) and passes with the fix in light/dark isolated Chromium. Actual pointer/keyboard checks cover clean/dirty/reverted forms, repeated open/close, Escape and rejected/accepted discard, retained navigation, external-update conflict, focus restoration and unchanged/dirty/reverted bookmark/folder catalogue modals including archive checkbox reversal.
-- Unit tests cover exact native values, normalized tag equivalence, archive representation and opening-baseline independence. The service, synchronization, metadata schema and native write paths are unchanged.
-- Existing `check-editing.mjs`, `check-folders.mjs` and `check-appearance.mjs` passed, including repeated Escape, failed/duplicate saves, external conflicts, bookmark/folder partial-save recovery, inherited archive filtering, final-visible-section hover and theme/draft retention. The folder script’s obsolete pre-0.1.26 setup/review selectors were updated to the current Manage panels; recovery runs only in disposable fixtures. Prior 0.1.26 rendered evidence remains at [the review record](visual-review/generated/0.1.26-review.md); the new build adds no visual design changes.
-- Tests use isolated profiles/fixtures, not live bookmark data. Chromium results do not establish native Edge acceptance. The reported two-device move result above comes from the user.
+- New scheduler unit tests cover coalescing, current-geometry/dependency order, cancellation and no stale callback after disposal.
+- `check-resize-observer.mjs` fails against `editing-validated-0.1.27` with five peek-entry window errors and passes on the corrected source with **zero window errors**, settled geometry and no pending frames in all three variants. It captures window ErrorEvents (not just console/page exceptions), verifies stable geometry/callback/style-write counts and checks painted entry/exit/footer boundaries. Workflows include startup/reload, fonts, open/nested/peek, resizing, theme, Manage/editor, search restoration and auto-scroll. Light desktop, dark narrow and reduced motion are included.
+- Existing `check-peek-scroll.mjs` now also captures window errors during repeated real wheel/pointer final-section cycles and short-page/reduced-motion coverage. It checks settled measurement counts, pending callbacks, pointer retention and absence of oscillation.
+- Existing editing, archive/tag and navigation follow-up regressions passed, covering modal focus/drafts, search restoration, inherited annotations, compact sticky geometry and mouse/keyboard tag visibility. No change to native mutations, identity, metadata, archive or theme semantics.
+- [Committed before/after measurements](visual-review/generated/0.1.28-observer-results.json) summarize the captured errors, callback counts and transition samples. Rendered dark/narrow peek and short-page final preview captures were inspected.
+- Browser evidence is from disposable Chromium fixtures, not native Edge. No live bookmark/profile data was accessed. The original screenshot identifies the warning but lacks a callback stack; the established cause is backed by the matching local reproduction and geometry trace.
 
-## Checkpoint closed — await next user-directed work
+## Next action: targeted native Edge review
 
-Native Edge review of **Indexfold 0.1.27** is complete. `editing-validated-0.1.27` is an annotated tag on the documentation acceptance commit. No active title-change investigation or related review checklist remains. Historical evidence is retained without asserting an original cause or a proven title-overwrite fix.
+Reload committed **Indexfold 0.1.28** at `edge://extensions`, clear the old extension error list (not storage), then open a fresh dashboard.
 
-No version bump, rebuild, push, live repair or metadata reset accompanies this checkpoint. The committed 0.1.27 artifact and earlier validated references remain unchanged. Wait for the user's next scope; do not begin deferred features. Active-Workspace filtering, Workspace ↔ ordinary-root support, copying, bulk operations, website thumbnails and semantic search remain deferred.
+1. Resize narrow/wide, switch themes, open sections/subfolders and traverse peeks. Check tags, summaries, dither coverage and pointer targets.
+2. Hover the final section, wait for auto-scroll, wheel to the footer, leave/re-enter and scroll upward. Repeat without reload; check stability and full preview coverage.
+3. Enter/leave Manage and bookmark/folder editors, Cancel/Escape and search/Escape; repeat with reduced motion. Confirm no new ResizeObserver warnings in the extension error list.
+
+No push or live repair. Accepted references and supplied media are unchanged. The title-change investigation remains closed; its cause is unconfirmed, with historical evidence retained. Deferred features remain outside this checkpoint.
 
 ## Corrected diagnosis and inspected evidence
 

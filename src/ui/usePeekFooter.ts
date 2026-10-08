@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { peekFooterSpace, retainedPeekSpace } from './peek-footer';
+import { layoutTask } from './layout-task';
 
 /** Only this flow spacer moves the footer. Real section targets never move.
  * Retained exit previews stay measured until their reveal has finished. */
@@ -16,6 +17,11 @@ export function usePeekFooter(epoch: number, suspended: boolean) {
     if (suspended) return;
     const retired = new Set(stack.querySelectorAll('.is-leaving'));
     const update = () => {
+      // Only sample continuously while a real reveal transition is running.
+      // Its initial unchanged frame need not deliver another resize event;
+      // waiting for the next delivery would clip the first growing frame.
+      if ([...stack.querySelectorAll('.is-peeking .section-content, .is-leaving .section-content')]
+        .some(node => node.getAnimations().some(animation => animation.playState === 'running'))) task.schedule();
       const bottoms = [...stack.querySelectorAll('.is-peeking, .is-leaving')].filter(section => {
         if (section.classList.contains('is-peeking')) retired.delete(section);
         return !retired.has(section);
@@ -34,19 +40,28 @@ export function usePeekFooter(epoch: number, suspended: boolean) {
       if (Math.abs(height - previous) < .02) return;
       element.style.height = `${height}px`;
     };
-    const observer = new ResizeObserver(update);
+    // Reservation changes resize the catalogue/spacer watched by final-hover
+    // retention. Never make those writes inside ResizeObserver delivery.
+    const task = layoutTask(update, 1);
+    const observer = new ResizeObserver(task.schedule);
+    const targets = new Set<Element>();
     const observe = () => {
-      observer.disconnect(); observer.observe(stack); observer.observe(footer);
-      stack.querySelectorAll('.section-content, .peek-successor').forEach(node => observer.observe(node));
+      const next = new Set<Element>([stack, footer, ...stack.querySelectorAll('.section-content, .peek-successor')]);
+      for (const node of targets) if (!next.has(node)) { observer.unobserve(node); targets.delete(node); }
+      for (const node of next) if (!targets.has(node)) { observer.observe(node); targets.add(node); }
+      // React has just mounted/removed preview content. Reserve its initial
+      // geometry before paint (especially instantaneous reduced-motion peeks).
+      // Resize deliveries themselves always use the deferred task above.
       update();
+      task.schedule();
     };
     const mutations = new MutationObserver(observe);
     mutations.observe(stack, { childList: true, subtree: true });
-    window.addEventListener('resize', update);
-    window.addEventListener('scroll', update, { passive: true });
-    document.fonts.addEventListener('loadingdone', update);
+    window.addEventListener('resize', task.schedule);
+    window.addEventListener('scroll', task.schedule, { passive: true });
+    document.fonts.addEventListener('loadingdone', task.schedule);
     observe();
-    return () => { observer.disconnect(); mutations.disconnect(); window.removeEventListener('resize', update); window.removeEventListener('scroll', update); document.fonts.removeEventListener('loadingdone', update); };
+    return () => { task.dispose(); observer.disconnect(); mutations.disconnect(); window.removeEventListener('resize', task.schedule); window.removeEventListener('scroll', task.schedule); document.fonts.removeEventListener('loadingdone', task.schedule); };
   }, [epoch, suspended]);
   return spacer;
 }

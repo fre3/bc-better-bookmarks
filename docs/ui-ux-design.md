@@ -414,3 +414,7 @@ Settings/Bookmarks/Diagnostics and Back to dashboard remain non-destructive navi
 ## Native review closure — 2026-10-08
 
 Indexfold 0.1.27 is accepted in native Edge, checkpointed as `editing-validated-0.1.27`. The focused Manage dismissal review is complete. The historical title-change investigation is closed after user-reported nonrecurrence across several releases; its original cause remains unconfirmed, not a proven title-overwrite fix. Earlier version-specific review notes remain historical evidence, not active requests to repeat that investigation.
+
+## 0.1.28 — resize delivery and transition geometry
+
+Peek coverage and footer reservations now run as coalesced, ordered geometry tasks outside ResizeObserver delivery. Initial mount geometry remains synchronous before paint; active CSS reveal transitions receive bounded frame measurement so entry/exit and reduced-motion boundaries remain intact. Idle geometry does not poll. No typography, tags, duration, pointer-target or footer retention rule changes. See the [observer investigation and regression evidence](resize-observer-0.1.28.md). Native Edge review is pending.

@@ -1,9 +1,10 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { labelIsCovered } from './peek-summary';
 import { peekCoverBottom, type CoveredSheet } from './peek-coverage';
+import { layoutTask } from './layout-task';
 
 /** Cover partial headers without extending the lip across an open sheet. */
-export function usePeekCoverage(active: boolean) {
+export function usePeekCoverage(active: boolean, revealing: boolean) {
   const slot = useRef<HTMLElement>(null);
   const [coveredIds, setCoveredIds] = useState<string[]>([]);
   useLayoutEffect(() => {
@@ -14,6 +15,9 @@ export function usePeekCoverage(active: boolean) {
     if (!cover) return; // Final preview ends directly at the real footer edge.
     const label = cover.querySelector<HTMLElement>('.section-header');
     const update = () => {
+      // Keep the first changing frame covered even if the transition's initial
+      // zero-height frame produced no new resize notification. Stops with CSS.
+      if (content.getAnimations().some(animation => animation.playState === 'running')) task.schedule();
       const top = cover.getBoundingClientRect().top;
       const minimum = label?.getBoundingClientRect().height ?? parseFloat(getComputedStyle(cover).getPropertyValue('--header-height'));
       const sheets: CoveredSheet[] = [];
@@ -49,8 +53,9 @@ export function usePeekCoverage(active: boolean) {
           }
         }
       }
-      cover.style.height = `${bottom - top}px`;
-      cover.style.setProperty('--peek-label-height', `${minimum}px`);
+      if (Math.abs(cover.getBoundingClientRect().height - (bottom - top)) >= .02) cover.style.height = `${bottom - top}px`;
+      const labelHeight = `${minimum}px`;
+      if (cover.style.getPropertyValue('--peek-label-height') !== labelHeight) cover.style.setProperty('--peek-label-height', labelHeight);
       const overlayTop = content.getBoundingClientRect().top;
       const covered: string[] = [];
       for (let sibling = section.nextElementSibling; sibling; sibling = sibling.nextElementSibling) {
@@ -63,16 +68,21 @@ export function usePeekCoverage(active: boolean) {
       }
       setCoveredIds(previous => previous.length === covered.length && previous.every((id, i) => id === covered[i]) ? previous : covered);
     };
-    // The animated body's ResizeObserver runs before paint on entry and exit.
-    // Measure the copy's label, never its extended height, to avoid feedback.
-    const observer = new ResizeObserver(update);
+    // Changing the lip here synchronously would resize a sibling observed by
+    // usePeekFooter at an already delivered depth. Measure current animation
+    // geometry in the next frame, before the dependent footer reservation.
+    const task = layoutTask(update);
+    const observer = new ResizeObserver(task.schedule);
     observer.observe(content);
     if (label) observer.observe(label);
     if (section.parentElement) observer.observe(section.parentElement);
-    document.fonts.addEventListener('loadingdone', update);
-    window.addEventListener('scroll', update, { passive: true });
+    document.fonts.addEventListener('loadingdone', task.schedule);
+    window.addEventListener('scroll', task.schedule, { passive: true });
     update();
-    return () => { observer.disconnect(); document.fonts.removeEventListener('loadingdone', update); window.removeEventListener('scroll', update); };
-  }, [active]);
+    // The first exit frame changes the CSS height before its first resize
+    // delivery. Arm that frame when the reveal phase changes, not afterward.
+    task.schedule();
+    return () => { task.dispose(); observer.disconnect(); document.fonts.removeEventListener('loadingdone', task.schedule); window.removeEventListener('scroll', task.schedule); };
+  }, [active, revealing]);
   return { slot, coveredIds };
 }
