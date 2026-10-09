@@ -4,68 +4,115 @@
 
 A typography-first bookmark dashboard with instant search and keyboard navigation. Built for Chrome and Edge.
 
-Indexfold is a Manifest V3 New Tab extension, currently **pre-release 0.1.29**. Native browser bookmarks own titles, URLs, hierarchy and order. The extension stores direct tags and conservative identity/reconciliation metadata; inheritance is computed. There is no backend or separate bookmark database.
 
-The user accepted the 0.1.25 Edge checks, including changes and tag synchronization between PC A and PC B, and reported successful Chrome use. That does not establish a full Chrome regression or cross-browser synchronization test. The user also confirms 0.1.26 cross-Workspace movement and synchronization between PCs passed. Indexfold 0.1.27 is accepted in native Edge and checkpointed as `editing-validated-0.1.27`. The 0.1.28 ResizeObserver checks passed in native Edge with no further extension errors. The user reports the 0.1.29 search-path correction passed; see [the handoff](docs/development-state.md).
+![Indexfold dashboard in light mode, with Reading open and a nested Design folder](docs/images/dashboard-light.png)
 
-## Browse and search
+*The real dashboard with an illustrative bookmark collection.*
 
-All bookmarks is the default scope. Browser root names, such as Favorites bar, remain unchanged. Click a section to open it; folders expand inline. Mouse hover peeks immediately, then optionally scrolls after 1,000ms. Keyboard-only peeks and reduced motion remain static.
+[User guide](docs/user-guide.md) · [Releases](https://github.com/fre3/indexfold/releases) · [Report an issue](https://github.com/fre3/indexfold/issues)
 
-Type to search, or press `/`. Combine plain text, `#tag` and `@folder`; Escape restores the original browse context. Alt+top-row 1–9 selects roots in navigation order. Windows Alt+numpad character entry remains ordinary platform behavior.
+## Why Indexfold?
 
-**Ctrl+Shift+B** is the suggested Windows dashboard command, not a guaranteed assignment. Manage → Settings displays the actual configured shortcut. Open `edge://extensions/shortcuts` in Edge or `chrome://extensions/shortcuts` in Chrome to assign, change or remove it. The extension never overwrites your choice.
+- **Search as you type.** Start typing to search titles, URLs, folder paths and tags without opening another screen. Use `#tag` and `@folder` to narrow your search.
+- **A dashboard worth opening.** Large editorial typography, stacked section cards and quiet controls give your bookmarks room to breathe.
+- **Preview before opening.** Hover a section to peek inside; long previews gently scroll after a delay. Automatic scrolling can be disabled and respects reduced motion.
+- **Keyboard first.** Open dashboard search with a configurable browser shortcut, switch roots with Alt+1–9, and press Escape to return to your previous browsing context.
+- **Your actual browser bookmarks.** Create, edit, move and delete bookmarks and folders. Indexfold works with the browser's existing hierarchy and order.
+- **Tags that follow the structure.** Folder tags are inherited by descendants without being copied onto them. Moving an item changes its inherited context.
+- **Archive without deleting.** Archive a bookmark or an entire folder subtree; show it again with the local Show archived setting.
+- **Editing by mouse or keyboard.** Use Edit mode, drag titles to move items, or choose More → Move for a keyboard-accessible alternative.
+- **Light, dark or system appearance.** Theme and other viewing preferences are stored locally.
+- **Limited permissions.** No broad website-access permission is requested. Bookmark access supports management, storage supports metadata/preferences, and tab access supports finding and reusing the dashboard for its search shortcut.
 
-From another tab, the command searches All bookmarks temporarily. Within the dashboard it keeps the current scope. Existing queries are selected for replacement. Open editors and Manage pause the command to preserve drafts. Ordinary Ctrl+T retains address-bar focus. In the user-tested Edge already-open-dashboard case, Ctrl+F6 may still be needed to transfer focus. This limitation has not been independently established in Chrome. [Keyboard details](docs/keyboard-search.md).
+Search runs locally; no search backend is required. “Instant” describes the interaction, not a claim of identical performance on every device or bookmark collection.
 
-## Edit and organize
+## Privacy and permissions
 
-Choose Edit, then click a bookmark title or its Edit button. Folder and section titles still expand; their Edit buttons open editors. Native link context menus and deliberate modifier/middle clicks remain available. Save changes title/URL/direct tags; Cancel and Escape protect dirty drafts. Escape at the discard question returns to editing.
+Indexfold keeps titles, URLs, folder hierarchy and order in the browser's native bookmark system. It stores tags and identity metadata separately using browser extension storage.
 
-New bookmark/New folder are available globally and inside permitted folders. Choose a real destination in All bookmarks. Drag titles to move, or use More → Move for keyboard operation and search results. More → Delete explicitly confirms native deletion, including folder descendants. No guaranteed Undo is provided.
+The v1.0.0 manifest requests:
 
-Tags entered on folders apply to descendants without copying assignments. Editors distinguish direct and inherited tags with source paths. The archive checkbox represents only direct `archived`; effective archiving hides a subtree from browsing, search and Edit. Manage → Settings → Show archived is a local visibility override. Archiving never deletes or hides native browser bookmarks.
+| Permission | Purpose |
+| --- | --- |
+| `bookmarks` | Read and manage your native bookmarks and folders. |
+| `storage` | Save tags, identity metadata and local preferences. |
+| `favicon` | Read browser-provided favicons through the extension-local favicon endpoint. |
+| `tabs` | Identify and reuse dashboard tabs for the configurable search command. |
 
-Received folder tags may need explicit local binding confirmation. A persistent Review notice leads to the same consolidated workflow available under Manage → Bookmarks, regardless of archive visibility. Matching names/paths alone do not prove identity. Metadata-health restrictions must not be bypassed.
+The `tabs` permission exposes tab URL/title metadata; Indexfold uses it to identify its dashboard for command routing.
 
-Native writes and extension metadata writes are not atomic. Editors report partial outcomes and retain input. Creation retries complete the same recorded item rather than creating duplicates. Moves verify native parent/order before reporting success; uncertain outcomes require inspection, not automatic retry. Draft retention is in-page only, not a promise of recovery after closing/reloading.
+The manifest declares no content scripts or host permissions. Application code has no website-content fetching, analytics endpoint or search backend. Favicons may still involve browser/network requests; Indexfold is not described as network-free. Browser account synchronization may transmit bookmarks and extension metadata through the browser provider.
 
-## Edge Workspaces
+Deletion affects real bookmarks, including descendants when deleting a folder. Confirmations and identity checks reduce accidental changes, but they do not replace a backup. Diagnostic exports can contain private bookmark information: inspect them before sharing.
 
-Indexfold protects the Workspaces root and its immediate folder containers. Their native names and lifecycle stay in Edge; confirmed extension tags/archive remain editable. Ordinary descendants support creation/edit/deletion and within/between-container moves, subject to native outcome verification and existing integrity safeguards. Moves between a Workspace and an ordinary root remain restricted. Never create a Workspace through New folder.
+## Install the release
 
-All containers remain discoverable regardless of the active Workspace. Direct loose entries beneath the Workspaces root are omitted from browsing but remain in search (with catalogue hierarchy context), Manage and diagnostics. [Capability assumptions and limitations](docs/workspace-capabilities.md) describe the Edge-only structural root identification; unknown Chrome roots are never inferred to be Workspaces.
+1. Download the **unpacked extension ZIP** from [GitHub Releases](https://github.com/fre3/indexfold/releases). Choose the extension asset, not GitHub's source-code ZIP.
+2. Extract it into a permanent local folder.
+3. Open the appropriate browser page:
 
-## Manage
+   | Chrome | Edge |
+   | --- | --- |
+   | `chrome://extensions` | `edge://extensions` |
 
-- **Settings:** System/Light/Dark appearance, Show archived, auto-scroll previews and actual keyboard shortcut. Preferences are device-local and update other dashboard tabs.
-- **Bookmarks:** management/search, folder operations, complete binding review and entries excluded from dashboard browsing. Switching panels retains form drafts, query and selection.
-- **Diagnostics:** version/browser, metadata health, reconciliation/events and redacted diagnostic export. Exports can contain private titles, URLs, tags and mappings; review before sharing. Advanced metadata reset requires export, inventory and explicit confirmation. It is recovery, not routine setup.
+4. Enable **Developer mode**, choose **Load unpacked**, and select the extracted folder containing `manifest.json`.
+5. Open a new tab. If your browser asks whether to keep the new-tab change, keep Indexfold enabled.
+6. Configure its dashboard-search command at `chrome://extensions/shortcuts` or `edge://extensions/shortcuts`.
 
-No test-data generator, automatic reset or experimental setup is required. [Coordinated recovery procedure](docs/metadata-setup.md). Reset never modifies native bookmarks or unrelated preferences.
+If another extension also replaces the New Tab page, choose which one should own that page. Keep the extracted folder: an unpacked installation loads its files from there.
 
-## Build and load
+GitHub installation is separate from Chrome Web Store or Edge Add-ons distribution. No store listing is implied.
 
-The authoritative development checkout is WSL at `/home/dev/projects/bc-better-bookmarks`, with Node 24 LTS:
+Official loading instructions: [Chrome](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-an-unpacked-extension) · [Edge](https://learn.microsoft.com/en-us/microsoft-edge/extensions/getting-started/extension-sideloading).
+
+## Build from source
+
+Install Git and **Node.js 24 or later** with npm. For the published v1.0 source:
 
 ```sh
+git clone https://github.com/fre3/indexfold.git
+cd indexfold
+git checkout v1.0.0
 npm ci
 npm run check
+```
+
+To work on the repository's current default branch instead, omit the checkout command.
+
+`npm run check` runs typechecking, lint, tests and the production build. The complete unpacked extension is generated in **`dist/`**. Load that directory using the installation steps above.
+
+Useful development commands:
+
+```sh
+npm run build
+npm run dev
 npm run extension:id
 ```
 
-`npm run check` runs typecheck, lint, tests and production build. `npm run dev` watches builds. Tracked `dist/` is the exact loadable review artifact; Windows testing consumes it without rebuilding.
+`npm run dev` watches and rebuilds the extension; it does not start a hosted bookmark dashboard. After changing an installed build, reload the extension and open a fresh new tab.
 
-1. Open `edge://extensions` or `chrome://extensions` in the intended browser profile.
-2. Enable Developer mode, choose Load unpacked and select `dist/`.
-3. Confirm Indexfold's development ID: `nfhbegeoeafnpejpjdljhgagefbpafal`.
-4. Open a fresh New Tab; keep its override if prompted. For updates, reload the extension and reopen the dashboard.
-5. Use disposable content for native review. Do not reset metadata or restructure existing bookmarks as setup.
+`dist/` is intentionally tracked. Preserve the manifest's public identity key and persistent storage identifiers so existing installations keep their metadata identity.
 
-Browser sync handles native bookmarks; extension metadata uses browser-provided sync storage. Local tests and storage writes do not prove transport or compatibility between different browser vendors.
+## Updates and synchronization
 
-## Identity and retained technical names
+To update an unpacked installation, replace its files with the next release in the same folder, reload it on the extensions page, and open a fresh new tab. Avoid uninstalling/reinstalling solely to update.
 
-Indexfold is a display rebrand of Better Bookmarks. The repository path/remote, npm identifier `bc-better-bookmarks`, manifest public key, extension ID, storage keys, and metadata schemas remain unchanged. The footer now uses `source=indexfold`. No data migration is needed. Historical documents and release captures retain their original names.
+Native bookmark synchronization depends on your browser's account and sync settings. Tags use extension sync storage. Install the same Indexfold extension identity on each device; a pending folder review may require confirmation before folder tags appear.
 
-The validated functional baseline `mvp-validated-0.1.1`, visual checkpoint `ui-validated-0.1.15` and their branches remain intact. [Architecture](docs/architecture.md), [design](docs/ui-ux-design.md), [roadmap](docs/roadmap.md) and [native evidence](docs/cross-device-test.md) distinguish implementation checks from user-reported browser validation.
+Two-device Edge workflows, including folder tags and cross-Workspace moves, have been manually verified. This is not a promise of immediate delivery, conflict-free simultaneous editing, or automatic synchronization between Chrome and Edge.
+
+Appearance, Show archived and preview-scroll preferences are local to each device. Folder associations are confirmed locally, never guessed from duplicate names. Native changes and extension metadata are separate writes: a partial-save message identifies what succeeded, preserves remaining input and allows safe completion. Do not retry an uncertain move blindly.
+
+## Edge Workspaces
+
+Existing immediate folders under Edge's Workspaces root are treated as Workspace containers. Create and manage the Workspaces themselves through Edge. Indexfold protects those containers while allowing normal bookmark/subfolder operations inside them, including moves between containers.
+
+The active Edge Workspace is not automatically detected. Moves between a Workspace and ordinary bookmark roots remain restricted.
+
+## Help and development
+
+Read the [user guide](docs/user-guide.md) for the daily workflow, shortcuts, tags and archiving.
+
+For developers: [architecture](docs/architecture.md), [current handoff](docs/development-state.md) and [roadmap](docs/roadmap.md). Developer documents describe implementation and historical evidence; they are not required for everyday use.
+
+When reporting an issue, include your browser version, Indexfold version and steps to reproduce. Use synthetic examples where possible; share diagnostic exports only after reviewing their contents.
