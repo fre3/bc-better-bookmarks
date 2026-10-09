@@ -1,17 +1,17 @@
 # Development State
 
-Last updated: 2026-10-08
-Current branch: `feature/bookmark-editing`. Review build: **0.1.28**, ResizeObserver correction awaiting native Edge review. Accepted `editing-validated-0.1.27` remains at `bd87c83232eebce4afca1e86c9bcc6c2c436fcb7`.
+Last updated: 2026-10-09
+Current branch: `feature/bookmark-editing`. Review build: **0.1.29**, redundant search-path suffix correction awaiting native Edge review. Accepted `editing-validated-0.1.27` remains at `bd87c83232eebce4afca1e86c9bcc6c2c436fcb7`.
 Validated MVP: `1217369dd10638942d80107d5f33d7f61491d075`, unchanged on `master`, `archive/mvp-validated-0.1.1` and annotated `mvp-validated-0.1.1`.
 Accepted visual checkpoint: `ui-validated-0.1.15` and `feature/ui-ux-redesign` remain at `0e6a596210b2be2d273eab4a19d2268d9a1407a1`. No push; supplied media and Windows clone untouched.
 
 ## Review status
 
-The user accepted **0.1.25 Edge tests**, including changes and tag synchronization between PC A and PC B. Successful Chrome use was also reported; no full Chrome regression or cross-browser synchronization is inferred. The user now confirms **0.1.26 native cross-Workspace moves and synchronization between PCs passed**. This is specific native evidence; no additional scenarios or full-release acceptance are inferred. The user has now accepted **Indexfold 0.1.27 in native Edge**, including the focused Manage dismissal correction.
+The user accepted **0.1.25 Edge tests**, including changes and tag synchronization between PC A and PC B. Successful Chrome use was also reported; no full Chrome regression or cross-browser synchronization is inferred. The user now confirms **0.1.26 native cross-Workspace moves and synchronization between PCs passed**. This is specific native evidence; no additional scenarios or full-release acceptance are inferred. The user accepted **Indexfold 0.1.27 in native Edge**, including the focused Manage dismissal correction. On 2026-10-09 the user reports all requested 0.1.28 tests passed with no further extension errors, while identifying a separate redundant search-path display issue. The observer correction is accepted; the new presentation correction requires review.
 
 The 0.1.23 duplicate-bookmark binding fix remains preserved. The historical native-title-change investigation is **closed** on 2026-10-08 because the user reports no recurrence across several subsequent releases. Its original cause remains unconfirmed; this is not evidence of a proven title-overwrite fix. It is no longer an active issue or review requirement. [Historical evidence and closure](move-identity-0.1.23.md) remain available, separately from the demonstrated duplicate-binding fix. No live reset, guessed identity repair, merge, recreation or live bookmark mutation was performed. Supplied screenshots `0.1.25_readonly-fields.png`, `0.1.25_context-menu-items.png` and `0.1.25_management.png` were all opened with the image viewer before implementation.
 
-## Current behavior — Indexfold 0.1.28
+## Current behavior — Indexfold 0.1.29
 
 - Ordinary bookmarks/subtrees can move **between Edge Workspace containers**, using the existing native move command and full parent/order verification. Direct tags/IDs/bindings remain; inherited tags, archive state and paths follow the actual destination. Rejected, unchanged and uncertain outcomes remain explicit errors with refreshed state and no automatic retry. The old silent-success reporting gap was fixed in 0.1.25; the native cause of the user's original failed boundary operation was not established.
 - Workspace root/container lifecycle protection remains. No creation/receiving directly beneath the root. Workspace ↔ ordinary-root moves remain restricted. Root identification now requires positive Edge browser evidence plus the documented structural assumption; arbitrary unknown Chrome roots are never classified as Workspaces. No active-Workspace filter. [Current capability limits](workspace-capabilities.md).
@@ -28,9 +28,9 @@ Inspected `0.1.27_ext-error.png`. Reproduced the exact window error in isolated 
 
 ## Verification
 
-User-reported native Edge acceptance: **0.1.27 passed**, recorded 2026-10-08. The new observer correction is not yet accepted in Edge.
+User-reported native Edge acceptance: **0.1.27 passed**, recorded 2026-10-08. The user reports the **0.1.28 checks passed with no further extension errors** on 2026-10-09.
 
-`npm run check`: **261 tests / 25 files**, typecheck, lint, build and stable ID validation passed for 0.1.28. The tracked loadable artifact retains extension ID `nfhbegeoeafnpejpjdljhgagefbpafal`.
+`npm run check`: **261 tests / 25 files**, typecheck, lint, build and stable ID validation passed for 0.1.29. The tracked loadable artifact retains extension ID `nfhbegeoeafnpejpjdljhgagefbpafal`.
 
 - New scheduler unit tests cover coalescing, current-geometry/dependency order, cancellation and no stale callback after disposal.
 - `check-resize-observer.mjs` fails against `editing-validated-0.1.27` with five peek-entry window errors and passes on the corrected source with **zero window errors**, settled geometry and no pending frames in all three variants. It captures window ErrorEvents (not just console/page exceptions), verifies stable geometry/callback/style-write counts and checks painted entry/exit/footer boundaries. Workflows include startup/reload, fonts, open/nested/peek, resizing, theme, Manage/editor, search restoration and auto-scroll. Light desktop, dark narrow and reduced motion are included.
@@ -39,13 +39,15 @@ User-reported native Edge acceptance: **0.1.27 passed**, recorded 2026-10-08. Th
 - [Committed before/after measurements](visual-review/generated/0.1.28-observer-results.json) summarize the captured errors, callback counts and transition samples. Rendered dark/narrow peek and short-page final preview captures were inspected.
 - Browser evidence is from disposable Chromium fixtures, not native Edge. No live bookmark/profile data was accessed. The original screenshot identifies the warning but lacks a callback stack; the established cause is backed by the matching local reproduction and geometry trace.
 
-## Next action: targeted native Edge review
+## Search-path presentation correction — 0.1.29
 
-Reload committed **Indexfold 0.1.28** at `edge://extensions`, clear the old extension error list (not storage), then open a fresh dashboard.
+Visually inspected the supplied `docs/visual-review/0.1.28_search_discrepancies.png`. Search-only spans appended full paths to each bookmark, folder and section title; this was rendering, not stored-title modification. Removed those spans and their unused CSS. Root scope/provenance, section headers and inline ancestor folders retain the context. Search still indexes folder paths; Manage and editor/move dialogs retain full paths. This supersedes the earlier requirement to print full paths beside every search result, including Workspace loose items. No data, identity, schema or search-matching change.
 
-1. Resize narrow/wide, switch themes, open sections/subfolders and traverse peeks. Check tags, summaries, dither coverage and pointer targets.
-2. Hover the final section, wait for auto-scroll, wheel to the footer, leave/re-enter and scroll upward. Repeat without reload; check stability and full preview coverage.
-3. Enter/leave Manage and bookmark/folder editors, Cancel/Escape and search/Escape; repeat with reduced motion. Confirm no new ResizeObserver warnings in the extension error list.
+`check-search-context.mjs` passes in light/dark at 1200px and 390px: nested path-query matches, hierarchy/provenance without repeated path suffixes, scoped results, searchable loose Workspace items and original Escape scope restoration. The updated Workspace rendered regression also passes. Re-ran `check-resize-observer.mjs`: all three variants passed with zero window errors and settled geometry. Rendered desktop dark and narrow light examples were visually inspected. Automated Chromium evidence does not establish native acceptance of 0.1.29.
+
+## Next action: brief native Edge review
+
+Reload committed **Indexfold 0.1.29** at `edge://extensions`, then open a fresh dashboard. Search within a root and All bookmarks: bookmarks/folders should have no appended path strings, while root provenance, section labels and nested folder titles still identify location. Check a folder-path query and Escape restoration. Confirm no new extension errors.
 
 No push or live repair. Accepted references and supplied media are unchanged. The title-change investigation remains closed; its cause is unconfirmed, with historical evidence retained. Deferred features remain outside this checkpoint.
 

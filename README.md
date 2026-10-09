@@ -4,9 +4,9 @@
 
 A typography-first bookmark dashboard with instant search and keyboard navigation. Built for Chrome and Edge.
 
-Indexfold is a Manifest V3 New Tab extension, currently **pre-release 0.1.28**. Native browser bookmarks own titles, URLs, hierarchy and order. The extension stores direct tags and conservative identity/reconciliation metadata; inheritance is computed. There is no backend or separate bookmark database.
+Indexfold is a Manifest V3 New Tab extension, currently **pre-release 0.1.29**. Native browser bookmarks own titles, URLs, hierarchy and order. The extension stores direct tags and conservative identity/reconciliation metadata; inheritance is computed. There is no backend or separate bookmark database.
 
-The user accepted the 0.1.25 Edge checks, including changes and tag synchronization between PC A and PC B, and reported successful Chrome use. That does not establish a full Chrome regression or cross-browser synchronization test. The user also confirms 0.1.26 cross-Workspace movement and synchronization between PCs passed. Indexfold 0.1.27 is accepted in native Edge and checkpointed as `editing-validated-0.1.27`. The focused 0.1.28 ResizeObserver correction awaits native review; see [the handoff](docs/development-state.md).
+The user accepted the 0.1.25 Edge checks, including changes and tag synchronization between PC A and PC B, and reported successful Chrome use. That does not establish a full Chrome regression or cross-browser synchronization test. The user also confirms 0.1.26 cross-Workspace movement and synchronization between PCs passed. Indexfold 0.1.27 is accepted in native Edge and checkpointed as `editing-validated-0.1.27`. The 0.1.28 ResizeObserver checks passed in native Edge with no further extension errors. The 0.1.29 redundant search-path presentation correction awaits review; see [the handoff](docs/development-state.md).
 
 ## Browse and search
 
@@ -34,7 +34,7 @@ Native writes and extension metadata writes are not atomic. Editors report parti
 
 Indexfold protects the Workspaces root and its immediate folder containers. Their native names and lifecycle stay in Edge; confirmed extension tags/archive remain editable. Ordinary descendants support creation/edit/deletion and within/between-container moves, subject to native outcome verification and existing integrity safeguards. Moves between a Workspace and an ordinary root remain restricted. Never create a Workspace through New folder.
 
-All containers remain discoverable regardless of the active Workspace. Direct loose entries beneath the Workspaces root are omitted from browsing but remain in search (with full paths), Manage and diagnostics. [Capability assumptions and limitations](docs/workspace-capabilities.md) describe the Edge-only structural root identification; unknown Chrome roots are never inferred to be Workspaces.
+All containers remain discoverable regardless of the active Workspace. Direct loose entries beneath the Workspaces root are omitted from browsing but remain in search (with catalogue hierarchy context), Manage and diagnostics. [Capability assumptions and limitations](docs/workspace-capabilities.md) describe the Edge-only structural root identification; unknown Chrome roots are never inferred to be Workspaces.
 
 ## Manage
 

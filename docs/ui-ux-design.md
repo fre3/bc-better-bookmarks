@@ -393,7 +393,7 @@ User reports the other 0.1.23 checks passed; historical native-title-change caus
 
 The accepted immediate-child policy replaces 0.1.24's blanket native restriction beneath the identified Workspaces root. Containers retain metadata-only editors and New favorite/New folder actions for their contents; root-scoped New is absent. Ordinary descendants regain native editing, deletion and within-container moving with existing identity safeguards. No presumed active-container filter is added.
 
-Direct loose favorites beneath Workspaces and their synthetic group are omitted from browsing (also in All bookmarks). They remain searchable with a visible full path and inspectable in Manage with an explanation that they are outside displayed containers. This is not an archive or search exclusion. Binding review remains complete. No synthetic group, native entry or metadata is rewritten.
+Direct loose favorites beneath Workspaces and their synthetic group are omitted from browsing (also in All bookmarks). They remain searchable with root/section context and inspectable with full paths in Manage with an explanation that they are outside displayed containers. This is not an archive or search exclusion. Binding review remains complete. No synthetic group, native entry or metadata is rewritten.
 
 Cross-boundary move destinations are temporarily unavailable with an explanation. A native move that leaves order unchanged or has an unexpected result now remains an error in the dialog and refreshes observed state, without automatic retry. Container read-only naming, tags/archive, source highlighting, section geometry, search restoration and footer lifecycle remain unchanged. [0.1.25 captures and checks](visual-review/generated/0.1.25-review.md) are Chromium evidence, pending Edge acceptance.
 
@@ -417,4 +417,9 @@ Indexfold 0.1.27 is accepted in native Edge, checkpointed as `editing-validated-
 
 ## 0.1.28 — resize delivery and transition geometry
 
-Peek coverage and footer reservations now run as coalesced, ordered geometry tasks outside ResizeObserver delivery. Initial mount geometry remains synchronous before paint; active CSS reveal transitions receive bounded frame measurement so entry/exit and reduced-motion boundaries remain intact. Idle geometry does not poll. No typography, tags, duration, pointer-target or footer retention rule changes. See the [observer investigation and regression evidence](resize-observer-0.1.28.md). Native Edge review is pending.
+Peek coverage and footer reservations now run as coalesced, ordered geometry tasks outside ResizeObserver delivery. Initial mount geometry remains synchronous before paint; active CSS reveal transitions receive bounded frame measurement so entry/exit and reduced-motion boundaries remain intact. Idle geometry does not poll. No typography, tags, duration, pointer-target or footer retention rule changes. See the [observer investigation and regression evidence](resize-observer-0.1.28.md). The user reports the 0.1.28 checks passed with no further extension errors (2026-10-09).
+
+
+## 0.1.29 — search stays a catalogue
+
+Remove repeated full-path suffixes after bookmarks, folders and section labels in search. Root scope/provenance and the retained ancestor-folder hierarchy provide context. This supersedes the 0.1.25 full-path suffix requirement. Full paths remain in Manage and dialogs; matching still includes paths. No change to stored titles, tags, geometry rules or search/Escape semantics. Native review of this presentation correction remains pending.

@@ -38,7 +38,7 @@ No global error listener/filter is installed in production, and necessary observ
 
 The committed regression fails on `editing-validated-0.1.27` with five peek-entry window errors and passes on 0.1.28 with zero errors in all three configurations. Settled states have no pending frames or continuing measurement/style writes. [Before/after measurements](visual-review/generated/0.1.28-observer-results.json) and the current [handoff](development-state.md) retain the results. `npm run check` passed 261 tests in 25 files plus typecheck, lint and build. Existing editing, archive and navigation follow-up regressions also passed. `check-resize-observer.mjs` captures window errors and verifies stable geometry/callback/style-write counts after workflows settle. It covers fresh load/reload, fonts, section/folder opening, animated entry/exit, full final previews, wheel/leave/upward cleanup, resizing, themes, Manage/editor transitions, search restoration and active auto-scroll, with narrow/dark and reduced-motion variants. `check-peek-scroll.mjs` also captures window errors during the existing repeated wheel/pointer lifecycle regression.
 
-Chromium evidence is not native Edge acceptance. In Edge, reload the committed 0.1.28 artifact, clear the *old extension error list* (not storage/metadata), then:
+User-reported native Edge outcome (2026-10-09): all requested checks passed; no further extension errors appeared. This is separate from the Chromium evidence above. The completed review checklist was:
 
 1. Open fresh tabs; resize narrow/wide and switch themes. Check no new ResizeObserver entry appears.
 2. Open a section/subfolder; traverse header peeks, including quick entry/exit. Check tags, summaries, dither coverage and pointer targets.
