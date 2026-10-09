@@ -35,7 +35,7 @@ The v1.0.0 manifest requests:
 | Permission | Purpose |
 | --- | --- |
 | `bookmarks` | Read and manage your native bookmarks and folders. |
-| `storage` | Save tags, identity metadata and local preferences. |
+| `storage` | Save tags and identity metadata in extension sync storage, and device preferences locally. |
 | `favicon` | Read browser-provided favicons through the extension-local favicon endpoint. |
 | `tabs` | Identify and reuse dashboard tabs for the configurable search command. |
 
@@ -46,6 +46,8 @@ The manifest declares no content scripts or host permissions. Application code h
 Deletion affects real bookmarks, including descendants when deleting a folder. Confirmations and identity checks reduce accidental changes, but they do not replace a backup. Diagnostic exports can contain private bookmark information: inspect them before sharing.
 
 ## Install the release
+
+[Download v1.0.0](https://github.com/fre3/indexfold/releases/tag/v1.0.0). Use a current Chrome or Edge version.
 
 1. Download the **unpacked extension ZIP** from [GitHub Releases](https://github.com/fre3/indexfold/releases). Choose the extension asset, not GitHub's source-code ZIP.
 2. Extract it into a permanent local folder.

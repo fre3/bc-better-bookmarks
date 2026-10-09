@@ -91,7 +91,7 @@ Read-only fields cannot be changed. Browser-owned containers are protected even 
 
 ## Tags and inheritance
 
-Enter direct tags separated by commas. Use `#` when searching or reading tag labels; tag values are normalized to lowercase.
+Enter direct tags separated by commas, without `#`. Use `#` when searching or reading tag labels; tag values are normalized to lowercase.
 
 A folder tag applies to all descendants as an **inherited tag**. It is not copied into each descendant's direct tags.
 

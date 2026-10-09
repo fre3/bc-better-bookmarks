@@ -13,7 +13,7 @@ assert.equal(extensionId, 'nfhbegeoeafnpejpjdljhgagefbpafal', 'Development ident
 assert.equal(manifest.key, sourceManifest.key);
 assert.deepEqual(manifest.permissions, ['bookmarks', 'storage', 'favicon', 'tabs']);
 assert.deepEqual(manifest.commands['open-dashboard-search'], {
-  description: 'Open dashboard in search mode', suggested_key: { windows: 'Ctrl+Shift+B' }, global: false,
+  description: 'Open dashboard in search mode', suggested_key: { default: 'Ctrl+Shift+B', windows: 'Ctrl+Shift+B' }, global: false,
 });
 assert.ok(existsSync('dist/search.html'));
 assert.ok(existsSync('dist/theme-init.js'));

@@ -4,6 +4,8 @@ Deferred ideas and explicitly future work. Items here are **not implementation r
 
 ## Next session scope
 
+Indexfold v1.0.0 packages the existing implementation as a GitHub unpacked-extension release, with a user guide and real synthetic-data screenshots. Store publication remains separate. No deferred feature is promoted by the release. See the current handoff for release verification and post-release feedback.
+
 Validated references remain at `mvp-validated-0.1.1` and `ui-validated-0.1.15`; **Indexfold 0.1.27 is accepted in native Edge**, checkpointed as `editing-validated-0.1.27`. Cross-Workspace moves and synchronization between PCs also passed. Successful Chrome use is reported, without implying a full Chrome regression or cross-browser sync suite. The historical title-change investigation is closed following user-reported nonrecurrence across several releases; its original cause is unconfirmed, with evidence retained in [the investigation record](move-identity-0.1.23.md). It is not an active issue or review task. Await the next explicitly requested scope; no deferred feature or live repair is authorized by this checkpoint.
 
 ## Future catalogue imagery and motion
