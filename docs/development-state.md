@@ -3,7 +3,11 @@
 Last updated: 2026-10-09
 Release: **Indexfold 1.0.0**. Prepared on `release/1.0.0` from the actual local 0.1.29 implementation (`4d238f2`), with production source/build/documentation published through stable `master` and annotated `v1.0.0`.
 
-Production commit: **`v1.0.0^{commit}`**, available at the [immutable release source](https://github.com/fre3/indexfold/tree/v1.0.0); resolve its full SHA with `git rev-parse 'v1.0.0^{commit}'`. [GitHub release and runtime assets](https://github.com/fre3/indexfold/releases/tag/v1.0.0). The release workflow verifies/builds/packages the tagged source and publishes a normal release; publication checks and full SHA are reported at handoff.
+Production commit: **`5aedb7fa9bd28ce7db07827a6c38b4739bffe3eb`**, available at the [immutable release source](https://github.com/fre3/indexfold/tree/v1.0.0). Annotated tag object: `b72ea5a598a0212878c5569e9aafd846e996d7fa`. [Published GitHub release and runtime assets](https://github.com/fre3/indexfold/releases/tag/v1.0.0) are normal/public, not draft or prerelease.
+
+The initial tag push registered the new workflow but produced no run. Publication-only commit `7ac8bf2` adds stable-branch/manual triggering and resolves/checks out the existing annotated tag before building. It does not change the production tag or runtime. [Publication run](https://github.com/fre3/indexfold/actions/runs/37952965234) passed the build/dist comparison, packaging and release publication. Master contains that follow-up and this publication record; `release/1.0.0` and the immutable production tag remain at `5aedb7f`.
+
+Downloaded release ZIP and checksum byte-match the locally tested artifact (ZIP: 129,345 bytes). README and pinned guide render on GitHub with valid relative screenshot links; all three public images and the pinned guide byte-match their reviewed local versions. Manage's link resolves to the published guide. Only master and v1.0.0 were pushed; no blanket branch/tag push.
 
 ## Preserved references and identity
 
@@ -31,7 +35,7 @@ Real Linux Chromium loading exposed a missing default shortcut declaration: the 
 - Rendered regressions passed: `check-resize-observer`, `check-peek-scroll`, `check-navigation-followup`, `check-023`, `check-026`, `check-management-dismissal`, `check-search-context`, `check-editing`, `check-appearance`.
 - ResizeObserver regression: zero window ErrorEvents, settled geometry and no pending measurement work, including light desktop, dark narrow, reduced motion and repeated wheel/pointer footer cycles.
 - Actual 1.0.0 extension loaded in a new Chromium 153.0.8010.12 Linux profile: native synthetic creation, direct/inherited tags, archive exclusion, search/Escape, themes, and guide keyboard activation from all Manage panels with the draft retained. Documentation captures are from this production UI, not a mockup. All three images visually inspected.
-- ZIP extraction matches tracked dist byte-for-byte. The same real-extension check is run against the extracted ZIP. No development endpoints, test fixture globals, content scripts, host permissions or private signing/diagnostic files in the runtime asset.
+- ZIP extraction matches tracked dist byte-for-byte. The same real-extension check passed against the extracted ZIP, including actual `chrome://newtab/` loading. No development endpoints, test fixture globals, content scripts, host permissions or private signing/diagnostic files in the runtime asset.
 - `scripts/package-release.py` emits a deterministic ZIP with manifest at root and SHA-256 sidecar. ZIP SHA-256: `22e98351b6de7835b663ee5e8beabb11225bdbe1b418f0977b96ee52ad426dc4`.
 - Outgoing tracked files and added-file history were inspected for private media, diagnostic exports and credential signatures. Supplied screenshots/videos remain untracked. Older tracked generated review evidence is synthetic fixture output and remains historical.
 
