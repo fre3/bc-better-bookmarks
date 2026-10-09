@@ -1,79 +1,116 @@
-# Better Bookmarks — Edge technical MVP
+# Indexfold
 
-A Manifest V3 New Tab dashboard over your **real Microsoft Edge Favorites**. Favorites own titles, URLs, folders, hierarchy and ordering. The extension stores only tags and identity/reconciliation metadata; there is no separate bookmark database or backend.
+**Your bookmarks, beautifully within reach.**
 
-**Baseline single-device behavior and sequential two-way metadata synchronization are manually validated in real Edge.** On 2026-09-28 the user reported successful fresh B → A creation with tags, followed by A → B and B → A tag edits on the same identity, all converging correctly. Cross-device sync is generally working reliably for this tested workflow. The earlier metadata-loss incident remains documented with its cause unresolved; the planned A–G session is complete within recorded scope, with D using accepted prior baseline evidence; deferred ambiguity/delivery cases remain outside that scope. The development ID matches on two independently built machines. A local `storage.sync.set()` success alone is still not remote acknowledgement. See [the manual test results](docs/cross-device-test.md).
+A typography-first bookmark dashboard with instant search and keyboard navigation. Built for Chrome and Edge.
 
-## Build
+> **Release preparation:** This documentation describes the planned v1.0 release and the accepted editing features through 0.1.27. The public default branch still contains the earlier baseline. The local 0.1.29 source, current permissions and release package must be checked before these documents are integrated into v1.0. No v1.0 download is available yet.
 
-Install Node.js **24 LTS** (includes npm). In this repository, using PowerShell, bash, or a terminal:
+[User guide](docs/user-guide.md) · [Releases](https://github.com/fre3/indexfold/releases) · [Report an issue](https://github.com/fre3/indexfold/issues)
+
+## Why Indexfold?
+
+- **Fast, instant search.** Start typing to search titles, URLs, folder paths and tags without opening another screen. Use `#tag` and `@folder` to narrow your search.
+- **A dashboard worth opening.** Large editorial typography, stacked section cards and quiet controls give your bookmarks room to breathe.
+- **Preview before opening.** Hover a section to peek inside; long previews gently scroll after a delay. Automatic scrolling can be disabled and respects reduced motion.
+- **Keyboard first.** Open dashboard search with a configurable browser shortcut, switch roots with Alt+1–9, and press Escape to return to your previous browsing context.
+- **Your actual browser bookmarks.** Create, edit, move and delete bookmarks and folders. Indexfold works with the browser's existing hierarchy and order.
+- **Tags that follow the structure.** Folder tags are inherited by descendants without being copied onto them. Moving an item changes its inherited context.
+- **Archive without deleting.** Archive a bookmark or an entire folder subtree; show it again with the local Show archived setting.
+- **Editing by mouse or keyboard.** Use Edit mode, drag titles to move items, or choose More → Move for a keyboard-accessible alternative.
+- **Light, dark or system appearance.** Theme and other viewing preferences are stored locally.
+- **Limited permissions.** No broad website-access permission is needed for the documented design. Bookmark access supports management, storage supports metadata/preferences, and tab access supports finding and reusing the dashboard for its search shortcut.
+
+Search runs locally; no search backend is required. “Instant” describes the interaction, not a claim of identical performance on every device or bookmark collection.
+
+## Privacy and permissions
+
+Indexfold keeps titles, URLs, folder hierarchy and order in the browser's native bookmark system. It stores tags and identity metadata separately using browser extension storage.
+
+The intended v1.0 permission set is:
+
+| Permission | Purpose |
+| --- | --- |
+| `bookmarks` | Read and manage your native bookmarks and folders. |
+| `storage` | Save tags, identity metadata and local preferences. |
+| `tabs` | Identify and reuse dashboard tabs for the configurable search command. |
+
+The local release review must verify this table against the final manifest. Tab permission can expose tab URL/title metadata; its use should remain limited to dashboard routing.
+
+The documented design uses no content scripts or host permissions to read arbitrary website contents. Favicons may still involve browser/network requests; Indexfold is not described as network-free. Browser account synchronization may transmit bookmarks and extension metadata through the browser provider.
+
+Deletion affects real bookmarks, including descendants when deleting a folder. Confirmations and identity checks reduce accidental changes, but they do not replace a backup. Diagnostic exports can contain private bookmark information: inspect them before sharing.
+
+## Install the release
+
+Once v1.0 is published:
+
+1. Download the **unpacked extension ZIP** from [GitHub Releases](https://github.com/fre3/indexfold/releases). Choose the extension asset, not GitHub's source-code ZIP.
+2. Extract it into a permanent local folder.
+3. Open the appropriate browser page:
+
+   | Chrome | Edge |
+   | --- | --- |
+   | `chrome://extensions` | `edge://extensions` |
+
+4. Enable **Developer mode**, choose **Load unpacked**, and select the extracted folder containing `manifest.json`.
+5. Open a new tab. If your browser asks whether to keep the new-tab change, keep Indexfold enabled.
+6. Configure its dashboard-search command at `chrome://extensions/shortcuts` or `edge://extensions/shortcuts`.
+
+If another extension also replaces the New Tab page, choose which one should own that page. Keep the extracted folder: an unpacked installation loads its files from there.
+
+GitHub installation is separate from Chrome Web Store or Edge Add-ons distribution. No store listing is implied.
+
+Official loading instructions: [Chrome](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-an-unpacked-extension) · [Edge](https://learn.microsoft.com/en-us/microsoft-edge/extensions/getting-started/extension-sideloading).
+
+## Build from source
+
+Install Git and **Node.js 24 or later** with npm. For the published v1.0 source:
 
 ```sh
+git clone https://github.com/fre3/indexfold.git
+cd indexfold
+git checkout v1.0.0
 npm ci
-npm run typecheck
-npm run lint
-npm test
+npm run check
+```
+
+The release tag will exist once v1.0 is published. To work on the repository's current default branch instead, omit the checkout command.
+
+`npm run check` runs typechecking, lint, tests and the production build. The complete unpacked extension is generated in **`dist/`**. Load that directory using the installation steps above.
+
+Useful development commands:
+
+```sh
 npm run build
+npm run dev
 npm run extension:id
 ```
 
-`npm run check` runs all four checks. `dist/` is the complete installable unpacked extension. No server is required. The lockfile pins dependencies; React/React DOM are the only runtime dependencies.
+`npm run dev` watches and rebuilds the extension; it does not start a hosted bookmark dashboard. After changing an installed build, reload the extension and open a fresh new tab.
 
-## Load in Windows Microsoft Edge
+`dist/` is intentionally tracked. Preserve the manifest's public identity key and persistent storage identifiers so existing installations keep their metadata identity.
 
-1. For the validated test baseline, use the committed `dist/` without rebuilding. For deliberate implementation changes, build as above and commit source and generated artifact together.
-2. Open `edge://extensions` in the intended Microsoft account profile.
-3. Enable **Developer mode**.
-4. Select **Load unpacked**, then select this repository's **dist** folder (the folder containing `manifest.json`).
-5. Verify the extension is enabled and its ID is **`nfhbegeoeafnpejpjdljhgagefbpafal`**. It must match on both machines, independent of the checkout path.
-6. Open a new tab. Accept/keep the extension's New Tab change if Edge asks. Disable a competing New Tab extension if necessary.
-7. Leave the initial read-only mode until test setup is ready. Under **Category management / test folder setup**, choose a writable parent (such as Favorites bar), create a uniquely named `Dashboard Test YYYY-MM-DD` folder. The new folder becomes this device's dashboard root. Existing Favorites are not moved.
-8. Add a test link. Verify it also exists in Edge's native Favorites UI (`Ctrl+Shift+O`).
+## Updates and synchronization
 
-Existing Favorite folders can also be selected as the root. Root selection is device-local; select the corresponding synchronized folder independently on B. **All Favorites — enable edits** deliberately allows broader modifications. Missing/deleted roots do not silently fall back to writable all-Favorites mode.
+To update an unpacked installation, replace its files with the next release in the same folder, reload it on the extensions page, and open a fresh new tab. Avoid uninstalling/reinstalling solely to update.
 
-To test a committed build, pull the intended revision and reload its committed `dist/`. After deliberate implementation changes, run `npm run build`, click **Reload** for the extension at `edge://extensions`, then open a fresh new tab. `npm run dev` builds in watch/development mode; still load `dist`, reload the extension, and reopen the tab after changes. Do not load the repository root or use a localhost preview to test browser APIs. No hot-reload extension plugin is required.
+Native bookmark synchronization depends on your browser's account and sync settings. Tags use extension sync storage. Install the same Indexfold extension identity on each device; a pending folder review may require confirmation before folder tags appear.
 
-## What works
+Two-device Edge workflows, including folder tags and cross-Workspace moves, have been manually verified. This is not a promise of immediate delivery, conflict-free simultaneous editing, or automatic synchronization between Chrome and Edge.
 
-- Full Favorites tree reading, folder/category grouping, immediate search across title, URL, path, user tags and derived system labels. `#tag` targets user tags; `@category` targets folder paths. All whitespace-separated terms must match, case-insensitively by substring. For example, `microsoft @dev #important`. Lone `#` and `@` are ignored; embedded characters in URLs/text remain ordinary text.
-- Add/edit/move/delete individual Favorites; create/rename normal folders. Delete requires confirmation. No folder deletion or bulk deletion.
-- Comma-separated tags; trim, Unicode NFC normalization, lowercase, deduplicate, sort. `Azure` and `azure` are one tag. Removing all tags preserves the identity record.
-- Background reconciliation on startup, bookmark events and sync-storage events, including when dashboard tabs are closed.
-- Diagnostics with local browser IDs, application IDs, mapping method, browser sync fields when exposed, unresolved/ambiguous records, bytes/quotas, recent event logs, reload/reconcile controls, sanitized console dump and JSON export.
-- Browser-owned/managed folders are protected. New/edited links accept only HTTP, HTTPS, or explicitly confirmed `javascript:` bookmarklets. Every save whose resulting URL is a bookmarklet requires an executable-code warning, including title/tag-only edits; merely viewing one never prompts. Cancel leaves the editor open and sends no save command. Bookmarklet code is passed unchanged to the browser API. The dashboard never executes it; run bookmarklets through Edge Favorites. Other existing schemes remain visible but cannot be saved through this editor.
-- Read-only system labels: `JS` for `javascript:`, `HTTP` for `http:`, none for HTTPS. These are derived in the view/search model, separate from user tags, with no independent synchronization, stableId creation or persisted label array. A native copy gets its own derived label but does not inherit the mapped original's user tags.
+Appearance, Show archived and preview-scroll preferences are local to each device.
 
-Browser APIs live behind repositories. UI commands go through one service worker queue. Logic tests use in-memory repositories, including simulated different local IDs and both arrival orders; they do **not** test Microsoft account sync.
+## Edge Workspaces
 
-## Development identity
+Existing immediate folders under Edge's Workspaces root are treated as Workspace containers. Create and manage the Workspaces themselves through Edge. Indexfold protects those containers while allowing normal bookmark/subfolder operations inside them, including moves between containers.
 
-`public/manifest.json` includes a fixed public `key`, copied unchanged into `dist`. The key was generated once using Node's RSA key-pair generator; only the public SPKI DER bytes were written. Private material was never saved. **Do not regenerate this key** or remove it for A/B tests. `npm run extension:id` derives the expected ID from the public key. Never commit a signing key, PEM, CRX, account credentials, or diagnostic exports containing private Favorites.
+The active Edge Workspace is not automatically detected. Moves between a Workspace and ordinary bookmark roots remain restricted in the documented accepted build.
 
-The manifest `key` mechanism is [officially documented](https://developer.chrome.com/docs/extensions/reference/manifest/key). Edge Add-ons production distribution has a store identity and update process; do not assume it inherits this development ID or its sync namespace. No production migration/publishing has been implemented.
+## Help and development
 
-## Read before broad testing
+Read the [user guide](docs/user-guide.md) for the daily workflow, shortcuts, tags and archiving.
 
-Use only the dedicated test folder initially, and export a Favorites HTML backup from Edge's native Favorites manager. Diagnostic JSON is a sanitized debugging artifact, not a restorable backup. It contains Favorites and tag data (no visited-history fields); review before sharing. Web URLs with credentials and common secret parameter names are redacted, but arbitrary private information in titles, tags, paths or ordinary URL parameters cannot be automatically identified. Bookmarklet code is exported verbatim without interpretation or redaction and may contain private data.
+For developers: [architecture](docs/architecture.md), [current handoff](docs/development-state.md) and [roadmap](docs/roadmap.md). Developer documents describe implementation and historical evidence; they are not required for everyday use.
 
-Known limitations: the earlier metadata-loss cause remains unresolved despite the successful two-way retest; exact duplicates on a fresh device remain ambiguous; unknown rename/move history remains unresolved; missed deletion events can make recreation indistinguishable; concurrent cross-device writes to the same storage key can lose edits. Small sync quotas limit tagged Favorites/history. There is no automatic cleanup, conflict merge, or import.
-
-Stage 1 hardening records content-free key additions/updates/removals in bounded diagnostics and preserves each locally authored metadata intent in `storage.local` before publishing it. Preservation is capped at 512 identities / 1 MiB without automatic eviction; failure blocks publication. Diagnostics distinguish missing, quarantined, deleted and ambiguous metadata. Unsafe identity edits are rejected before Favorite mutation when already detectable. Automatic recovery is deferred to Stage 2: missing sync keys are never recreated from the journal on startup or events. See [the architecture notes](docs/architecture.md) for compatibility and remaining limits.
-
-- [Technical spike and official references](docs/technical-spike.md)
-- [Architecture, storage schema and failure behavior](docs/architecture.md)
-- [Exact Windows two-device test and result worksheet](docs/cross-device-test.md)
-
-Local check results and live-test status are recorded in the test worksheet. If transport fails on both machines, collect evidence and stop before introducing any backend.
-
-## Validation status
-
-- **AUTOMATED TESTED:** pure logic and mocked/in-memory repository/service tests, typecheck, lint, production package and deterministic ID checks. These do not prove browser UI or Microsoft transport; exact results are in the worksheet.
-- **MANUALLY VALIDATED IN EDGE:** user-reported baseline unpacked loading, same ID on two independent builds, complete Favorites hierarchy/order, dashboard creation/title/URL edits/moves/deletion, user-tag add/remove/search, native rename/move updating the open dashboard, mapped tags surviving rename/move, and native copy/paste appearing immediately without inheriting user tags. Exact versions/times and private exports were not supplied.
-- **MANUALLY VALIDATED IN EDGE (cross-device):** initial A → B tags were loaded on B. Following the recorded failure, fresh B → A creation with tags succeeded, then A → B and B → A tag edits converged on the same identity (user report recorded 2026-09-28).
-- **MANUALLY VALIDATED IN EDGE (2026-09-29–30):** A–C including C.6–C.10; D accepted prior baseline; Stage 1 journal/event/preflight E1–E4; cross-device F1–F8/G1–G3 including worker wakeup, isolation, deletion and recreation. No outstanding functional test failures in the completed session. Bookmarklet titles are intentionally non-clickable with “Run this bookmarklet through Edge Favorites.” The HTTP fixture count correction is 36 → 37.
-- **DEFERRED COVERAGE:** fresh duplicate ambiguity, mutations before first mapping, natural metadata-first receipt, extension-disabled evidence loss and production identity testing. These are not failed checks or prerequisites for the next UI/UX session; historical metadata-loss cause remains unresolved.
-
-## Roadmap
-
-Deferred system labels, search enhancements, metadata-recovery work and distribution considerations are tracked in [the roadmap](docs/roadmap.md). Roadmap items are not implementation requirements unless explicitly promoted into current work; see [the current development handoff](docs/development-state.md) for active status and next actions.
+When reporting an issue, include your browser version, Indexfold version and steps to reproduce. Use synthetic examples where possible; share diagnostic exports only after reviewing their contents.
