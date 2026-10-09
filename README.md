@@ -6,7 +6,7 @@ A typography-first bookmark dashboard with instant search and keyboard navigatio
 
 Indexfold is a Manifest V3 New Tab extension, currently **pre-release 0.1.29**. Native browser bookmarks own titles, URLs, hierarchy and order. The extension stores direct tags and conservative identity/reconciliation metadata; inheritance is computed. There is no backend or separate bookmark database.
 
-The user accepted the 0.1.25 Edge checks, including changes and tag synchronization between PC A and PC B, and reported successful Chrome use. That does not establish a full Chrome regression or cross-browser synchronization test. The user also confirms 0.1.26 cross-Workspace movement and synchronization between PCs passed. Indexfold 0.1.27 is accepted in native Edge and checkpointed as `editing-validated-0.1.27`. The 0.1.28 ResizeObserver checks passed in native Edge with no further extension errors. The 0.1.29 redundant search-path presentation correction awaits review; see [the handoff](docs/development-state.md).
+The user accepted the 0.1.25 Edge checks, including changes and tag synchronization between PC A and PC B, and reported successful Chrome use. That does not establish a full Chrome regression or cross-browser synchronization test. The user also confirms 0.1.26 cross-Workspace movement and synchronization between PCs passed. Indexfold 0.1.27 is accepted in native Edge and checkpointed as `editing-validated-0.1.27`. The 0.1.28 ResizeObserver checks passed in native Edge with no further extension errors. The user reports the 0.1.29 search-path correction passed; see [the handoff](docs/development-state.md).
 
 ## Browse and search
 
@@ -66,6 +66,6 @@ Browser sync handles native bookmarks; extension metadata uses browser-provided 
 
 ## Identity and retained technical names
 
-Indexfold is a display rebrand of Better Bookmarks. The repository path/remote, npm identifier `bc-better-bookmarks`, manifest public key, extension ID, storage keys, metadata schemas and footer `source=bcbb` parameter remain unchanged. No data migration is needed. Historical documents and release captures retain their original names.
+Indexfold is a display rebrand of Better Bookmarks. The repository path/remote, npm identifier `bc-better-bookmarks`, manifest public key, extension ID, storage keys, and metadata schemas remain unchanged. The footer now uses `source=indexfold`. No data migration is needed. Historical documents and release captures retain their original names.
 
 The validated functional baseline `mvp-validated-0.1.1`, visual checkpoint `ui-validated-0.1.15` and their branches remain intact. [Architecture](docs/architecture.md), [design](docs/ui-ux-design.md), [roadmap](docs/roadmap.md) and [native evidence](docs/cross-device-test.md) distinguish implementation checks from user-reported browser validation.
